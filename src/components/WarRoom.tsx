@@ -237,7 +237,7 @@ export default function WarRoom() {
           <div className="border-b border-white/10 p-3 text-[11px] text-muted">
             <div className="flex justify-between"><span>Advisory monitoring</span><span>{monitor?.error ? "Scan needs attention" : monitor?.checked ? "Active" : "Awaiting first scan"}</span></div>
             {monitor?.checked && <div className="mt-1">Last checked {new Date(monitor.checked).toLocaleTimeString()}</div>}
-            {alerts.slice(0,3).map(a=><button key={a.id} onClick={()=>{loadImpact(a.advisory).catch(e=>setErr(e.message));setTab("brief");setBrief(null);}} className="mt-2 block w-full rounded bg-crit/10 p-2 text-left text-white">{a.advisory} · {a.services.length} services<br/><span className="text-muted">{a.status==='accepted'?'Email accepted by provider':a.status==='failed'?'Email failed · retry pending':'Email pending / setup required'}</span></button>)}
+            {alerts.slice(0,3).map(a=><button key={a.id} onClick={()=>{loadImpact(a.advisory).catch(e=>setErr(e.message));setTab("brief");setBrief(null);}} className="mt-2 block w-full rounded bg-crit/10 p-2 text-left text-white">{a.isTest ? "TEST · " : ""}{a.advisory} · {a.services.length} services<br/><span className="text-muted">{a.status==='accepted'?'Email accepted by provider':a.status==='failed'?'Email failed · retry pending':'Email pending / setup required'}</span></button>)}
           </div>
           <PanelTitle icon={Radio} title="Advisory feed" sub="ranked by services reached" />
           <div className="scroll min-h-0 flex-1 overflow-y-auto px-2 pb-2">

@@ -24,9 +24,9 @@ async function main() {
  const realFetch=globalThis.fetch;
  process.env.RESEND_API_KEY='test-only';process.env.ALERT_FROM='test@example.com';
  let sends=0;
- globalThis.fetch=async (url,opts)=>{assert.equal(url,'https://api.resend.com/emails');assert.equal((opts?.headers as any)['Idempotency-Key'],'test-id');const body=JSON.parse(opts?.body as string);assert.deepEqual(body.to,['admin@example.com']);sends++;return Response.json({id:'mock-accepted'});};
+ globalThis.fetch=async (url,opts)=>{assert.equal(url,'https://api.resend.com/emails');assert.equal(new Headers(opts?.headers).get('Idempotency-Key'),'test-id');const body=JSON.parse(opts?.body as string);assert.deepEqual(body.to,['admin@example.com']);sends++;return Response.json({id:'mock-accepted'});};
  assert.equal(await sendEmail('admin@example.com','test','content','test-id'),'mock-accepted');assert.equal(sends,1);
- globalThis.fetch=async()=>new Response('{}',{status:429});await assert.rejects(()=>sendEmail('admin@example.com','test','content','test-id'),/429/);
+ globalThis.fetch=async()=>Response.json({name:'rate_limit_exceeded',message:'Slow down'},{status:429});await assert.rejects(()=>sendEmail('admin@example.com','test','content','test-id'),/rate_limit_exceeded/);
  globalThis.fetch=realFetch;
  delete process.env.RESEND_API_KEY;delete process.env.ALERT_FROM;
  process.env.ADMIN_TOKEN='a'.repeat(32);

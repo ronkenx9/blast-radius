@@ -6,7 +6,7 @@ export default function Setup() {
  async function request(action:string) {
  setBusy(true);setMessage('');
  try {
- const r=await fetch('/api/admin/alerts',{method:action==='load'?'GET':'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},...(action==='load'?{}:{body:JSON.stringify({action,email,enabled})})});
+ const r=await fetch('/api/admin/alerts',{method:action==='load'?'GET':'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},...(action==='load'?{}:{body:JSON.stringify({action,email,enabled,...(action==='test'?{testId:crypto.randomUUID()}:{})})})});
  const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');
  if(action==='load'){setEmail(d.email);setEnabled(d.enabled);setReady(d.providerReady);setUnlocked(true);}else setMessage(d.message);
  }catch(e){setMessage((e as Error).message);}finally{setBusy(false);}

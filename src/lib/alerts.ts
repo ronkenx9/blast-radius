@@ -1,4 +1,5 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { Resend } from 'resend';
 import { q } from './db';
 import { impact } from './impact';
 export function authorized(req: Request, secret = process.env.ADMIN_TOKEN) {
@@ -12,20 +13,27 @@ export function emailText(data: NonNullable<Awaited<ReturnType<typeof impact>>>)
 }
 export async function sendEmail(email: string, subject: string, text: string, key: string) {
   if (!process.env.RESEND_API_KEY || !process.env.ALERT_FROM) throw new Error('Email provider is not configured');
-  const response = await fetch('https://api.resend.com/emails', {method:'POST', headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({from:process.env.ALERT_FROM,to:[email],subject,text}),signal:AbortSignal.timeout(12000)});
-  if (!response.ok) throw new Error(`Email provider rejected request (${response.status})`);
-  const result = await response.json(); if (!result.id) throw new Error('Email provider did not confirm acceptance');
-  return result.id as string;
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const split = escaped.lastIndexOf('\n',1900);
+  const boundary = split > 0 ? split : 1900;
+  const content = process.env.RESEND_TEMPLATE_ID && escaped.length <= 3800 && escaped.length - boundary <= 2000
+    ? {template:{id:process.env.RESEND_TEMPLATE_ID,variables:{DETAILS:escaped.slice(0,boundary),MORE:escaped.slice(boundary) || ' '}}}
+    : {text};
+  const {data,error} = await new Resend(process.env.RESEND_API_KEY).emails.send({from:process.env.ALERT_FROM,to:[email],subject,...content}, {idempotencyKey:key,signal:AbortSignal.timeout(12000)});
+  if(error) throw new Error(`Email provider rejected request: ${error.name}`);
+  if(!data?.id) throw new Error('Email provider did not confirm acceptance');
+  return data.id;
 }
-export async function recordAlert(id: string) {
+export async function recordAlert(id: string, testKey?: string) {
   const data = await impact(id); if (!data?.services.length) return;
-  const key = createHash('sha256').update(id+JSON.stringify(data.services.map(s=>s.service).sort())).digest('hex');
-  await q(`MERGE (a:Alert {id:$key}) ON CREATE SET a.advisory=$id, a.created=$now, a.status='pending', a.services=$services RETURN a.id`, {key,id,now:new Date().toISOString(),services:data.services.map(s=>s.service)},false);
+  const key = testKey || createHash('sha256').update(id+JSON.stringify(data.services.map(s=>s.service).sort())).digest('hex');
+  await q(`MERGE (a:Alert {id:$key}) ON CREATE SET a.advisory=$id, a.created=$now, a.status='pending', a.isTest=$isTest, a.services=$services RETURN a.id`, {key,id,now:new Date().toISOString(),services:data.services.map(s=>s.service),isTest:!!testKey},false);
+  return key;
 }
-export async function deliverPending() {
+export async function deliverPending(onlyId = '') {
   const s = await settings();
   if (!s.enabled || !validEmail(s.email) || !process.env.RESEND_API_KEY || !process.env.ALERT_FROM) return {status:'Email setup required',accepted:0};
-  const alerts = await q<any>("MATCH (a:Alert) WHERE a.status='pending' OR a.status='failed' RETURN a.id AS id, a.advisory AS advisory ORDER BY a.created LIMIT 1");
+  const alerts = await q<any>("MATCH (a:Alert) WHERE (a.status='pending' OR a.status='failed') AND ($onlyId='' OR a.id=$onlyId) RETURN a.id AS id, a.advisory AS advisory, a.isTest AS isTest ORDER BY a.created LIMIT 1",{onlyId});
   let accepted = 0;
   for (const a of alerts) {
     const owner = randomUUID();
@@ -33,7 +41,7 @@ export async function deliverPending() {
     if (!claimed.length) continue;
     try {
       const data = await impact(a.advisory); if (!data) throw new Error('Advisory unavailable');
-      const providerId = await sendEmail(s.email,`[Blast Radius] ${data.services.length} services exposed — ${a.advisory}`,emailText(data),a.id);
+      const providerId = await sendEmail(s.email,`[Blast Radius${a.isTest ? " TEST" : ""}] ${data.services.length} services exposed — ${a.advisory}`,emailText(data),a.id);
       await q("MATCH (a:Alert {id:$id,owner:$owner}) SET a.status='accepted',a.providerId=$providerId,a.lease=0,a.error='' RETURN a.id",{id:a.id,owner,providerId},false); accepted++;
     } catch (e) { await q("MATCH (a:Alert {id:$id,owner:$owner}) SET a.status='failed',a.error=$error,a.lease=0 RETURN a.id",{id:a.id,owner,error:(e as Error).message},false); }
   }
