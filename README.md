@@ -193,3 +193,20 @@ src/lib/tools.ts          MCP tool registry
 src/app/api/*             graph, investigate (NDJSON stream), risk, investigations, mcp, health
 src/components/*          war-room UI and 3D graph
 ```
+
+## Incident map, monitoring and admin email
+
+Select an advisory or simulate an incident to highlight all connecting dependency branches, affected services, teams and on-call people simultaneously. Evidence clicks narrow the view; **Show all affected areas** restores the overview. Email links open the same incident through `?advisory=…`.
+
+The protected `/api/monitor` endpoint checks installed package versions against [OSV querybatch](https://google.github.io/osv.dev/post-v1-querybatch/). The GitHub `dependency-monitor` workflow runs approximately every 30 minutes (scheduler delays are possible). It imports up to three newly discovered advisories per scan, records persistent deduplicated alerts and retries pending email. This monitors published vulnerability exposure, not intrusion detection. Initial seeded advisories are the baseline; it does not email all historical vulnerabilities. Package inventory remains the synthetic seeded company, not a connected customer repository.
+
+At `/setup`, the deployment owner signs in with `ADMIN_TOKEN`, enters the admin email, and chooses whether to enable notifications. Public visitors cannot configure email, run monitoring or send tests. Admin keys remain only in page memory. Configure these server-side settings:
+
+- `ADMIN_TOKEN`: at least 32 random characters; owner-only setup access.
+- `MONITOR_TOKEN`: separate random secret, also stored as the GitHub Actions secret of the same name.
+- `APP_URL`: canonical deployed HTTPS address; also a GitHub repository variable.
+- `RESEND_API_KEY` and `ALERT_FROM`: [Resend](https://resend.com/docs/api-reference/emails/send-email) key and verified sender.
+
+Save the recipient before pressing **Send test email**. The UI reports provider acceptance, not inbox delivery. No real provider key or admin email is bundled. Without them, alerts persist in-app and say pending/setup required. Public simulations never send email. Email goes to the configured admin, with the fictional service owners listed for context. This is single-workspace owner setup, not a multi-tenant signup system.
+
+Alert records and onboarding settings are excluded from the public graph. The public alert list contains advisory IDs and delivery states, never the recipient address. Avoid reseeding: it would erase settings and history. Rotate admin/monitor keys through deployment settings if needed.

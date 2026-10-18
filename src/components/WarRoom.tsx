@@ -40,6 +40,41 @@ export default function WarRoom() {
   const [openCypher, setOpenCypher] = useState<string | null>(null);
   const [selected, setSelected] = useState<GNode | null>(null);
   const g = useRef<GraphHandle>(null);
+  const [incident, setIncident] = useState<any>(null);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [monitor, setMonitor] = useState<any>(null);
+  const [mapMode, setMapMode] = useState(false);
+  const seenAlert = useRef<string | null>(null);
+  const alertsInitialized = useRef(false);
+  const overview = (data: any) => {
+    setHl({nodes:new Set(data.nodes),links:new Set(data.links),mode:"incident"});
+    setCrumbs([]); setMapMode(true); g.current?.fit(data.nodes);
+  };
+  const loadImpact = async (id: string) => {
+    const r = await fetch(`/api/impact?advisory=${encodeURIComponent(id)}`);
+    if (!r.ok) throw new Error("Could not load incident map");
+    const data = await r.json(); setIncident(data); overview(data); return data;
+  };
+  useEffect(() => {
+    let stopped=false;
+    const poll=async () => {
+      try {
+        const r=await fetch('/api/alerts'); if(!r.ok)return;
+        const d=await r.json();if(stopped)return;setAlerts(d.alerts);setMonitor(d.monitor);
+        if(d.alerts[0] && seenAlert.current !== d.alerts[0].id) {
+          const first=!alertsInitialized.current; seenAlert.current=d.alerts[0].id;
+          if(!first && !running) {const graphData=await fetch('/api/graph').then(r=>r.json());if(!graphData.error)setGraph(graphData);await loadImpact(d.alerts[0].advisory);}
+        }
+        alertsInitialized.current=true;
+      } catch { /* Keep the last successful monitor status visible. */ }
+    };
+    poll();const timer=setInterval(poll,15000);return()=>{stopped=true;clearInterval(timer);};
+  }, [running]);
+  useEffect(() => {
+    if(!graph)return;
+    const id=new URLSearchParams(window.location.search).get('advisory');
+    if(id) loadImpact(id).catch(e=>setErr(e.message));
+  }, [!!graph]);
 
   useEffect(() => {
     fetch("/api/graph").then((r) => r.json()).then((d) => (d.error ? setErr(d.error) : setGraph(d))).catch((e) => setErr(String(e)));
@@ -77,11 +112,11 @@ export default function WarRoom() {
 
   const run = async (advisory: string, simulate = false) => {
     if (running) return;
-    setRunning(advisory); setTab("brief"); setBrief(null); setMemoryNote(null); setAgents({}); clear();
+    setErr(null); setIncident(null); setRunning(advisory); setTab("brief"); setBrief(null); setMemoryNote(null); setAgents({}); clear();
     const a = advisories.find((x) => x.id === advisory);
     if (simulate) { setDrop(a || { id: advisory }); await new Promise((r) => setTimeout(r, 2200)); setDrop(null); }
-    let paths: string[][] = []; let ctxNodes: string[] = []; let firstPath: string[] | null = null;
     try {
+      const fullImpact = await loadImpact(advisory);
       const res = await fetch(`/api/investigate?advisory=${encodeURIComponent(advisory)}`);
       const reader = res.body!.getReader(); const dec = new TextDecoder(); let buf = "";
       while (true) {
@@ -92,11 +127,6 @@ export default function WarRoom() {
           const e = JSON.parse(line);
           if (e.type === "agent") {
             setAgents((s) => ({ ...s, [e.agent]: { ...s[e.agent], status: e.phase === "start" ? "running" : "done", text: e.text, cypher: e.cypher || s[e.agent]?.cypher, ms: e.ms, rows: e.rows, highlight: e.highlight } }));
-            if (e.phase === "done" && e.highlight) {
-              if (e.agent === "Scout") { highlight(e.highlight.nodes); g.current?.fit(e.highlight.nodes); }
-              if (e.agent === "Tracer") { paths = e.highlight.paths; firstPath = paths[0] || null; highlight([], paths); g.current?.fit(paths.flat()); }
-              if (e.agent === "Cartographer") { ctxNodes = e.highlight.nodes; highlight(ctxNodes, paths, "context"); }
-            }
             await new Promise((r) => setTimeout(r, e.phase === "done" ? 650 : 350));
           } else if (e.type === "memory") setMemoryNote(e.text);
           else if (e.type === "brief") setBrief({ ...e });
@@ -104,13 +134,13 @@ export default function WarRoom() {
           else if (e.type === "error") setErr(e.text);
         }
       }
-      const fp = firstPath as string[] | null;
-      if (fp) { highlight(ctxNodes, paths, "path"); await fly(fp); g.current?.fit([...paths.flat(), ...ctxNodes]); }
+      overview(fullImpact);
     } catch (e: any) { setErr(String(e?.message || e)); }
     setRunning(null);
   };
 
   const claimClick = async (c: Claim) => {
+    setMapMode(false);
     const pathish = c.evidence.filter((x) => x.startsWith("Service:") || x.startsWith("Version:"));
     const others = c.evidence.filter((x) => !pathish.includes(x));
     if (pathish.length >= 2 && pathish[0].startsWith("Service:")) {
@@ -122,7 +152,7 @@ export default function WarRoom() {
   };
 
   const showRisk = async () => {
-    setTab("risk");
+    setMapMode(false); setTab("risk");
     const d = risk || (await fetch("/api/risk").then((r) => r.json())); setRisk(d);
     if (d.maintainers?.[0]) riskFor(d.maintainers[0].maintainer);
   };
@@ -147,13 +177,13 @@ export default function WarRoom() {
   };
 
   const openInv = async (inv: any) => {
+    await loadImpact(inv.advisory);
     const d = await fetch(`/api/investigations/${inv.id}`).then((r) => r.json());
     const fs: any[] = d.findings || [];
         const dj = (f: any) => { try { return JSON.parse(f.data || "{}"); } catch { return {}; } };
     const claims: Claim[] = fs.filter((f) => f.kind === "brief").map((f) => ({ text: f.text, evidence: dj(f).evidence || f.evidence, tone: dj(f).tone }));
-    const exposures: string[][] = fs.filter((f) => f.kind === "exposure").map((f) => dj(f).path || f.evidence);
     setBrief({ headline: `Recalled from graph memory · ${inv.serviceCount ?? "?"} services exposed`, severity: inv.severity, claims, mode: inv.mode, investigation: inv.id, fromMemory: true, started: inv.started });
-    setTab("brief"); setCrumbs([]); highlight([], exposures); g.current?.fit(exposures.flat());
+    setTab("brief"); setCrumbs([]);
   };
 
   const stats = useMemo(() => graph ? {
@@ -166,7 +196,7 @@ export default function WarRoom() {
   return (
     <main className="grain relative h-screen w-screen overflow-hidden">
       {/* graph canvas */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 xl:left-[365px] xl:right-[445px] top-[84px]">
         {graph ? <GraphView ref={g as any} data={graph} hl={hl} onNode={(n) => setSelected(n)} /> :
           <div className="flex h-full items-center justify-center font-mono text-sm text-muted">{err ? `FalkorDB unreachable: ${err}` : "Loading graph from FalkorDB…"}</div>}
       </div>
@@ -182,7 +212,7 @@ export default function WarRoom() {
           </div>
         </div>
         {stats && (
-          <div className="panel hidden items-center gap-5 whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted xl:flex">
+          <div className="panel hidden items-center gap-5 whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted 2xl:flex">
             <Stat k="nodes" v={stats.nodes} /><Stat k="edges" v={stats.links} /><Stat k="advisories" v={stats.adv} />
             <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-ok" />FalkorDB</span>
           </div>
@@ -191,6 +221,7 @@ export default function WarRoom() {
           <span title={health?.agents?.fallback || health?.agents?.model || ""} className={clsx("panel flex items-center gap-1.5 whitespace-nowrap px-3 py-2 font-mono text-[11px]", health?.agents?.mode === "llm" ? "text-info" : "text-muted")}>
             <Sparkles size={13} /> {health?.agents?.mode === "llm" ? health.agents.model : health?.agents?.fallback ? "AI off · deterministic" : "deterministic agents"}
           </span>
+          <a href="/setup" className="panel whitespace-nowrap px-3 py-2 text-xs text-info">Set up alerts</a>
           <button onClick={showRisk} className="panel flex items-center gap-2 whitespace-nowrap px-3.5 py-2 text-[13px] hover:border-white/20"><ShieldAlert size={15} className="text-warn" />Who holds the keys</button>
           <button onClick={() => { setTab("memory"); loadInvs(); }} className="panel flex items-center gap-2 whitespace-nowrap px-3.5 py-2 text-[13px] hover:border-white/20"><Brain size={15} className="text-info" />Memory</button>
           <button disabled={!!running} onClick={() => run(FEATURED, true)}
@@ -203,6 +234,11 @@ export default function WarRoom() {
       {/* left: feed + agents */}
       <aside className="absolute bottom-4 left-4 top-[84px] z-10 flex w-[340px] flex-col gap-3">
         <section className="panel flex min-h-0 flex-[0.9] flex-col">
+          <div className="border-b border-white/10 p-3 text-[11px] text-muted">
+            <div className="flex justify-between"><span>Advisory monitoring</span><span>{monitor?.error ? "Scan needs attention" : monitor?.checked ? "Active" : "Awaiting first scan"}</span></div>
+            {monitor?.checked && <div className="mt-1">Last checked {new Date(monitor.checked).toLocaleTimeString()}</div>}
+            {alerts.slice(0,3).map(a=><button key={a.id} onClick={()=>{loadImpact(a.advisory).catch(e=>setErr(e.message));setTab("brief");setBrief(null);}} className="mt-2 block w-full rounded bg-crit/10 p-2 text-left text-white">{a.advisory} · {a.services.length} services<br/><span className="text-muted">{a.status==='accepted'?'Email accepted by provider':a.status==='failed'?'Email failed · retry pending':'Email pending / setup required'}</span></button>)}
+          </div>
           <PanelTitle icon={Radio} title="Advisory feed" sub="ranked by services reached" />
           <div className="scroll min-h-0 flex-1 overflow-y-auto px-2 pb-2">
             {advisories.slice(0, 30).map((a) => (
@@ -259,6 +295,15 @@ export default function WarRoom() {
           ))}
         </div>
         <div className="scroll min-h-0 flex-1 overflow-y-auto p-4">
+          {err && <p role="alert" className="mb-3 rounded border border-crit p-3 text-sm">{err}</p>}
+          {incident && tab === "brief" && <section className="mb-5 rounded-xl border border-crit/40 bg-crit/[.07] p-4" aria-label="Affected areas">
+            <div className="font-mono text-[10px] uppercase tracking-widest text-crit">{running ? "SIMULATED / MANUAL INVESTIGATION" : "DEPENDENCY EXPOSURE"}</div>
+            <h2 className="mt-2 text-xl font-semibold">{incident.services.length} of {stats?.services || 10} services affected</h2>
+            <p className="mt-1 text-xs text-muted">{incident.tier1} critical services · {new Set(incident.services.map((x:any)=>x.teamId)).size} teams · every connecting branch</p>
+            <button onClick={()=>overview(incident)} className="mt-3 w-full rounded-lg bg-crit px-3 py-2 text-sm font-semibold text-black">{mapMode?'All affected areas highlighted':'Show all affected areas'}</button>
+            <div className="mt-3 space-y-2">{incident.services.map((h:any)=><div key={h.service} className="flex justify-between gap-2 text-xs"><strong>{h.service}</strong><span className="text-right text-muted">{h.team}<br/>{h.oncall || 'No on-call assigned'}</span></div>)}</div>
+            <p className="mt-3 text-[11px] text-muted">Exposure is not proof of a breach. Manual investigations never send email.</p>
+          </section>}
           {tab === "brief" && (brief ? (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex items-center gap-2 font-mono text-[10.5px] text-muted">
@@ -291,7 +336,7 @@ export default function WarRoom() {
               </div>
               {brief.investigation && <div className="mt-4 font-mono text-[10.5px] text-muted">Filed as (:Investigation {"{"}id:&apos;{brief.investigation}&apos;{"}"}) · every claim is a (:Finding)-[:EVIDENCE]-&gt;(node)</div>}
             </motion.div>
-          ) : <Empty running={!!running} onRun={() => run(FEATURED, true)} />)}
+          ) : incident ? <p className="text-sm text-muted">{running ? "Building the incident brief…" : "Select an advisory to run a full investigation."}</p> : <Empty running={!!running} onRun={() => run(FEATURED, true)} />)}
 
           {tab === "risk" && (risk ? (
             <div>
@@ -358,7 +403,7 @@ export default function WarRoom() {
       )}</AnimatePresence>
 
       {/* legend */}
-      <div className="pointer-events-none absolute bottom-[70px] left-[372px] z-10 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] text-muted">
+      <div className="pointer-events-none absolute bottom-[70px] left-[372px] z-10 flex flex-wrap max-w-[calc(100%-830px)] gap-x-3 gap-y-1 font-mono text-[10px] text-muted">
         {["Service", "Team", "Person", "Version", "Maintainer", "Advisory", "Incident", "Decision"].map((l) => (
           <span key={l} className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full" style={{ background: COLORS[l] }} />{l}</span>
         ))}
