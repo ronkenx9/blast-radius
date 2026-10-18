@@ -1,0 +1,35 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    volumes: ["falkordb-data:/data"]
+    ports: ["127.0.0.1:6379:6379", "127.0.0.1:3001:3000"]   # 3001 = FalkorDB Browser
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+  app:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      FALKORDB_HOST: falkordb
+      FALKORDB_PORT: "6379"
+      # OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      falkordb:
+        condition: service_healthy
+  mcp:   # official FalkorDB MCP server, read-only, for Claude/Cursor alongside our /api/mcp
+    image: node:20-slim
+    command: npx -y @falkordb/mcpserver@latest
+    environment:
+      MCP_TRANSPORT: http
+      MCP_PORT: "3005"
+      FALKORDB_HOST: falkordb
+      FALKORDB_PORT: "6379"
+      FALKORDB_DEFAULT_READONLY: "true"
+    ports: ["3005:3005"]
+    depends_on:
+      falkordb:
+        condition: service_healthy
+
+volumes:
+  falkordb-data:

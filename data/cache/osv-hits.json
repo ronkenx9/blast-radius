@@ -1,0 +1,209 @@
+{
+ "axios@0.21.1": [
+  "GHSA-3g43-6gmg-66jw",
+  "GHSA-3p68-rc4w-qgx5",
+  "GHSA-43fc-jf86-j433",
+  "GHSA-5c9x-8gcm-mpgx",
+  "GHSA-62hf-57xw-28j9",
+  "GHSA-6chq-wfr3-2hj9",
+  "GHSA-7q8q-rj6j-mhjq",
+  "GHSA-898c-q2cr-xwhg",
+  "GHSA-cph5-m8f7-6c5x",
+  "GHSA-fvcv-3m26-pcqx",
+  "GHSA-hfxv-24rg-xrqf",
+  "GHSA-j5f8-grm9-p9fc",
+  "GHSA-jr5f-v2jv-69x6",
+  "GHSA-m7pr-hjqh-92cm",
+  "GHSA-mmx7-hfxf-jppx",
+  "GHSA-p92q-9vqr-4j8v",
+  "GHSA-pf86-5x62-jrwf",
+  "GHSA-pjwm-pj3p-43mv",
+  "GHSA-pmwg-cvhr-8vh7",
+  "GHSA-vf2m-468p-8v99",
+  "GHSA-w9j2-pvgh-6h63",
+  "GHSA-wf5p-g6vw-rhxx",
+  "GHSA-xhjh-pmcv-23jw",
+  "GHSA-xx6v-rp6x-q39c"
+ ],
+ "body-parser@1.19.0": [
+  "GHSA-qwcr-r2fm-qrc7",
+  "GHSA-v422-hmwv-36x6"
+ ],
+ "braces@2.3.2": [
+  "GHSA-grv7-fg5c-xmjg",
+  "GHSA-vfj7-8cjw-p6xm"
+ ],
+ "braces@3.0.3": [
+  "GHSA-vfj7-8cjw-p6xm"
+ ],
+ "cookie@0.4.0": [
+  "GHSA-pxg6-pf52-xh8x"
+ ],
+ "decode-uri-component@0.2.2": [
+  "GHSA-vcc3-ghjq-m6fr"
+ ],
+ "elliptic@6.6.1": [
+  "GHSA-848j-6mx2-7j84"
+ ],
+ "event-stream@3.3.6": [
+  "GHSA-mh6f-8j2x-4483"
+ ],
+ "express@4.17.1": [
+  "GHSA-qw6h-vgh9-j6wx",
+  "GHSA-rv95-896h-c2vc"
+ ],
+ "form-data@2.3.3": [
+  "GHSA-fjxv-7rqg-78g4",
+  "GHSA-hmw2-7cc7-3qxx"
+ ],
+ "handlebars@4.7.6": [
+  "GHSA-2qvq-rjwj-gvw9",
+  "GHSA-2w6w-674q-4c4q",
+  "GHSA-3mfm-83xf-c92r",
+  "GHSA-442j-39wm-28r2",
+  "GHSA-765h-qjxv-5f44",
+  "GHSA-7rx3-28cr-v5wh",
+  "GHSA-8r5x-fm3f-whwj",
+  "GHSA-9cx6-37pm-9jff",
+  "GHSA-f2jv-r9rf-7988",
+  "GHSA-p8wg-vrv2-v86f",
+  "GHSA-xhpv-hc6g-r9c6",
+  "GHSA-xjpj-3mr7-gcpf",
+  "GHSA-xw65-4hp5-5hc7"
+ ],
+ "jsonwebtoken@8.5.1": [
+  "GHSA-8cf7-32gw-wr33",
+  "GHSA-hjrf-2m68-5959",
+  "GHSA-qwph-4952-7xr6"
+ ],
+ "lodash@4.17.15": [
+  "GHSA-29mw-wpgm-hmr9",
+  "GHSA-35jh-r3h4-6jhm",
+  "GHSA-f23m-r3pf-42rh",
+  "GHSA-p6mc-m468-83gw",
+  "GHSA-r5fr-rjxr-66jc",
+  "GHSA-xxjr-mmjv-4gpg"
+ ],
+ "micromatch@3.1.10": [
+  "GHSA-952p-6rrq-rcjv"
+ ],
+ "minimist@1.2.5": [
+  "GHSA-xvch-5gv4-984h"
+ ],
+ "moment@2.29.1": [
+  "GHSA-8hfj-j24r-96c4",
+  "GHSA-wc69-rhjr-hc9g"
+ ],
+ "next@12.1.0": [
+  "GHSA-2xp9-vwfh-vxw4",
+  "GHSA-3x4c-7xq6-9pq8",
+  "GHSA-4342-x723-ch2f",
+  "GHSA-7gfc-8cq8-jh5f",
+  "GHSA-9g9p-9gw9-jx7f",
+  "GHSA-c59h-r6p8-q9wc",
+  "GHSA-f82v-jwr5-mffw",
+  "GHSA-g5qg-72qw-gw5v",
+  "GHSA-g77x-44xx-532m",
+  "GHSA-ggv3-7p47-pfv8",
+  "GHSA-h64f-5h5j-jqjh",
+  "GHSA-p9j2-gv94-2wf4",
+  "GHSA-qpjv-v59x-3qc4",
+  "GHSA-xv57-4mr9-wg8v"
+ ],
+ "node-fetch@2.6.0": [
+  "GHSA-r683-j2x4-v87g",
+  "GHSA-w7rc-rwvf-8q5r"
+ ],
+ "nodemailer@6.6.0": [
+  "GHSA-268h-hp4c-crq3",
+  "GHSA-2x7j-588g-ccc2",
+  "GHSA-6vj9-mwq6-2f5v",
+  "GHSA-8m3c-c648-2xjj",
+  "GHSA-8vvx-rff5-p5rq",
+  "GHSA-9h6g-pr28-7cqp",
+  "GHSA-c7w3-x93f-qmm8",
+  "GHSA-hwqf-gcqm-7353",
+  "GHSA-mm7p-fcc7-pg87",
+  "GHSA-p6gq-j5cr-w38f",
+  "GHSA-r7g4-qg5f-qqm2",
+  "GHSA-rcmh-qjqh-p98v",
+  "GHSA-v53p-9fqp-m79j",
+  "GHSA-vvjj-xcjg-gr5g",
+  "GHSA-wmmp-3585-3rmp",
+  "GHSA-wqvq-jvpq-h66f"
+ ],
+ "passport@0.4.1": [
+  "GHSA-v923-w3x8-wh69"
+ ],
+ "path-to-regexp@0.1.7": [
+  "GHSA-37ch-88jc-xwx2",
+  "GHSA-9wv6-86v2-598j",
+  "GHSA-rhx6-c78j-4q9w"
+ ],
+ "postcss@8.4.5": [
+  "GHSA-6g55-p6wh-862q",
+  "GHSA-7fh5-64p2-3v2j",
+  "GHSA-fxqj-rqcc-2cmp",
+  "GHSA-qx2v-qp2m-jg93",
+  "GHSA-r28c-9q8g-f849"
+ ],
+ "qs@6.5.5": [
+  "GHSA-4mjr-xmp4-gh2g",
+  "GHSA-6rw7-vpxm-498p"
+ ],
+ "qs@6.7.0": [
+  "GHSA-4mjr-xmp4-gh2g",
+  "GHSA-6rw7-vpxm-498p",
+  "GHSA-hrpp-h998-j3pp",
+  "GHSA-w7fw-mjwx-w883"
+ ],
+ "request@2.88.2": [
+  "GHSA-p8p7-x288-28g6"
+ ],
+ "send@0.17.1": [
+  "GHSA-m6fv-jmcg-4jfg"
+ ],
+ "serialize-javascript@4.0.0": [
+  "GHSA-5c6j-r48x-rmvq"
+ ],
+ "serve-static@1.14.1": [
+  "GHSA-cm22-4g7w-348p"
+ ],
+ "tar@6.1.0": [
+  "GHSA-23hp-3jrh-7fpw",
+  "GHSA-34x7-hfp2-rc4v",
+  "GHSA-3jfq-g458-7qm9",
+  "GHSA-5955-9wpr-37jh",
+  "GHSA-83g3-92jg-28cx",
+  "GHSA-8qq5-rm4j-mr97",
+  "GHSA-8x88-c5mf-7j5w",
+  "GHSA-9ppj-qmqm-q256",
+  "GHSA-9r2w-394v-53qc",
+  "GHSA-f5x3-32g6-xq36",
+  "GHSA-gvwx-54wh-qm9j",
+  "GHSA-qffp-2rhf-9h96",
+  "GHSA-qq89-hq3f-393p",
+  "GHSA-r292-9mhp-454m",
+  "GHSA-r628-mhmh-qjhw",
+  "GHSA-r6q2-hw4h-h46w",
+  "GHSA-vmf3-w455-68vh",
+  "GHSA-w8wr-v893-vjvp"
+ ],
+ "tough-cookie@2.5.0": [
+  "GHSA-72xf-g2v4-qvf3"
+ ],
+ "uuid@3.4.0": [
+  "GHSA-w5hq-g745-h8pq"
+ ],
+ "uuid@8.3.2": [
+  "GHSA-w5hq-g745-h8pq"
+ ],
+ "ws@7.4.5": [
+  "GHSA-3h5v-q93c-6h6q",
+  "GHSA-6fc8-4gx4-v693",
+  "GHSA-96hv-2xvq-fx4p"
+ ],
+ "xml2js@0.4.23": [
+  "GHSA-776f-qx25-q3cc"
+ ]
+}

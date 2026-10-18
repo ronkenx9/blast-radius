@@ -1,0 +1,13 @@
+# FalkorDB Cloud free instances stop after 1 day idle. Ping the live app every 3h so judges find it up.
+name: keepalive
+on:
+  schedule: [{ cron: "17 */3 * * *" }]
+  workflow_dispatch:
+jobs:
+  ping:
+    if: ${{ vars.APP_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: curl -fsS "$APP_URL/api/health"

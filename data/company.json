@@ -1,0 +1,376 @@
+{
+  "company": {
+    "name": "Lagos Ledger",
+    "tagline": "Synthetic fintech used for the Blast Radius demo. All people, teams and incidents are fictional."
+  },
+  "teams": [
+    {
+      "id": "payments",
+      "name": "Payments",
+      "channel": "#payments-oncall"
+    },
+    {
+      "id": "platform",
+      "name": "Platform",
+      "channel": "#platform"
+    },
+    {
+      "id": "identity",
+      "name": "Identity & Trust",
+      "channel": "#identity"
+    },
+    {
+      "id": "growth",
+      "name": "Growth Web",
+      "channel": "#growth-web"
+    },
+    {
+      "id": "data",
+      "name": "Data & Reporting",
+      "channel": "#data"
+    }
+  ],
+  "people": [
+    {
+      "id": "ada",
+      "name": "Ada Okafor",
+      "role": "Staff Engineer",
+      "team": "payments"
+    },
+    {
+      "id": "tunde",
+      "name": "Tunde Bakare",
+      "role": "Backend Engineer",
+      "team": "payments"
+    },
+    {
+      "id": "zainab",
+      "name": "Zainab Musa",
+      "role": "Engineering Manager",
+      "team": "platform"
+    },
+    {
+      "id": "chidi",
+      "name": "Chidi Eze",
+      "role": "SRE",
+      "team": "platform"
+    },
+    {
+      "id": "ifeoma",
+      "name": "Ifeoma Nwosu",
+      "role": "Security Engineer",
+      "team": "identity"
+    },
+    {
+      "id": "segun",
+      "name": "Segun Adeyemi",
+      "role": "Backend Engineer",
+      "team": "identity"
+    },
+    {
+      "id": "amara",
+      "name": "Amara Obi",
+      "role": "Frontend Lead",
+      "team": "growth"
+    },
+    {
+      "id": "kelechi",
+      "name": "Kelechi Uche",
+      "role": "Frontend Engineer",
+      "team": "growth"
+    },
+    {
+      "id": "bisi",
+      "name": "Bisi Alade",
+      "role": "Data Engineer",
+      "team": "data"
+    },
+    {
+      "id": "emeka",
+      "name": "Emeka Ani",
+      "role": "Analytics Engineer",
+      "team": "data"
+    },
+    {
+      "id": "hauwa",
+      "name": "Hauwa Bello",
+      "role": "CTO",
+      "team": "platform"
+    },
+    {
+      "id": "femi",
+      "name": "Femi Lawal",
+      "role": "Backend Engineer",
+      "team": "payments"
+    }
+  ],
+  "services": [
+    {
+      "id": "payments-api",
+      "team": "payments",
+      "tier": 1,
+      "desc": "Card + transfer payment orchestration",
+      "deps": [
+        "express@4.17.1",
+        "jsonwebtoken@8.5.1",
+        "axios@0.21.1",
+        "decimal.js@10.3.1"
+      ],
+      "oncall": "ada"
+    },
+    {
+      "id": "ledger-core",
+      "team": "payments",
+      "tier": 1,
+      "desc": "Double-entry ledger",
+      "deps": [
+        "pg@8.7.1",
+        "lodash@4.17.15",
+        "moment@2.29.1",
+        "uuid@8.3.2"
+      ],
+      "oncall": "femi"
+    },
+    {
+      "id": "fx-rates",
+      "team": "payments",
+      "tier": 2,
+      "desc": "Naira FX rate streaming",
+      "deps": [
+        "axios@0.21.1",
+        "ws@7.4.5",
+        "node-cron@3.0.0"
+      ],
+      "oncall": "tunde"
+    },
+    {
+      "id": "auth-service",
+      "team": "identity",
+      "tier": 1,
+      "desc": "Login, sessions, JWT issuing",
+      "deps": [
+        "express@4.17.1",
+        "jsonwebtoken@8.5.1",
+        "bcryptjs@2.4.3",
+        "passport@0.4.1"
+      ],
+      "oncall": "segun"
+    },
+    {
+      "id": "kyc-worker",
+      "team": "identity",
+      "tier": 1,
+      "desc": "KYC document ingestion",
+      "deps": [
+        "tar@6.1.0",
+        "node-fetch@2.6.0",
+        "xml2js@0.4.23",
+        "request@2.88.2"
+      ],
+      "oncall": "ifeoma"
+    },
+    {
+      "id": "notifications",
+      "team": "platform",
+      "tier": 2,
+      "desc": "SMS / email / push fan-out",
+      "deps": [
+        "ws@7.4.5",
+        "nodemailer@6.6.0",
+        "handlebars@4.7.6",
+        "request@2.88.2"
+      ],
+      "oncall": "chidi"
+    },
+    {
+      "id": "web-dashboard",
+      "team": "growth",
+      "tier": 2,
+      "desc": "Customer web app",
+      "deps": [
+        "next@12.1.0",
+        "react@17.0.2",
+        "axios@0.21.1",
+        "ua-parser-js@0.7.28",
+        "webpack@4.46.0"
+      ],
+      "oncall": "amara"
+    },
+    {
+      "id": "merchant-portal",
+      "team": "growth",
+      "tier": 2,
+      "desc": "Merchant onboarding portal",
+      "deps": [
+        "next@12.1.0",
+        "react@17.0.2",
+        "moment@2.29.1",
+        "xml2js@0.4.23",
+        "webpack@4.46.0"
+      ],
+      "oncall": "kelechi"
+    },
+    {
+      "id": "reporting",
+      "team": "data",
+      "tier": 3,
+      "desc": "Regulatory reports (CBN)",
+      "deps": [
+        "lodash@4.17.15",
+        "handlebars@4.7.6",
+        "minimist@1.2.5",
+        "colors@1.4.0",
+        "request@2.88.2"
+      ],
+      "oncall": "bisi"
+    },
+    {
+      "id": "legacy-cli",
+      "team": "data",
+      "tier": 3,
+      "desc": "Old batch export CLI",
+      "deps": [
+        "event-stream@3.3.6",
+        "colors@1.4.0",
+        "minimist@1.2.5"
+      ],
+      "oncall": "emeka"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "INC-2021-07",
+      "title": "ua-parser-js hijack: crypto-miner in dashboard build",
+      "date": "2021-10-22",
+      "services": [
+        "web-dashboard"
+      ],
+      "package": "ua-parser-js",
+      "summary": "A compromised publish of ua-parser-js shipped a miner. CI pinned versions saved prod, but the build runners were exposed for 4 hours.",
+      "lead": "amara"
+    },
+    {
+      "id": "INC-2022-01",
+      "title": "colors.js sabotage broke reporting jobs",
+      "date": "2022-01-09",
+      "services": [
+        "reporting",
+        "legacy-cli"
+      ],
+      "package": "colors",
+      "summary": "Maintainer pushed an infinite-loop release. CBN reports were late by a day.",
+      "lead": "bisi"
+    },
+    {
+      "id": "INC-2022-11",
+      "title": "Prototype pollution probe on ledger-core",
+      "date": "2022-11-14",
+      "services": [
+        "ledger-core"
+      ],
+      "package": "lodash",
+      "summary": "WAF caught crafted JSON targeting lodash merge. No data loss.",
+      "lead": "femi"
+    },
+    {
+      "id": "INC-2023-04",
+      "title": "SSRF attempt through redirect chain in fx-rates",
+      "date": "2023-04-02",
+      "services": [
+        "fx-rates"
+      ],
+      "package": "follow-redirects",
+      "summary": "Attacker-controlled rate source redirected to metadata endpoint. Blocked by egress policy.",
+      "lead": "tunde"
+    },
+    {
+      "id": "INC-2024-02",
+      "title": "JWT alg confusion pen-test finding",
+      "date": "2024-02-19",
+      "services": [
+        "auth-service"
+      ],
+      "package": "jsonwebtoken",
+      "summary": "External pen test flagged weak key handling. Mitigated in config; upgrade never shipped.",
+      "lead": "ifeoma"
+    },
+    {
+      "id": "INC-2025-06",
+      "title": "Body-parser DoS during Black Friday load test",
+      "date": "2025-06-11",
+      "services": [
+        "payments-api"
+      ],
+      "package": "body-parser",
+      "summary": "Malformed URL-encoded bodies spiked CPU in staging.",
+      "lead": "ada"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-007",
+      "title": "Pin all transitive deps with lockfiles + weekly Renovate",
+      "by": "zainab",
+      "about": [
+        "payments-api",
+        "auth-service",
+        "ledger-core"
+      ],
+      "packages": [],
+      "text": "Every service commits its lockfile. Renovate opens weekly batches; tier-1 services must merge security PRs within 72h."
+    },
+    {
+      "id": "ADR-012",
+      "title": "Stay on express 4 until Q3 migration",
+      "by": "ada",
+      "about": [
+        "payments-api",
+        "auth-service"
+      ],
+      "packages": [
+        "express"
+      ],
+      "text": "Express 5 migration deferred; security patches on 4.x must still be applied immediately."
+    },
+    {
+      "id": "ADR-015",
+      "title": "Freeze legacy-cli, decommission by 2026",
+      "by": "hauwa",
+      "about": [
+        "legacy-cli"
+      ],
+      "packages": [
+        "event-stream"
+      ],
+      "text": "No new features. Security fixes only if exploitable; otherwise delete."
+    },
+    {
+      "id": "ADR-019",
+      "title": "All outbound HTTP via egress proxy",
+      "by": "chidi",
+      "about": [
+        "fx-rates",
+        "kyc-worker",
+        "payments-api"
+      ],
+      "packages": [
+        "axios",
+        "node-fetch"
+      ],
+      "text": "Redirects to private ranges are blocked at the proxy, which limits SSRF impact."
+    },
+    {
+      "id": "ADR-021",
+      "title": "Rotate JWT signing keys quarterly; RS256 only",
+      "by": "ifeoma",
+      "about": [
+        "auth-service",
+        "payments-api"
+      ],
+      "packages": [
+        "jsonwebtoken"
+      ],
+      "text": "HS256 removed. Library upgrade to jsonwebtoken 9 is a tracked follow-up."
+    }
+  ]
+}
