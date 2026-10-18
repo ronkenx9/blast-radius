@@ -22,5 +22,5 @@ Scope: Extract and install the supplied project, verify the real local graph and
 - [x] G4: Deployment configuration and environment documentation are complete; cloud-dependent steps are explicitly identified.
   EVIDENCE: DEPLOYMENT.md and .env.example reviewed; vercel.json, Node 22 pin, secret/build exclusions, manual Cloud seed, remote smoke steps, and model-key limits documented. Local database restart preserved all 7 investigation IDs. Docker alternate and real Cloud/model deployment remain explicitly untested.
 
-- [ ] G5: GitHub repository created and verified project pushed without secrets or local data.
-  EVIDENCE: pending
+- [x] G5: GitHub repository created and verified project pushed without secrets or local data.
+  EVIDENCE: Private repository https://github.com/ronkenx9/blast-radius created; main pushed successfully. Staged-file scan excluded .env.local, local database/runtime, node_modules, .next and test-results, and found no credential signatures.
