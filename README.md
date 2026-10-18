@@ -2,7 +2,9 @@
 
 **A CVE just dropped. Which of your services are exposed, through which dependency path, who's on call, and has this happened before?**
 
-Blast Radius is a multi-agent supply-chain war room built on **FalkorDB**. Four agents (Scout, Tracer, Cartographer, Commander) walk one graph that joins **real npm data** (resolved dependency trees from deps.dev, advisories from OSV.dev, publishers from the npm registry) to a **company graph** (teams, people, services, on-call, architecture decisions, past incidents). Every sentence in the incident brief is a clickable `(:Finding)-[:EVIDENCE]->(node)` that flies the camera along the exact path in the graph.
+Blast Radius is an incident workspace built on **FalkorDB**. Four sequential investigation stages (Scout, Tracer, Cartographer, Commander) query one graph joining **real npm data** (resolved dependency trees from deps.dev, advisories from OSV.dev, public maintainer handles) to a **synthetic company graph** (teams, people, services, on-call, architecture decisions and past incidents). All affected layers light up together. Select an evidence-linked finding to inspect its path in 3D. Scheduled advisory checks can notify the configured admin with concise next steps.
+
+The public demo runs deterministic graph-based output without a model key. Optional LLM narration can rewrite the Commander brief; the other stages are query-driven tools, not four autonomous LLM agents.
 
 > Built solo for **Graph Hacks: Context for AI Agents** (WeMakeDevs × FalkorDB), Oct 15–18, 2026.
 
@@ -10,11 +12,14 @@ Blast Radius is a multi-agent supply-chain war room built on **FalkorDB**. Four 
 
 | | |
 |---|---|
-| Live demo | [blast-radius-murex.vercel.app](https://blast-radius-murex.vercel.app) |
+| Live site | [blast-radius-murex.vercel.app](https://blast-radius-murex.vercel.app) |
+| Incident workspace | [Open the demo](https://blast-radius-murex.vercel.app/app) |
 | Demo video | `<VIDEO_URL>` *(to be filled)* |
 | MCP endpoint | `https://blast-radius-murex.vercel.app/api/mcp` (Streamable HTTP, JSON-RPC) |
 
-![War room](docs/shots/03-agents-brief.png)
+![Blast Radius landing page](docs/shots/landing-2026.png)
+
+![Incident workspace](docs/shots/war-room-2026.png)
 
 ---
 
@@ -24,7 +29,7 @@ The question "are we exposed?" is a multi-hop question: `Advisory → vulnerable
 
 What the graph finds in the demo dataset (all real npm data):
 - **CVE-2025-15284 (qs)** reaches **5 of 10 services, 3 of them tier-1**, through two separate routes: `express@4.17.1 → qs@6.7.0` and `request@2.88.2 → qs@6.5.5`. None of those services lists `qs` directly.
-- **One npm account publishes 54 packages in the tree (29 as sole publisher) and can reach 8 of 10 services.** That's concentration risk, found by PageRank over `DEPENDS_ON` plus reachability.
+- **The cached npm metadata lists one maintainer handle on 54 packages in the tree, including 29 with no other listed maintainer; those packages reach 8 of 10 services.** PageRank over `DEPENDS_ON` plus service reachability measures concentration in this snapshot, not current publish permissions or likelihood of compromise.
 
 ## The agents
 
@@ -38,8 +43,10 @@ What the graph finds in the demo dataset (all real npm data):
 Agents hand off through **shared state in the graph** (`Investigation`, `Finding`, `Agent` nodes), not through prompts. Every run is persisted, so a later session (or a different agent, or Claude via MCP) can recall it.
 
 **Two modes:**
-- **LLM mode:** set `AI_GATEWAY_API_KEY`, `OPENAI_API_KEY` or `OPENROUTER_API_KEY`. The Commander writes the brief with an OpenAI-compatible model, constrained to the graph facts. A **grounding guard** keeps only claims whose evidence ids exist in the graph result and whose `pkg@version` / CVE / GHSA / ADR / INC tokens appear in the facts. Ungrounded claims are dropped and counted in the UI. If fewer than 3 grounded claims survive, or the model call fails (bad key, timeout), the Commander falls back to deterministic mode and shows the reason. `/api/health` probes the model every 10 minutes, so the header badge reflects whether AI mode is actually live.
+- **LLM mode:** set `AI_GATEWAY_API_KEY`, `OPENAI_API_KEY` or `OPENROUTER_API_KEY`. The Commander writes the brief with an OpenAI-compatible model, constrained to the graph facts. A **grounding guard** keeps only claims whose evidence ids exist in the graph result and whose `pkg@version` / CVE / GHSA / ADR / INC tokens appear in the facts. These checks are a partial safeguard, not a proof that every natural-language assertion is correct. Ungrounded claims are dropped and counted in the UI. If fewer than 3 grounded claims survive, or the model call fails (bad key, timeout), the Commander falls back to deterministic mode and shows the reason. `/api/health` probes the model every 10 minutes, so the header badge reflects whether AI mode is actually live.
 - **Deterministic mode (default):** same graph tools, template brief. Fully reproducible and needs no key.
+
+Full reference: [Graph model](docs/GRAPH_MODEL.md) · [Cypher query catalog](docs/QUERIES.md) · [Product audit](submission/AUDIT.md).
 
 ## Graph data model
 
@@ -59,7 +66,7 @@ Agents hand off through **shared state in the graph** (`Investigation`, `Finding
 (:Finding)-[:EVIDENCE]->(any node)       (:Finding)-[:SUPERSEDES]->(:Finding)
 ```
 
-Seeded size: about 1,540 nodes and 3,000 relationships (509 package versions, 464 packages, 375 maintainers, 135 advisories, 10 services, 12 people, 5 teams, 6 incidents, 5 ADRs), plus memory nodes that grow with every investigation.
+Seeded display graph: 1,522 nodes and 2,955 relationships (509 package versions, 464 packages, 375 maintainers, 135 advisories, 10 services, 12 people, 5 teams, 6 incidents, 5 ADRs), plus memory nodes that grow with every investigation.
 
 ## Key Cypher queries
 
@@ -179,14 +186,14 @@ npm run dev                                        # http://localhost:3000
 
 ## AI tools disclosure
 
-This project was built with AI coding assistance (an AI coding agent wrote much of the code from my design and architecture direction). I chose the problem, the graph model, the queries, the agent design and the visual design, and I reviewed and tested the result. When a model key is configured, the running app uses an LLM only for the Commander's wording. All facts come from Cypher queries, and cited evidence ids are validated against the graph.
+AI coding assistants helped implement, debug, test, document and deploy this project and prepare its demonstration media. The participant supplied the product direction: show all affected layers of a dependency incident at once, notify the configured admin, and make the alert short and actionable. The implementation and verification record are included here; the participant should review the architecture and queries and be prepared to explain them. The live demo currently uses deterministic graph-based output. When a model key is configured, an LLM rewrites only the Commander's brief; evidence and entity-token checks reject unsupported references, but do not establish that every natural-language statement is correct.
 
 ## Project layout
 
 ```
 data/company.json         synthetic company graph
 data/cache/*.json         cached public npm/OSV/deps.dev responses
-scripts/seed.ts           idempotent graph rebuild + memory seed
+scripts/seed.ts           destructive graph rebuild + explicit demo-memory seed
 src/lib/queries.ts        every Cypher query (agent tools)
 src/lib/agents.ts         Scout → Tracer → Cartographer → Commander
 src/lib/tools.ts          MCP tool registry
@@ -200,15 +207,18 @@ Select an advisory or simulate an incident to highlight all connecting dependenc
 
 The protected `/api/monitor` endpoint checks installed package versions against [OSV querybatch](https://google.github.io/osv.dev/post-v1-querybatch/). The GitHub `dependency-monitor` workflow runs approximately every 30 minutes (scheduler delays are possible). It imports up to three newly discovered advisories per scan, records persistent deduplicated alerts and attempts one pending email per run. This monitors published vulnerability exposure, not intrusion detection. Initial seeded advisories are the baseline; it does not email all historical vulnerabilities. Package inventory remains the synthetic seeded company, not a connected customer repository.
 
-At `/setup`, the deployment owner signs in with `ADMIN_TOKEN`, enters the admin email, and chooses whether to enable notifications. Public visitors cannot configure email, run monitoring or send tests. Admin keys remain only in page memory. Configure these server-side settings:
+At `/setup`, the deployment owner signs in with `ADMIN_TOKEN`, confirms the server-configured admin email, and chooses whether to enable notifications. Public visitors cannot configure email, run monitoring or send tests. Admin keys remain only in page memory. Configure these server-side settings:
 
 - `ADMIN_TOKEN`: at least 32 random characters; owner-only setup access.
 - `MONITOR_TOKEN`: separate random secret, also stored as the GitHub Actions secret of the same name.
 - `APP_URL`: canonical deployed HTTPS address; also a GitHub repository variable.
+- `ADMIN_EMAIL`: private server-side recipient. The graph stores the notification preference, never the address. Change this value in deployment settings to change the recipient.
 - `RESEND_API_KEY` and `ALERT_FROM`: [Resend](https://resend.com/docs/api-reference/emails/send-email) key and verified sender.
 
 Optionally set `RESEND_TEMPLATE_ID` to a published template with string variables `DETAILS` and `MORE`; long alerts fall back to complete plain text. The official Resend SDK sends with a stable idempotency key. For own-inbox testing, `Blast Radius <onboarding@resend.dev>` works only with your Resend account email; other recipients require a verified sending domain.
 
-Save the recipient and enable notifications before pressing **Send test email**. The test runs a real, clearly marked synthetic incident through alert persistence and delivery. Replaying the same test request ID returns the existing accepted result without sending again. The UI reports provider acceptance, not inbox delivery. No real provider key or admin email is bundled. Without them, alerts persist in-app and say pending/setup required. Public simulations never send email. Email goes to the configured admin, with the fictional service owners listed for context. This is single-workspace owner setup, not a multi-tenant signup system.
+Confirm the configured recipient and enable notifications before pressing **Send test email**. The test runs a real, clearly marked synthetic incident through alert persistence and delivery. Replaying the same test request ID returns the existing accepted result without sending again. The UI reports provider acceptance, not inbox delivery. No real provider key or admin email is bundled. Without them, alerts persist in-app and say pending/setup required. Public simulations never send email. Email goes to the configured admin, with the fictional service owners listed for context. This is single-workspace owner setup, not a multi-tenant signup system.
 
-Alert records and onboarding settings are excluded from the public graph. The public alert list contains advisory IDs and delivery states, never the recipient address. Avoid reseeding: it would erase settings and history. Rotate admin/monitor keys through deployment settings if needed.
+Alert records and notification preferences are excluded from the public graph. The recipient remains in server environment settings; loading settings removes any legacy recipient property from the graph. The public alert list contains advisory IDs and delivery states, never the recipient address. Avoid reseeding: it would erase settings and history. Rotate admin/monitor keys through deployment settings if needed.
+
+Seeded prior incidents and architecture decisions are fictional examples, including their historical dates. They are demonstration context, not pre-hackathon product activity.

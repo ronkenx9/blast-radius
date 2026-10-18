@@ -21,7 +21,10 @@ export async function POST(req:Request) {
    return Response.json({message:'Incident test accepted by email provider. Check your inbox.',alertId:id,providerId:alert.providerId});
  }
  if(!validEmail(body.email)||typeof body.enabled!=='boolean') return Response.json({error:'Enter a valid email and notification preference'}, {status:400});
- await q("MERGE (s:AlertSettings {id:'admin'}) SET s.email=$email,s.enabled=$enabled RETURN s.id",{email:body.email.trim(),enabled:body.enabled},false);
- return Response.json({message:'Admin email saved. Existing pending alerts will be sent when monitoring runs if enabled.'});
+ const s=await settings();
+ if(!validEmail(s.email)) return Response.json({error:'The deployment owner must configure ADMIN_EMAIL before enabling alerts'}, {status:503});
+ if(body.email.trim().toLowerCase()!==s.email.toLowerCase()) return Response.json({error:'This recipient is configured by the deployment owner. Update ADMIN_EMAIL to change it.'}, {status:400});
+ await q("MERGE (s:AlertSettings {id:'admin'}) SET s.enabled=$enabled REMOVE s.email RETURN s.id",{enabled:body.enabled},false);
+ return Response.json({message:'Notification preference saved. Existing pending alerts will be sent when monitoring runs if enabled.'});
  } catch(e) {return Response.json({error:(e as Error).message}, {status:502});}
 }

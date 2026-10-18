@@ -1,53 +1,47 @@
-# The CVE didn't name my dependency. The graph did.
+# A dependency alert should show where it spreads
 
-*How I built Blast Radius, a multi-agent supply-chain war room on FalkorDB, solo, for Graph Hacks.*
+*Draft for publication — not yet published. Built for Graph Hacks: Context for AI Agents.*
 
-A new advisory lands for `qs`, a query-string parser. You search your repos and none of them depend on `qs`. You close the tab.
+A vulnerability appears in `qs`, a query-string parser. None of a company's services lists `qs` as a direct dependency. That can make the alert look irrelevant, even while the package sits underneath several important services.
 
-You're wrong. In my demo company, five services use it, three of them tier-1. Two routes lead there: `express@4.17.1 → qs@6.7.0` and `request@2.88.2 → qs@6.5.5`. The danger is in the transitive dependencies, and a flat list of packages can't show you paths.
+In Blast Radius's fictional company, Lagos Ledger, the featured advisory reaches five of ten services. Three are tier-1. Two short paths explain why: `express@4.17.1 → qs@6.7.0` and `request@2.88.2 → qs@6.5.5`. Knowing the vulnerable package is only the beginning. The useful answer includes the services, their owners, the evidence and the next action.
 
-That's the problem I picked for Graph Hacks. "Are we exposed?" sounds like a lookup. It's really a walk:
+That became the product direction: when a dependency gets hit, light up every affected layer at once and notify the configured admin.
 
-```
-Advisory → vulnerable Version ← DEPENDS_ON* ← direct dep ← DEPLOYS ← Service ← OWNS ← Team
-                                                                    ← ON_CALL ← Person
-                                                                    ← ABOUT   ← Decision (ADR)
-                                                                    ← INVOLVED ← Incident
-```
+## From a package name to an actionable map
 
-## One graph, two worlds
+Blast Radius joins public dependency data with a synthetic company graph in FalkorDB. Resolved npm versions and dependency edges come from deps.dev. Advisory matches come from OSV. Public npm maintainer handles add a view of concentration. Lagos Ledger contributes fictional services, teams, on-call people, architecture decisions and past incidents.
 
-Blast Radius joins two graphs in one FalkorDB instance:
+The seeded inventory contains 509 package versions. These are graph records, not vulnerable packages installed into the Blast Radius application. Cached source responses make the dataset reproducible. Re-seeding deliberately rebuilds the graph, so ordinary deployments preserve existing investigation history instead of starting over.
 
-1. **Real public npm data.** Resolved dependency trees from deps.dev, advisories from OSV.dev queried per exact resolved version, and publishers from the npm registry (usernames only, no emails). That's about 1,500 nodes.
-2. **A company graph.** "Lagos Ledger", a fictional fintech: teams, people, services with tiers, on-call rotations, architecture decisions and past incidents.
+The core query follows a service's deployed dependencies through `DEPENDS_ON` edges to an advisory's affected versions. It then joins the team and on-call person. A shortest path gives each exposure a compact explanation. A separate query collects every connecting branch for the complete incident map.
 
-The seed is one idempotent script. It caches the raw API responses, so a rebuild runs offline in about five seconds.
+That distinction mattered. One highlighted path can explain one service while hiding the wider incident. The overview needs to show all affected services together; individual evidence paths are there when someone wants to inspect a claim.
 
-## Four agents, one shared memory
+The interface now starts with a concise introduction, then opens a dedicated workspace. A custom mark, restrained typography and light or dark graph canvases give the map room to breathe. The important visual event is the same in either theme: the connected areas light up as a single incident.
 
-- **Scout** opens an `(:Investigation)` and checks whether we've triaged this advisory before.
-- **Tracer** runs `shortestPath((s:Service)-[:DEPLOYS|DEPENDS_ON*]->(v))` for every exposed service.
-- **Cartographer** is the company brain: owners, on-call, the ADRs that apply ("stay on express 4, but patch immediately") and incidents that hit the same services before.
-- **Commander** writes the brief: who to page, the fix path, decisions in play, history, and what changed since last time.
+## An investigation that leaves a record
 
-The agents don't pass prompts to each other. They hand off through the graph. Every claim in the brief is stored as `(:Finding)-[:EVIDENCE]->(node)`, so clicking a sentence in the UI flies the 3D camera along the exact path that proves it. Run the same advisory tomorrow and the new investigation `FOLLOWS_UP` the old one, and its brief `SUPERSEDES` the previous one. Memory you can audit, not a growing chat log.
+The workflow has four sequential stages. Scout reads the advisory and opens an investigation. Tracer finds exposed services and their paths. Cartographer adds ownership, decisions and incident history. Commander produces the brief.
 
-## The finding that surprised me
+These stages share FalkorDB context and persist their findings. They are not four independent language models. The live demo runs deterministically without a model key; an optional model can rewrite Commander's wording. Its evidence-ID and entity-token checks filter some unsupported output, but do not prove every sentence correct.
 
-I added a "Who holds the keys" view: PageRank over `DEPENDS_ON`, rolled up per npm maintainer, plus reachability from every service. One account publishes 54 packages in this tree, 29 of them as the only publisher, and can ship code into 8 of the 10 services. That isn't a criticism of anyone. Open source runs on people like that. But it's exactly the shape of risk behind event-stream, ua-parser-js and xz, and no package list will show it to you. It takes one graph algorithm call.
+Each saved finding connects to its source entities through `EVIDENCE` edges. A later investigation connects to its predecessor through `FOLLOWS_UP`, while `SUPERSEDES` connects replacement findings to the previous brief. This gives the Memory view something concrete to reopen. The seed includes an explicitly backdated demonstration run, not a claim that a real company experienced that incident yesterday.
 
-## Why FalkorDB
+The same query-backed capabilities are available through the application's MCP endpoint. Another assistant can inspect exposure, ownership, maintainer concentration or previous investigations using the product's tools.
 
-- **Cypher for multi-hop questions.** Variable-length paths and `shortestPath` made the core feature one query.
-- **Built-in algorithms.** `algo.pageRank` runs where the data is, with no export step.
-- **Speed.** Blast-radius queries return in single-digit milliseconds, fast enough to call on every agent step.
-- **MCP.** Blast Radius exposes its tools at `/api/mcp`, and the official FalkorDB MCP server lets Claude or Cursor run their own read-only Cypher against the same graph.
+FalkorDB's built-in PageRank procedure also supports the key-holder view. Combined with service reachability, it shows how widely packages associated with a maintainer appear across the inventory. That is a concentration measure in a snapshot. It is not an accusation, a live permission audit or a prediction that an account will be compromised.
 
-## Built fast, honestly
+## Closing the gap between seeing and acting
 
-I built this solo in one day with an AI coding agent writing much of the code, while I drove the problem, graph model, queries and design. The app's LLM is optional and only writes the Commander's wording. Facts come from Cypher, and cited evidence ids are checked against the graph. Without a key it runs fully deterministic.
+A useful alert should not require the recipient to decode a graph trace. Blast Radius's email explains the issue, lists affected services and owners, and gives three actions: update the affected dependency using the advisory's fix information, prioritize critical services, then test and verify the resolved version. A link opens the full map.
 
-**Try it:** `<VERCEL_URL>` · **Code:** `<REPO_URL>` · **Video:** `<VIDEO_URL>`
+The delivery path stores alert state and uses a stable provider idempotency key to reduce duplicate sends. A real test through Resend reached the approved account's own inbox, and replaying that test did not create another message. The current test sender supports that inbox; other admin recipients require a verified sending domain.
 
-*Built for Graph Hacks: Context for AI Agents (WeMakeDevs × FalkorDB). Tracks: Agents That Act on Connected Data, Agent Memory and Coordination, Company Brain.*
+The scheduled monitor checks published OSV advisories against the seeded inventory. It does not detect an active intrusion, import customer repositories or automatically update the inventory after a patch. Those boundaries belong in the product, especially when the visual presentation makes an incident feel immediate.
+
+The main lesson was that an exposure path becomes much more useful when ownership and memory are attached to it. FalkorDB let those questions share one model: what is affected, who can act, and what was learned before.
+
+AI coding assistants helped implement, debug, test, document and deploy the project. The product direction was to connect a dependency incident to every affected area and an actionable admin alert. The repository includes the graph model, Cypher queries and verification notes so the implementation can be inspected and explained.
+
+Try the [live product](https://blast-radius-murex.vercel.app), open the [incident workspace](https://blast-radius-murex.vercel.app/app), or inspect the [source code](https://github.com/ronkenx9/blast-radius).

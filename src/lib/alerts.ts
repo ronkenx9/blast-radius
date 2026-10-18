@@ -7,9 +7,34 @@ export function authorized(req: Request, secret = process.env.ADMIN_TOKEN) {
   return !!secret && secret.length >= 32 && Buffer.byteLength(value) === Buffer.byteLength(secret) && timingSafeEqual(Buffer.from(value),Buffer.from(secret));
 }
 export const validEmail = (email: unknown): email is string => typeof email === 'string' && email.length <= 254 && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email);
-export async function settings() { const [s] = await q<any>("MATCH (s:AlertSettings {id:'admin'}) RETURN s.email AS email, s.enabled AS enabled"); return s || {email:'',enabled:false}; }
+export async function settings() {
+  // Idempotently remove the legacy property after ADMIN_EMAIL is configured for this release.
+  const [s] = await q<any>("MATCH (s:AlertSettings {id:'admin'}) REMOVE s.email RETURN s.enabled AS enabled",{},false);
+  // Keep the real recipient outside the synthetic graph, in server-side deployment settings.
+  return {email:(process.env.ADMIN_EMAIL || '').trim(),enabled:s?.enabled === true,recipientLocked:true};
+}
 export function emailText(data: NonNullable<Awaited<ReturnType<typeof impact>>>) {
-  return `${data.advisory.id}: ${data.advisory.summary}\n\n${data.services.length} services affected (${data.tier1} tier-1).\n\n${data.services.map(s=>`${s.service} — ${s.team}; on call: ${s.oncall || 'Unassigned'}\n${s.path.join(' → ')}`).join('\n\n')}\n\nOpen all affected areas: ${process.env.APP_URL || 'https://blast-radius-murex.vercel.app'}/?advisory=${encodeURIComponent(data.advisory.id)}\n\nLagos Ledger is a synthetic demo company. This reports vulnerability exposure, not proof of an active breach.`;
+  const packages: string[] = data.advisory.packages || [];
+  const fixed: string[] = [...new Set<string>((data.advisory.fixed || []).filter((release: string) =>
+    packages.some(pkg => release.startsWith(`${pkg}@`))))];
+  const critical = data.services.filter(s => s.tier === 1).map(s => s.service);
+  const indirect = data.services.some(s => s.path.length > 2);
+  const what = data.advisory.id === 'GHSA-6rw7-vpxm-498p'
+    ? 'A flaw in qs can use excessive memory and make affected services unavailable.'
+    : `A published security issue affects ${packages.join(', ') || 'a dependency'} used by these services.`;
+  const update = fixed.length
+    ? `Update the affected dependency to a fixed release listed by this advisory: ${fixed.join(', ')}. Confirm the right release for your installed version and compatibility.`
+    : 'Check the advisory for a fix or mitigation. No patched release is listed in the graph yet.';
+  const dependencyStep = indirect
+    ? ' It is used indirectly: update the parent dependency or use a compatible override, then regenerate the lockfile.'
+    : ' Update the dependency and regenerate the lockfile.';
+  const verification = fixed.length
+    ? 'Rerun dependency checks and tests. Deploy the tested lockfile, then verify each service resolves the patched version before treating the issue as resolved.'
+    : 'Apply the advisory’s recommended mitigation and test it. Keep the issue open until a fix or mitigation has been verified.';
+  const priority = critical.length
+    ? `Prioritize the ${critical.length} critical services: ${critical.join(', ')}. Contact their owners below.`
+    : 'Contact the owners below and prioritize the affected services.';
+  return `${data.services.length} services need a dependency update\n\nWhat happened\n${what}\n${data.services.length} services are exposed, including ${data.tier1} critical (tier-1). Exposure does not mean a breach has happened.\n\nDo this next\n1. ${update}${fixed.length ? dependencyStep : ''}\n2. ${priority}\n3. ${verification}\n\nAffected services and owners\n${data.services.map(s=>`${s.service} — ${s.team}; on call: ${s.oncall || 'Unassigned'}`).join('\n')}\n\nView all affected areas: ${process.env.APP_URL || 'https://blast-radius-murex.vercel.app'}/?advisory=${encodeURIComponent(data.advisory.id)}\n\nReference: ${(data.advisory.aliases || []).find((id: string) => id.startsWith('CVE-')) || data.advisory.id}${(data.advisory.aliases || []).some((id: string) => id.startsWith('CVE-')) ? ` · ${data.advisory.id}` : ''}\nLagos Ledger is a synthetic demo. Its sample inventory does not update when you deploy a patch.`;
 }
 export async function sendEmail(email: string, subject: string, text: string, key: string) {
   if (!process.env.RESEND_API_KEY || !process.env.ALERT_FROM) throw new Error('Email provider is not configured');
@@ -41,7 +66,7 @@ export async function deliverPending(onlyId = '') {
     if (!claimed.length) continue;
     try {
       const data = await impact(a.advisory); if (!data) throw new Error('Advisory unavailable');
-      const providerId = await sendEmail(s.email,`[Blast Radius${a.isTest ? " TEST" : ""}] ${data.services.length} services exposed — ${a.advisory}`,emailText(data),a.id);
+      const providerId = await sendEmail(s.email,`[Blast Radius${a.isTest ? " TEST" : ""}] ${data.services.length} services need a dependency update`,emailText(data),a.id);
       await q("MATCH (a:Alert {id:$id,owner:$owner}) SET a.status='accepted',a.providerId=$providerId,a.lease=0,a.error='' RETURN a.id",{id:a.id,owner,providerId},false); accepted++;
     } catch (e) { await q("MATCH (a:Alert {id:$id,owner:$owner}) SET a.status='failed',a.error=$error,a.lease=0 RETURN a.id",{id:a.id,owner,error:(e as Error).message},false); }
   }

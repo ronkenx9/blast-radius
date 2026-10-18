@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blast Radius — graph-native supply-chain war room",
-  description: "Multi-agent CVE triage on FalkorDB: which services, which path, who to page.",
+  title: "Blast Radius — see every affected service",
+  description: "Trace a vulnerable dependency to every affected service, its owners and the people on call. Explore the working FalkorDB demo.",
+  icons: { icon: "/brand/blast-radius-mark.svg" },
 };
 
 export default function RootLayout({
@@ -23,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

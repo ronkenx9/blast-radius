@@ -1,9 +1,7 @@
 "use client";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import SpriteText from "three-spritetext";
-import * as THREE from "three";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import IncidentMap from "./IncidentMap";
 import { COLORS } from "./colors";
 
@@ -13,6 +11,7 @@ export type Highlight = { nodes: Set<string>; links: Set<string>; focus?: string
 export type GraphHandle = { flyPath: (path: string[]) => Promise<void>; focusNode: (id: string) => void; fit: (ids?: string[]) => void };
 
 const SIZE: Record<string, number> = { Service: 9, Team: 7, Company: 10, Person: 3, Advisory: 2.2, Incident: 4, Decision: 4, Version: 1.4, Package: 0.9, Maintainer: 1.2 };
+const escapeLabel = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]!));
 const lid = (l: GLink) => `${typeof l.source === "object" ? l.source.id : l.source}>${typeof l.target === "object" ? l.target.id : l.target}`;
 
 const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink[] }; hl: Highlight; onNode?: (n: GNode) => void }>(
@@ -22,26 +21,40 @@ const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink
     const [size, setSize] = useState({ w: 800, h: 600 });
     const byId = useMemo(() => new Map(data.nodes.map((n) => [n.id, n])), [data]);
     const active = hl.nodes.size > 0;
+    const pendingFit = useRef<string[] | null>(null);
+    const fitVisibleGraph = useCallback(() => {
+      const el = wrap.current, ids = pendingFit.current;
+      if (!el || el.clientWidth === 0 || el.clientHeight === 0 || ids === null || !fg.current) return;
+      const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 650;
+      fg.current.zoomToFit(duration, 25, ids.length ? (node: GNode) => ids.includes(node.id) : undefined);
+      pendingFit.current = null;
+    }, []);
 
     useEffect(() => {
       const el = wrap.current; if (!el) return;
-      const ro = new ResizeObserver(() => setSize({ w: el.clientWidth, h: el.clientHeight }));
+      const ro = new ResizeObserver(() => {
+        // Mobile tabs hide this canvas. Keep a valid camera viewport while hidden.
+        const w = el.clientWidth, h = el.clientHeight;
+        if (w > 0 && h > 0) setSize({ w, h });
+      });
       ro.observe(el); return () => ro.disconnect();
     }, []);
 
     useEffect(() => {
+      const frame = requestAnimationFrame(fitVisibleGraph);
+      return () => cancelAnimationFrame(frame);
+    }, [size, fitVisibleGraph]);
+
+    useEffect(() => {
       const g = fg.current; if (!g) return;
-      if (!(g as any).__bloom) {
-        const bloom = new UnrealBloomPass(new THREE.Vector2(size.w, size.h), 0.55, 0.4, 0.35);
-        g.postProcessingComposer().addPass(bloom); (g as any).__bloom = true;
-      }
       g.d3Force("charge")?.strength(-38);
       g.d3Force("link")?.distance((l: GLink) => (l.type === "DEPENDS_ON" ? 18 : l.type === "MAINTAINS" ? 22 : 34));
-      const ctrl = g.controls(); if (ctrl) { ctrl.autoRotate = !active; ctrl.autoRotateSpeed = 0.35; }
+      const ctrl = g.controls(); if (ctrl) { ctrl.autoRotate = false; }
     }, [size, active]);
 
-    const camTo = (n: GNode, dist = 90, ms = 1100) => {
+    const camTo = (n: GNode, dist = 90, ms = 650) => {
       const g = fg.current; if (!g || n.x == null) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) ms = 0;
       const r = Math.hypot(n.x!, n.y!, n.z!) || 1;
       const k = 1 + dist / r;
       g.cameraPosition({ x: n.x! * k, y: n.y! * k + 12, z: n.z! * k }, { x: n.x, y: n.y, z: n.z }, ms);
@@ -49,11 +62,15 @@ const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink
 
     useImperativeHandle(ref, () => ({
       flyPath: async (path) => {
-        for (const id of path) { const n = byId.get(id); if (n) { camTo(n, 150, 1000); await new Promise((r) => setTimeout(r, 1150)); } }
+        for (const id of path) { const n = byId.get(id); if (n) { camTo(n, 150, 550); await new Promise((r) => setTimeout(r, 650)); } }
       },
       focusNode: (id) => { const n = byId.get(id); if (n) camTo(n, 110); },
-      fit: (ids) => fg.current?.zoomToFit(900, 25, ids?.length ? (n: GNode) => ids.includes(n.id) : undefined),
-    }), [byId]);
+      fit: (ids) => {
+        pendingFit.current = ids || [];
+        // Let the selected tab become visible and its measured size reach the renderer.
+        requestAnimationFrame(() => requestAnimationFrame(fitVisibleGraph));
+      },
+    }), [byId, fitVisibleGraph]);
 
     const nodeColor = (n: GNode) => {
       if (active && !hl.nodes.has(n.id)) return "rgba(90,100,130,0.12)";
@@ -70,7 +87,7 @@ const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink
           width={size.w}
           height={size.h}
           graphData={data as any}
-          backgroundColor="#06070a"
+          backgroundColor="#10151d"
           showNavInfo={false}
           warmupTicks={120}
           cooldownTicks={200}
@@ -79,7 +96,7 @@ const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink
           nodeResolution={12}
           nodeVal={(n: any) => (SIZE[n.label] || 1) * (hl.nodes.has(n.id) ? 1.5 : 1) * (n.label === "Service" && n.tier === 1 ? 1.4 : 1)}
           nodeColor={nodeColor as any}
-          nodeLabel={(n: any) => `<div style="font:12px ui-monospace;padding:4px 8px;background:#0b0d12;border:1px solid #222;border-radius:6px"><b style="color:${COLORS[n.label]}">${n.label}</b> ${n.title || n.name}</div>`}
+          nodeLabel={(n: any) => `<div style="font:12px ui-monospace;padding:4px 8px;background:#0b0d12;border:1px solid #222;border-radius:6px"><b style="color:${COLORS[n.label]}">${escapeLabel(n.label)}</b> ${escapeLabel(n.title || n.name)}</div>`}
           nodeThreeObjectExtend
           nodeThreeObject={(n: any) => {
             const show = (!active && (n.label === "Service" || n.label === "Team")) || (active && hl.nodes.has(n.id) && n.label !== "Package");

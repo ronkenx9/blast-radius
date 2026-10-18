@@ -1,13 +1,14 @@
 # Blast Radius deployment handoff
 
-Live: https://blast-radius-murex.vercel.app
-Repository: https://github.com/ronkenx9/blast-radius (private).
+Live site: https://blast-radius-murex.vercel.app
+Incident workspace: https://blast-radius-murex.vercel.app/app
+Public repository: https://github.com/ronkenx9/blast-radius
 
-Deployed on 18 October 2026 with Node 22 on Vercel and the seeded FalkorDB Cloud free instance. Public health, graph, investigation, evidence, memory, maintainer and MCP checks passed. The demo runs in deterministic mode without an AI key.
+The existing deployment was verified on 18 October 2026 with Node 22 on Vercel and the seeded FalkorDB Cloud free instance. The demo runs in deterministic mode without an AI key. The redesigned frontend and server-side recipient migration require a fresh deployed release check; historical verification does not establish that those latest changes are live. See the audit in `submission/AUDIT.md`.
 
 ## Local demo on this Mac
 
-The extracted project is `~/Documents/vibecoding/blast-radius`. The database is a real FalkorDB, installed through the official FalkorDBLite package in `.falkordb/venv`. It listens only on `127.0.0.1:6389`; data is saved in `.falkordb/blast-radius.rdb`. The app runs on http://127.0.0.1:3100.
+The extracted project is `~/Documents/vibecoding/blast-radius`. The database is a real FalkorDB, installed through the official FalkorDBLite package in `.falkordb/venv`. It listens only on `127.0.0.1:6389`; data is saved in `.falkordb/blast-radius.rdb`. The landing page runs on http://127.0.0.1:3100/ and the incident workspace on http://127.0.0.1:3100/app. An old incident link at `/?advisory=…` redirects to `/app?advisory=…`.
 
 In each terminal, start with:
 
@@ -37,15 +38,37 @@ With the dedicated Cloud database selected locally, run `npm run seed` once. The
 
 ## Vercel
 
-1. Push the project to the intended GitHub repository, excluding `.env.local`, `.falkordb`, `node_modules`, `.next`, and `test-results`. Repository: https://github.com/ronkenx9/blast-radius (private at creation).
+1. Push the project to the intended GitHub repository, excluding `.env.local`, `.falkordb`, `node_modules`, `.next`, and `test-results`. Public repository: https://github.com/ronkenx9/blast-radius.
 2. Import that repository into Vercel; select Next.js and Node **22.x**. The included `vercel.json` uses `npm ci` and `npm run build`.
-3. Add the Cloud variables above to the intended environment (Production and/or Preview), then deploy. The API uses Node runtime TCP connections to FalkorDB; no Edge runtime or local database binary is deployed. Investigation and MCP routes allow 60 seconds.
-4. Open `/api/health`: require `ok: true`, a populated graph, and the intended agent mode. Test the CVE button, evidence path, key holders and memory from the deployed URL. These remote checks passed on the production URL on 18 October 2026.
-5. Fill the live/video URLs in README only after those assets exist. The demo script and blog draft are included but have not been published.
+3. Add the Cloud variables above to the intended environment (Production and/or Preview). For email, configure the server-side variables below, including `ADMIN_EMAIL`, before deploying. The API uses Node runtime TCP connections to FalkorDB; no Edge runtime or local database binary is deployed. Investigation and MCP routes allow 60 seconds.
+4. Open `/api/health`: require `ok: true`, a populated graph, and the intended agent mode. Check the introduction at `/`, then test the featured incident, complete affected map, evidence path, key holders, light/dark canvas and memory at `/app`. Check that `/?advisory=GHSA-6rw7-vpxm-498p` still opens the correct incident. Run these checks against each new deployed release.
+5. Visit protected `/setup` once after this release to confirm the server-configured recipient and remove the legacy recipient property from the graph. Record the live migration and test result separately; this guide does not assert that the new migration has run. Add the demo video URL to README only after the uploaded video is accessible. `blog.md` is an unpublished draft.
 
 For optional AI wording, configure exactly one of `AI_GATEWAY_API_KEY`, `OPENAI_API_KEY`, or `OPENROUTER_API_KEY`, and a compatible `LLM_MODEL` (plus `LLM_BASE_URL` for a custom compatible endpoint). No real model key was supplied to this session. No-key mode is fully functional. Local tests simulate rejected keys and malformed/ungrounded responses; they do not verify a real model provider.
 
 `MCP_API_KEY` optionally requires a bearer token on POST `/api/mcp`. It does not protect the browser API. This is an intentionally public, synthetic-company demonstration with writeable investigation memory, not a private company deployment. Keep real company data out of this demo. A live model key enables model calls from the public investigation route; configure provider usage limits or deployment access controls for the intended audience.
+
+## Admin email and scheduled monitoring
+
+Configure these values as server-side deployment environment variables. Never prefix them with `NEXT_PUBLIC_` or put real values in the repository.
+
+| Variable | Purpose |
+|---|---|
+| `ADMIN_EMAIL` | The approved real recipient. Stored outside the graph; changing the destination requires updating this environment variable and redeploying. |
+| `ADMIN_TOKEN` | A secret of at least 32 characters for the owner-only `/setup` screen and admin API. |
+| `MONITOR_TOKEN` | A separate secret protecting `/api/monitor`; use the same value in the GitHub Actions repository secret. |
+| `APP_URL` | Canonical site origin, such as `https://blast-radius-murex.vercel.app`, without `/app`. |
+| `RESEND_API_KEY` | A sending-only Resend key. |
+| `ALERT_FROM` | Authorized sender, for example `Blast Radius <onboarding@resend.dev>` for own-account testing. Other recipients need a verified sending domain. |
+| `RESEND_TEMPLATE_ID` | Optional published Resend template with string variables `DETAILS` and `MORE`. Long alerts fall back to complete plain text. |
+
+At `/setup`, enter the admin key, confirm the read-only server-configured address and enable notifications. Only the enable/disable preference belongs in `AlertSettings`. Loading protected settings or monitor delivery removes a legacy `email` property from that node. Set `ADMIN_EMAIL` before this release; an address left only in the legacy graph property will no longer be used.
+
+**Send test email** creates an explicitly marked synthetic incident alert, persists it and sends through the provider. It is a real send to the configured recipient. The application reports provider acceptance; verify receipt separately before claiming delivery. Replaying the same test request ID returns the existing accepted result, while a fresh button press is a new intentional test. Public incident simulations do not email.
+
+For scheduled scans, set GitHub's `APP_URL` repository variable and `MONITOR_TOKEN` repository secret. `.github/workflows/monitor.yml` requests a scan every 30 minutes; scheduler delays are possible. The scan checks OSV against the seeded inventory, imports at most three advisory candidates and attempts one queued email. It does not detect attacks, import customer repositories or update the inventory after a patch. Existing advisory matches are the baseline.
+
+The current sender was previously tested with the approved account's own inbox. Do not treat that historical result as verification of the newest email wording or deployment; repeat the authorized real-flow check after release when required. Keep screenshots of private setup, inboxes and provider accounts out of public demo media.
 
 ## Verification
 

@@ -1,16 +1,20 @@
-# Demo video script (~2:00)
+# Working demo recording guide (~2 minutes)
 
-Record at 1600×960 or 1920×1080. Run `npm run seed` first for a clean memory state. Cursor visible, no music under the voice (or very low).
+Record the actual deployed application at 1920×1080. Open the landing page at https://blast-radius-murex.vercel.app and the workspace at `/app`. Use the existing seeded graph: **do not run the seed command before recording**, because it deletes investigation history and notification preferences. Keep credentials, the real admin address, private inboxes and provider dashboards out of the recording.
 
-| Time | Screen | Voiceover |
+| Time | Screen and action | Suggested narration |
 |---|---|---|
-| 0:00–0:10 | Title card (After Effects): "BLAST RADIUS" over the slow-rotating graph | "A CVE drops. Your repos don't mention the package. Are you safe? Usually, no." |
-| 0:10–0:25 | Overview, slowly orbiting graph; hover the top stats | "This is Blast Radius: one FalkorDB graph that joins real npm data (509 resolved versions, 135 OSV advisories, 375 maintainers) to a company graph of teams, people, services, on-call, decisions and incidents." |
-| 0:25–0:40 | Click **Simulate CVE drop** → red overlay | "Here's a real one: CVE-2025-15284 in qs. None of our services list qs. Four agents get dispatched." |
-| 0:40–1:05 | Agent cards light up one by one; open **Cypher** on Tracer | "Scout opens an investigation in the graph. Tracer runs shortestPath from every service to the vulnerable versions: five services, three tier-1, through express and through request. Cartographer pulls owners, on-call, the ADRs and past incidents. Every step is a Cypher query you can open." |
-| 1:05–1:25 | Camera fly-through along payments-api → express → qs; click the payments-api claim | "Commander writes the brief, and every sentence is a Finding linked to its evidence in the graph. Click one and the camera flies the exact path: payments-api, express 4.17.1, qs 6.7.0. Page Ada. ADR-012 says stay on Express 4 but patch immediately. We had a body-parser DoS on this same chain last year." |
-| 1:25–1:42 | **Who holds the keys** → red web from the top maintainer | "PageRank over DEPENDS_ON, rolled up per maintainer: one npm account publishes 54 packages in this tree, 29 alone, and reaches 8 of our 10 services. That's the shape of event-stream and xz, in one algorithm call." |
-| 1:42–1:55 | **Memory** tab → open yesterday's investigation, then rerun it | "Investigations persist in the graph. Re-run tomorrow and the new one follows up the old one and supersedes its brief, so any agent, or Claude over MCP, picks up where we left off." |
-| 1:55–2:00 | End card: Tracks 1·2·3, repo, live URL, "Built on FalkorDB" | "Blast Radius. Know your blast radius before the attacker does." |
+| 0:00–0:12 | Show the landing page and open the workspace. | “A vulnerable dependency can reach services that never list it directly. Blast Radius connects the advisory to every affected service and the people responsible for it.” |
+| 0:12–0:27 | Show the graph overview; briefly show the light or dark canvas setting. | “This demo joins real npm and OSV records with Lagos Ledger, a fictional company. Its inventory includes 509 resolved package versions and ten services.” |
+| 0:27–0:48 | Select the featured qs advisory or click **Simulate CVE drop**. Show the complete affected map. | “CVE-2025-15284 affects qs. Five services are exposed through transitive dependencies, including three tier-1 services. The complete map shows their connecting dependencies, teams and on-call people together. Exposure is not proof of an active breach.” |
+| 0:48–1:10 | Let the four stages complete. Open Tracer's **Cypher** view, then select the payments-api evidence claim. | “Four sequential stages investigate the graph. Scout opens the run, Tracer follows dependency paths, Cartographer adds company context, and Commander writes the brief. This live demo uses deterministic output without a model key. Here is the exact query and one evidence path: payments-api, express, qs.” |
+| 1:10–1:27 | Show owners and the saved brief. If available, use the sanitized email preview clearly labelled **Preview**, not a private inbox. | “The admin alert explains what happened and gives three next steps: update the dependency, prioritize critical services, then test and verify the patch. It includes the affected owners and a link back to this map. Public simulations do not send email.” |
+| 1:27–1:42 | Open **Key holders** and show the first result. | “PageRank and service reachability reveal concentration. The cached metadata lists this maintainer on 54 packages; 29 have no other listed maintainer. Those packages reach eight services. That is a snapshot measure, not a current permission audit or an accusation.” |
+| 1:42–1:55 | Open **Memory** and recall an existing investigation. | “FalkorDB persists findings and their evidence. Follow-up investigations link to earlier runs and supersede previous briefs. The company history is fictional, and the seed includes an explicitly backdated demonstration run.” |
+| 1:55–2:05 | End on the complete affected map with the live and repository URLs. | “Blast Radius brings the dependency path, the owner and the investigation history into one place. Built on FalkorDB.” |
 
-**B-roll tip:** a split-screen at 1:42 showing Claude Desktop calling `blast_radius` through `/api/mcp` makes the MCP claim concrete (optional).
+Keep the capture long enough to show the investigation actually finishing. Shorten narration or pauses to fit the final edit; do not imply actions happened instantaneously through misleading cuts. The landing page and graph are real product captures, while any email preview should stay labelled as a preview. A separate promo film does not replace this working-project demonstration.
+
+If showing MCP, record a real tool call and its response. The application exposes query-backed tools at `/api/mcp`; do not imply the optional Docker-based official FalkorDB MCP server is deployed or used unless that is separately demonstrated. Never show an access token.
+
+The scheduled monitor checks published advisories against this seeded inventory; it is not intrusion detection, customer repository import or automatic remediation. Real email delivery was previously tested to the approved account's own inbox. Claim a fresh email test only when that specific delivery has been verified.

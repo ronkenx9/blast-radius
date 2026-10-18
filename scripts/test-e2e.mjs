@@ -7,9 +7,16 @@ const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshade
 const page=await browser.newPage({viewport:{width:1600,height:960},deviceScaleFactor:1});
 const errors=[]; page.on('pageerror',e=>errors.push(e.message)); page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 try {
- await page.goto(base,{waitUntil:'networkidle'});
+ await page.goto(new URL('/app',base).href,{waitUntil:'networkidle'});
  await page.locator('canvas').first().waitFor({timeout:60000});
- await page.waitForFunction(()=>{const c=document.querySelector('canvas');return c && c.width>1000 && c.height>500});
+ // The graph shares the viewport with two panels; validate its rendered container, not a fixed screen width.
+ await page.waitForFunction(()=>{
+   const host=document.querySelector('.graph-canvas'),c=host?.querySelector('canvas');
+   if(!host||!c)return false;
+   const area=host.getBoundingClientRect(),rect=c.getBoundingClientRect();
+   return c.width>0&&c.height>0&&area.width>200&&area.height>200&&rect.width>0&&rect.height>0
+     &&Math.abs(rect.width-area.width)<3&&Math.abs(rect.height-area.height)<3;
+ });
  await page.waitForTimeout(2500);
  await page.screenshot({path:'test-results/01-overview.png'});
  await page.getByRole('button',{name:/Simulate CVE drop/}).first().click();
@@ -21,21 +28,23 @@ try {
  await page.getByText(/shortestPath/).last().waitFor();
  const claim=page.locator('button').filter({hasText:'payments-api (tier 1'}).first();
  await claim.click();
- await page.getByRole('button',{name:'reset',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Reset',exact:true}).waitFor();
  await page.waitForTimeout(4500);
  await page.screenshot({path:'test-results/02-brief-evidence.png'});
- await page.getByRole('button',{name:/Who holds the keys/}).click();
- await page.getByText('Who can ship code into your stack?').waitFor();
- assert((await page.locator('aside').last().innerText()).includes('8/10'));
+ await page.getByRole('button',{name:'Key holders',exact:true}).click();
+ await page.getByRole('heading',{name:'Who holds the keys?',exact:true}).waitFor();
+ const riskPanel=page.getByRole('complementary',{name:'Key-holder analysis',exact:true});
+ await riskPanel.locator('.maintainer-list button').first().waitFor();
+ assert((await riskPanel.locator('.maintainer-reach').first().innerText()).replace(/\s/g,'').includes('8/10'));
  await page.screenshot({path:'test-results/03-key-holders.png'});
  await page.getByRole('button',{name:'Memory',exact:true}).first().click();
- await page.getByText('Investigation memory',{exact:true}).waitFor();
- await page.locator('aside button').filter({hasText:/findings/}).last().click();
+ await page.getByRole('heading',{name:'Investigation memory',exact:true}).waitFor();
+ await page.getByRole('complementary',{name:'Investigation memory',exact:true}).locator('.investigation-list button').last().click();
  await page.getByText(/Recalled from graph memory/).waitFor();
  await page.screenshot({path:'test-results/04-memory.png'});
  await page.reload({waitUntil:'networkidle'});
  await page.getByRole('button',{name:'Memory',exact:true}).first().click();
- await page.locator('aside button').filter({hasText:/findings/}).first().click();
+ await page.getByRole('complementary',{name:'Investigation memory',exact:true}).locator('.investigation-list button').first().click();
  await page.getByText(/Recalled from graph memory/).waitFor();
  assert.deepEqual(errors,[]);
  console.log('BROWSER_VERIFIED');

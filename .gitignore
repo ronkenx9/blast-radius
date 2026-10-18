@@ -47,3 +47,6 @@ next-env.d.ts
 # Local verification artifacts
 /test-results/
 /.unlazy/
+
+# Local editable video production assets
+/submission/video/

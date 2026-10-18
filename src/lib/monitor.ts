@@ -27,7 +27,12 @@ export async function monitor() {
  }));
  for(const {id,keys,a} of candidates) {
    if(a.withdrawn) continue;
-   const fixed=[...new Set((a.affected||[]).flatMap((x:any)=>(x.ranges||[]).flatMap((r:any)=>(r.events||[]).filter((e:any)=>e.fixed).map((e:any)=>e.fixed))))];
+   // Match the seed/brief contract: preserve which npm package each fixed version belongs to.
+   const fixed=[...new Set((a.affected||[])
+     .filter((x:any)=>x.package?.ecosystem==='npm' && typeof x.package?.name==='string')
+     .flatMap((x:any)=>(x.ranges||[]).flatMap((r:any)=>(r.events||[])
+       .filter((e:any)=>typeof e.fixed==='string' && e.fixed)
+       .map((e:any)=>`${x.package.name}@${e.fixed}`))))];
    await q(`MERGE (a:Advisory {id:$id}) SET a.monitorNew=true,a.summary=$summary,a.severity=$severity,a.aliases=$aliases,a.published=$published,a.fixed=$fixed,a.url=$url WITH a UNWIND $keys AS key MATCH (v:Version {key:key}) SET v.vulnerable=true MERGE (a)-[:AFFECTS]->(v) RETURN a.id`,{id,summary:a.summary||id,severity:a.database_specific?.severity||'UNKNOWN',aliases:a.aliases||[],published:a.published||'',fixed,url:`https://osv.dev/vulnerability/${id}`,keys},false);
    await recordAlert(id);
    await q("MATCH (a:Advisory {id:$id}) SET a.monitorNew=false RETURN a.id",{id},false); imported++;

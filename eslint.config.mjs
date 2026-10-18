@@ -17,6 +17,7 @@ const eslintConfig = [
       ".next/**",
       "out/**",
       "build/**",
+      "submission/video/**",
       "next-env.d.ts",
     ],
   },
