@@ -14,7 +14,7 @@ The public demo runs deterministic graph-based output without a model key. Optio
 |---|---|
 | Live site | [blast-radius-murex.vercel.app](https://blast-radius-murex.vercel.app) |
 | Incident workspace | [Open the demo](https://blast-radius-murex.vercel.app/app) |
-| Demo video | `<VIDEO_URL>` *(to be filled)* |
+| Submitted video · 33-second overview | [Watch on YouTube](https://youtu.be/WtkidDnVEtA) |
 | MCP endpoint | `https://blast-radius-murex.vercel.app/api/mcp` (Streamable HTTP, JSON-RPC) |
 
 ![Blast Radius landing page](docs/shots/landing-2026.png)

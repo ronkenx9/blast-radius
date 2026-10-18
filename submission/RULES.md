@@ -22,10 +22,10 @@ All three tracks may be entered. Blast Radius fits connected-data investigation,
 
 The checked source uses cached public package/advisory data and a synthetic company. npm maintainer emails are discarded during seed collection; usernames represent package metadata and must not be presented as evidence of malicious behavior. The backdated seed investigation is demo history, not a real previous incident.
 
-The email feature originally stored an admin recipient in `AlertSettings`. Before filing, the release must verify real recipient data has been moved out of the graph or obtain a clear organizer interpretation. Hiding a field from a public endpoint alone does not satisfy the literal data rule. This is an identified compliance question, not a claim that organizers have ruled on it.
+The email feature originally stored an admin recipient in `AlertSettings`. The release moved the recipient to private server-side `ADMIN_EMAIL`; live protected settings executed removal of the legacy graph property. The graph now retains only the notification preference. This addresses the identified recipient-storage issue; it is not an organizer ruling on overall eligibility.
 
 Local Git history records work on 18 October 2026, within the event window; it does not independently establish when every original coding/design step occurred. The entrant must confirm timing, team eligibility and their understanding of the submitted architecture. Avoid claiming the participant personally wrote or reviewed code without that confirmation.
 
-The supplied submission form requires a public or unlisted **YouTube** demo link. A promotional video can support the launch but must not replace a demonstration of the working product. The optional blog link should remain empty until there is a published post.
+The supplied form requires a public or unlisted **YouTube** demo link showing the working project. The user filed the unlisted [short overview](https://youtu.be/WtkidDnVEtA); a longer working walkthrough is a separate deliverable still being finalized. WeMakeDevs showed Submitted at 16:55 Lagos on 18 October 2026. That state confirms filing, not an organizer judgment on video sufficiency or eligibility. The blog remains unpublished.
 
-Release update: the admin recipient is now held in the private `ADMIN_EMAIL` server environment variable. `AlertSettings` stores only the enabled preference; the first protected settings/monitor read removes a legacy `email` property. Public graph data remains public npm/OSV records and synthetic company context. Live migration status is tracked in the release record.
+The verified application checkpoint, production checks, recipient migration and submitted-video status are recorded in [RELEASE.md](RELEASE.md).

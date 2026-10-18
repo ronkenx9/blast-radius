@@ -83,7 +83,7 @@ The map returns the union of dependency edges on routes to affected versions, th
 
 - `Alert`: stable `id`, `advisory`, `created`, `status`, `isTest`, `services`; delivery adds a temporary `lease`/`owner`, `providerId` and `error`. Ordinary IDs hash the advisory plus sorted service IDs. Test IDs are explicit request IDs, so an intentional new test can be sent while a replay is deduplicated.
 - `Monitor {id:'osv'}`: lease owner and expiry, last `checked` timestamp and `error`.
-- `AlertSettings {id:'admin'}`: notification preferences. Recipient storage is a release-sensitive boundary; see the final implementation in `src/lib/alerts.ts` and [rules notes](../submission/RULES.md).
+- `AlertSettings {id:'admin'}`: the enabled notification preference. The real recipient comes from private server-side `ADMIN_EMAIL`, outside this graph. Live protected settings executed removal of the legacy `email` property during the release verification.
 
 These operational nodes are not part of the public graph visualization. The public alert endpoint exposes advisory/delivery metadata, not admin recipient details. Notification delivery uses one configured admin address; fictional on-call people appear as context, not real message recipients. `accepted` means the provider accepted the request, not that the mailbox received it.
 
@@ -98,4 +98,4 @@ The scheduled monitor queries OSV for seeded versions, imports at most three new
 - Memory is for one public synthetic workspace. Tenant isolation and customer-repository import are not implemented.
 - The optional LLM guard checks evidence IDs and recognized entity tokens. It is useful filtering, not a proof of every claim's semantic correctness.
 
-Release update: the admin recipient is now held in the private `ADMIN_EMAIL` server environment variable. `AlertSettings` stores only the enabled preference; the first protected settings/monitor read removes a legacy `email` property. Public graph data remains public npm/OSV records and synthetic company context. Live migration status is tracked in the release record.
+Release verification on 18 October 2026: the live protected settings request confirmed the server-configured recipient was locked, the provider ready and notifications enabled. That request executed removal of the legacy `AlertSettings.email` property. The admin recipient stays in private server-side `ADMIN_EMAIL`; the graph stores only the preference. See [the release record](../submission/RELEASE.md) for the exact verified application checkpoint. Public graph data remains public package/advisory metadata and synthetic company context.

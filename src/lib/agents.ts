@@ -148,7 +148,7 @@ function deterministicClaims(adv: Adv, hits: Hit[], decisions: Map<string, any>,
   if (inc.length) claims.push({ tone: "warn", evidence: inc.map((i) => `Incident:${i.id}`), text: `Past incidents on these services: ${inc.slice(0, 3).map((i) => `${i.id} "${i.title}" on ${i.service} (${i.date}, led by ${i.lead})`).join("; ")}.` });
   const solo = hist.filter((h) => adv.packages.includes(h.package));
   if (solo.length) claims.push({ tone: solo.some((s) => s.maintainerCount === 1) ? "warn" : "info", evidence: [`Advisory:${adv.id}`],
-    text: `Maintainers of ${solo.map((s) => s.package).join(", ")}: ${solo.map((s) => `${s.maintainers.join(", ") || "unknown"} (${s.maintainerCount} with publish rights)`).join("; ")}.` });
+    text: `Maintainers of ${solo.map((s) => s.package).join(", ")}: ${solo.map((s) => `${s.maintainers.join(", ") || "unknown"} (${s.maintainerCount} listed in the cached npm metadata)`).join("; ")}.` });
   if (opened?.previous) {
     const now = new Set(exp.map((h) => h.service)).size, then = opened.previousServiceCount;
     claims.push({ tone: then != null && now > then ? "critical" : "ok", evidence: [`Advisory:${adv.id}`],

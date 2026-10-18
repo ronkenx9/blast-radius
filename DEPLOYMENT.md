@@ -4,7 +4,7 @@ Live site: https://blast-radius-murex.vercel.app
 Incident workspace: https://blast-radius-murex.vercel.app/app
 Public repository: https://github.com/ronkenx9/blast-radius
 
-The existing deployment was verified on 18 October 2026 with Node 22 on Vercel and the seeded FalkorDB Cloud free instance. The demo runs in deterministic mode without an AI key. The redesigned frontend and server-side recipient migration require a fresh deployed release check; historical verification does not establish that those latest changes are live. See the audit in `submission/AUDIT.md`.
+The redesigned frontend and recipient migration were verified live on 18 October 2026 with Node 22, Vercel and the seeded FalkorDB Cloud free instance. The demo runs in deterministic mode without an AI key. See [the release record](submission/RELEASE.md) for the exact verified deployment and [the audit](submission/AUDIT.md) for scope and limitations.
 
 ## Local demo on this Mac
 
@@ -42,7 +42,7 @@ With the dedicated Cloud database selected locally, run `npm run seed` once. The
 2. Import that repository into Vercel; select Next.js and Node **22.x**. The included `vercel.json` uses `npm ci` and `npm run build`.
 3. Add the Cloud variables above to the intended environment (Production and/or Preview). For email, configure the server-side variables below, including `ADMIN_EMAIL`, before deploying. The API uses Node runtime TCP connections to FalkorDB; no Edge runtime or local database binary is deployed. Investigation and MCP routes allow 60 seconds.
 4. Open `/api/health`: require `ok: true`, a populated graph, and the intended agent mode. Check the introduction at `/`, then test the featured incident, complete affected map, evidence path, key holders, light/dark canvas and memory at `/app`. Check that `/?advisory=GHSA-6rw7-vpxm-498p` still opens the correct incident. Run these checks against each new deployed release.
-5. Visit protected `/setup` once after this release to confirm the server-configured recipient and remove the legacy recipient property from the graph. Record the live migration and test result separately; this guide does not assert that the new migration has run. Add the demo video URL to README only after the uploaded video is accessible. `blog.md` is an unpublished draft.
+5. Visit protected `/setup` once after this release to confirm the server-configured recipient and remove the legacy recipient property from the graph. The live migration and authorized real test are recorded in [RELEASE.md](submission/RELEASE.md). The README links the accessible submitted overview video. `blog.md` is an unpublished draft.
 
 For optional AI wording, configure exactly one of `AI_GATEWAY_API_KEY`, `OPENAI_API_KEY`, or `OPENROUTER_API_KEY`, and a compatible `LLM_MODEL` (plus `LLM_BASE_URL` for a custom compatible endpoint). No real model key was supplied to this session. No-key mode is fully functional. Local tests simulate rejected keys and malformed/ungrounded responses; they do not verify a real model provider.
 
@@ -68,7 +68,7 @@ At `/setup`, enter the admin key, confirm the read-only server-configured addres
 
 For scheduled scans, set GitHub's `APP_URL` repository variable and `MONITOR_TOKEN` repository secret. `.github/workflows/monitor.yml` requests a scan every 30 minutes; scheduler delays are possible. The scan checks OSV against the seeded inventory, imports at most three advisory candidates and attempts one queued email. It does not detect attacks, import customer repositories or update the inventory after a patch. Existing advisory matches are the baseline.
 
-The current sender was previously tested with the approved account's own inbox. Do not treat that historical result as verification of the newest email wording or deployment; repeat the authorized real-flow check after release when required. Keep screenshots of private setup, inboxes and provider accounts out of public demo media.
+The newest plain-English alert was tested once with the approved account's own inbox; Resend reported Delivered. See [RELEASE.md](submission/RELEASE.md) for the exact evidence and inbox-verification boundary. Keep screenshots of private setup, inboxes and provider accounts out of public demo media.
 
 ## Verification
 

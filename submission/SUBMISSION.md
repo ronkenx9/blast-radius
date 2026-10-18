@@ -1,6 +1,6 @@
 # Graph Hacks submission — Blast Radius
 
-Prepared 18 October 2026. These are copy-ready form answers; this file is not a submission receipt. Repository visibility, the YouTube URL and final release evidence must be confirmed before filing.
+Updated 18 October 2026. The user independently filed the submission; WeMakeDevs showed **Submitted** at **16:55 Lagos**, with all three tracks and the filled answers. This file preserves the prepared answers and observed filing state. See [the release record](RELEASE.md) for the verified application checkpoint and remaining media work.
 
 ## Project title
 
@@ -18,7 +18,7 @@ FalkorDB powers the traversals, ownership context, investigation memory and aler
 
 ## Tracks
 
-Select all three, with Track 1 as the primary fit:
+All three tracks were selected. Track 1 is the primary fit:
 
 - **Track 1 — Agents That Act on Connected Data:** multi-hop exposure queries, shortest paths and PageRank are callable tools; graph results determine the brief and incident alert.
 - **Track 2 — Agent Memory and Coordination:** investigations, agent-authored findings and evidence persist in FalkorDB. Follow-up runs link to previous runs and supersede their briefs. The four stages share the same graph; this is a sequential workflow, not a claim of autonomous concurrent agents.
@@ -34,7 +34,9 @@ Verified public on 18 October 2026. The form opens this URL as the project.
 
 ## Demo video
 
-**PENDING: insert the uploaded public or unlisted YouTube demo URL.** A local MP4 or the promo film is not a replacement for the required working-project demo link.
+Submitted link: https://youtu.be/WtkidDnVEtA
+
+The user uploaded this unlisted, approximately 33-second overview and filed it in the video field. A separate 105.667-second working walkthrough is finished locally; no uploaded YouTube URL for that longer video has been verified. The submitted state does not establish organizer approval of the video or eligibility.
 
 ## Live demo or deployment
 
@@ -54,7 +56,7 @@ These relationships determine the output; they are not just a visualization. Rem
 
 ## Blog link
 
-Leave blank until a blog is actually published. The repository's `blog.md` is a draft, not a published blog URL.
+No published blog URL is available. The repository's `blog.md` remains an unpublished draft.
 
 ## What did you like about FalkorDB?
 
@@ -66,14 +68,15 @@ A clearer first-run path for a Next.js app deployed on Vercel would help: one gu
 
 ## AI assistance disclosure
 
-AI coding assistants helped implement, debug, document, test and deploy this project and prepare its demonstration media. The participant supplied the product direction: show all affected layers of a dependency incident at once and notify the configured admin. The implementation and verification record are available in the repository. The participant should review the model, queries and architecture before submission and be prepared to explain them; this draft does not attest to a review that has not happened.
+AI coding assistants helped implement, debug, document, test and deploy this project and prepare its demonstration media. The participant supplied the product direction: show all affected layers of a dependency incident at once and notify the configured admin. The implementation and verification record are available in the repository. The entrant remains responsible for understanding and explaining the model, queries and architecture; this record does not attest to a personal review that has not been confirmed.
 
 Runtime AI is separate from coding assistance. The deployed demo runs without a model key using deterministic graph-based output. Optional LLM narration is limited to the Commander's wording and has evidence-ID and entity-token checks; those checks do not establish that every natural-language statement is correct.
 
-## Before filing
+## Filing and release status
 
-- Confirm the public repository and live deployment open while signed out.
-- Replace the demo placeholder with the verified YouTube URL.
-- Confirm the README links the graph model, Cypher and working-demo video.
-- Review the [rules and eligibility notes](RULES.md), especially permitted graph data and participant understanding.
-- Confirm team details and final form values. No submission has been filed by this document.
+- Public repository and live application verified; see [RELEASE.md](RELEASE.md) for the exact application commit and deployment.
+- User-uploaded overview URL is recorded above. A longer working walkthrough has no verified YouTube URL yet.
+- WeMakeDevs showed **Submitted** at 16:55 Lagos on 18 October 2026. The assistant observed this state and did not click the final submit button.
+- All three tracks were selected. The blog remains unpublished.
+- The legacy recipient property removal executed through live protected settings. Real recipient data is held in server-side `ADMIN_EMAIL`.
+- Review [rules and eligibility notes](RULES.md) for the entrant's continuing responsibilities; submitted status is not an organizer ruling.
