@@ -1,5 +1,10 @@
 # Blast Radius deployment handoff
 
+Live: https://blast-radius-murex.vercel.app
+Repository: https://github.com/ronkenx9/blast-radius (private).
+
+Deployed on 18 October 2026 with Node 22 on Vercel and the seeded FalkorDB Cloud free instance. Public health, graph, investigation, evidence, memory, maintainer and MCP checks passed. The demo runs in deterministic mode without an AI key.
+
 ## Local demo on this Mac
 
 The extracted project is `~/Documents/vibecoding/blast-radius`. The database is a real FalkorDB, installed through the official FalkorDBLite package in `.falkordb/venv`. It listens only on `127.0.0.1:6389`; data is saved in `.falkordb/blast-radius.rdb`. The app runs on http://127.0.0.1:3100.
@@ -35,7 +40,7 @@ With the dedicated Cloud database selected locally, run `npm run seed` once. The
 1. Push the project to the intended GitHub repository, excluding `.env.local`, `.falkordb`, `node_modules`, `.next`, and `test-results`. Repository: https://github.com/ronkenx9/blast-radius (private at creation).
 2. Import that repository into Vercel; select Next.js and Node **22.x**. The included `vercel.json` uses `npm ci` and `npm run build`.
 3. Add the Cloud variables above to the intended environment (Production and/or Preview), then deploy. The API uses Node runtime TCP connections to FalkorDB; no Edge runtime or local database binary is deployed. Investigation and MCP routes allow 60 seconds.
-4. Open `/api/health`: require `ok: true`, a populated graph, and the intended agent mode. Test the CVE button, evidence path, key holders and memory from the deployed URL. Cold starts, Cloud networking and the live deployment still require this final remote check.
+4. Open `/api/health`: require `ok: true`, a populated graph, and the intended agent mode. Test the CVE button, evidence path, key holders and memory from the deployed URL. These remote checks passed on the production URL on 18 October 2026.
 5. Fill the live/video URLs in README only after those assets exist. The demo script and blog draft are included but have not been published.
 
 For optional AI wording, configure exactly one of `AI_GATEWAY_API_KEY`, `OPENAI_API_KEY`, or `OPENROUTER_API_KEY`, and a compatible `LLM_MODEL` (plus `LLM_BASE_URL` for a custom compatible endpoint). No real model key was supplied to this session. No-key mode is fully functional. Local tests simulate rejected keys and malformed/ungrounded responses; they do not verify a real model provider.
@@ -65,3 +70,7 @@ Tests add investigations to the selected database. Use a dedicated demo/test gra
 
 - [Official FalkorDBLite installation and macOS requirements](https://github.com/FalkorDB/falkordblite)
 - [Vercel Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)
+
+## Cloud instance for this demo
+
+The dedicated instance is `blast-radius` (`instance-acnkqjr3c`), FalkorDB Free in AWS `us-east-1`. The user explicitly approved the free, non-TLS connection for this synthetic demo on 18 October 2026. Vercel Production and Preview use server-side FALKORDB_HOST, PORT, USERNAME, PASSWORD, GRAPH and TLS variables; the password is stored as a Secret. The Mac retains its separate local database settings. Do not place real company information in this demo or reuse its database password elsewhere.

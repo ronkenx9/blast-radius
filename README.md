@@ -10,9 +10,9 @@ Blast Radius is a multi-agent supply-chain war room built on **FalkorDB**. Four 
 
 | | |
 |---|---|
-| Live demo | `<VERCEL_URL>` *(to be filled)* |
+| Live demo | [blast-radius-murex.vercel.app](https://blast-radius-murex.vercel.app) |
 | Demo video | `<VIDEO_URL>` *(to be filled)* |
-| MCP endpoint | `<VERCEL_URL>/api/mcp` (Streamable HTTP, JSON-RPC) |
+| MCP endpoint | `https://blast-radius-murex.vercel.app/api/mcp` (Streamable HTTP, JSON-RPC) |
 
 ![War room](docs/shots/03-agents-brief.png)
 
@@ -130,7 +130,7 @@ RETURN i.id AS id, last.id AS previous, last.serviceCount AS previousServiceCoun
 Each result carries the Cypher it ran. Set `MCP_API_KEY` to require `Authorization: Bearer …`.
 
 ```json
-{ "mcpServers": { "blast-radius": { "url": "https://<VERCEL_URL>/api/mcp" } } }
+{ "mcpServers": { "blast-radius": { "url": "https://blast-radius-murex.vercel.app/api/mcp" } } }
 ```
 
 `docker-compose.yml` also starts the **official FalkorDB MCP server** (`@falkordb/mcpserver`, read-only) on `:3005`, so an assistant can run its own Cypher against the same graph.
