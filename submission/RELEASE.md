@@ -11,7 +11,7 @@ Recorded 18 October 2026. Times below use Lagos time (WAT, UTC+1).
 - Verified Vercel deployment: https://blast-radius-iwoctbzbj-ronins-projects-c7d07daa.vercel.app — **READY**, serving the canonical alias above.
 - GitHub verification: [successful workflow run](https://github.com/ronkenx9/blast-radius/actions/runs/39142282858).
 
-This is the exact application artifact covered by the deployment observations below. Later documentation and maintainer-wording updates are recorded separately.
+This is the exact application artifact covered by the deployment observations below. The documentation and cached-maintainer wording follow-up was published as `28909f605aade4886ebea5829546de910e3cbc15`; its Vercel deployment `blast-radius-1a8etfs3a-ronins-projects-c7d07daa.vercel.app` was Ready and [verification run39143286012](https://github.com/ronkenx9/blast-radius/actions/runs/39143286012) passed.
 
 ## Verification result
 
@@ -31,12 +31,14 @@ The current sender is limited to the approved account's own inbox. Other recipie
 
 The user independently uploaded a short overview to YouTube as unlisted and filed the WeMakeDevs submission. The app's **Submitted** state was observed on **18 October 2026 at 16:55 Lagos**, with all three tracks selected and the form answers filled. The assistant did not click the final submission button. This records the platform state, not an organizer eligibility ruling or judging outcome.
 
-Submitted video: [Blast Radius — 33-second overview](https://youtu.be/WtkidDnVEtA).
+The entry was updated at **17:14 Lagos**. A refreshed server view confirmed the full walkthrough link with all three tracks and the existing answers preserved.
 
-The separate 105.667-second working-demo video and 32.533-second promo are finished. Both are 1080p H.264/AAC with ElevenLabs narration, subtitles, source notes and an editable archive. Final decoded frames and audio measurements were reviewed; zero clipped samples were found. No YouTube URL for that longer walkthrough has been verified, and it is not represented as the submitted video. The blog in `blog.md` remains an unpublished draft; no blog URL is claimed.
+Submitted video: [Blast Radius — 1:46 working walkthrough](https://www.youtube.com/watch?v=dCOheNpA5T4).
+
+The separate 105.667-second working-demo video and 32.533-second promo are finished. Both are 1080p H.264/AAC with ElevenLabs narration, subtitles, source notes and an editable archive. Final decoded frames and audio measurements were reviewed; zero clipped samples were found. With the user’s explicit approval, the full walkthrough was uploaded as unlisted: https://youtu.be/dCOheNpA5T4. YouTube confirmed “Video published,” duration1:46, an English subtitle track, and no initial copyright/community issues. The description includes source credits, chapters, repo/live links and ElevenLabs disclosure. The saved submission now uses this full walkthrough. The blog in `blog.md` remains an unpublished draft; no blog URL is claimed.
 
 ## Supporting files
 
-The user-facing output folder contains `Submission-Submitted.png`, `Blast-Radius-Live-Landing.png`, `Blast-Radius-Live-Incident.png` and `Email-Delivered-Release.png`. Email/provider screenshots are private verification artifacts and should not be included in public media without appropriate sanitization. Copy-ready answers are in [SUBMISSION.md](SUBMISSION.md), the graph model in [GRAPH_MODEL.md](../docs/GRAPH_MODEL.md), and runnable examples in [QUERIES.md](../docs/QUERIES.md).
+The user-facing output folder contains `Submission-Final.png`, `Blast-Radius-Live-Landing.png`, `Blast-Radius-Live-Incident.png` and `Email-Delivered-Release.png`. Email/provider screenshots are private verification artifacts and should not be included in public media without appropriate sanitization. Copy-ready answers are in [SUBMISSION.md](SUBMISSION.md), the graph model in [GRAPH_MODEL.md](../docs/GRAPH_MODEL.md), and runnable examples in [QUERIES.md](../docs/QUERIES.md).
 
-The event deadline is 18 October 2026 at 19:29 Lagos. Submission state was observed before that deadline. Subsequent edits should preserve the distinction between this verified application checkpoint, the user's submitted overview video and any later deployment or longer-video upload.
+The event deadline is 18 October 2026 at 19:29 Lagos. Submission state was observed before that deadline. Subsequent edits should preserve the distinction between this verified application checkpoint, the initial filing, final full-demo link and any later deployment.

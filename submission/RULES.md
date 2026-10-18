@@ -26,6 +26,6 @@ The email feature originally stored an admin recipient in `AlertSettings`. The r
 
 Local Git history records work on 18 October 2026, within the event window; it does not independently establish when every original coding/design step occurred. The entrant must confirm timing, team eligibility and their understanding of the submitted architecture. Avoid claiming the participant personally wrote or reviewed code without that confirmation.
 
-The supplied form requires a public or unlisted **YouTube** demo link showing the working project. The user filed the unlisted [short overview](https://youtu.be/WtkidDnVEtA); a longer working walkthrough is a separate deliverable still being finalized. WeMakeDevs showed Submitted at 16:55 Lagos on 18 October 2026. That state confirms filing, not an organizer judgment on video sufficiency or eligibility. The blog remains unpublished.
+The supplied form requires a public or unlisted **YouTube** demo link showing the working project. The full [1:46 walkthrough](https://www.youtube.com/watch?v=dCOheNpA5T4) is published unlisted and was verified in the saved submission at 17:14 Lagos on 18 October 2026. WeMakeDevs shows Submitted with all three tracks. The blog remains an unpublished draft.
 
 The verified application checkpoint, production checks, recipient migration and submitted-video status are recorded in [RELEASE.md](RELEASE.md).

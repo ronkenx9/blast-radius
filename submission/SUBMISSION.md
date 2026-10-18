@@ -34,9 +34,9 @@ Verified public on 18 October 2026. The form opens this URL as the project.
 
 ## Demo video
 
-Submitted link: https://youtu.be/WtkidDnVEtA
+https://www.youtube.com/watch?v=dCOheNpA5T4
 
-The user uploaded this unlisted, approximately 33-second overview and filed it in the video field. A separate 105.667-second working walkthrough is finished locally; no uploaded YouTube URL for that longer video has been verified. The submitted state does not establish organizer approval of the video or eligibility.
+The full 1:46 working walkthrough is published unlisted with English subtitles, source credits, chapter markers and ElevenLabs disclosure. The saved WeMakeDevs entry was refreshed and verified with this link at 17:14 Lagos on 18 October 2026. All three tracks and the other answers were preserved.
 
 ## Live demo or deployment
 
@@ -75,7 +75,7 @@ Runtime AI is separate from coding assistance. The deployed demo runs without a 
 ## Filing and release status
 
 - Public repository and live application verified; see [RELEASE.md](RELEASE.md) for the exact application commit and deployment.
-- User-uploaded overview URL is recorded above. A longer working walkthrough has no verified YouTube URL yet.
+- Full working walkthrough is published and verified in the saved submission.
 - WeMakeDevs showed **Submitted** at 16:55 Lagos on 18 October 2026. The assistant observed this state and did not click the final submit button.
 - All three tracks were selected. The blog remains unpublished.
 - The legacy recipient property removal executed through live protected settings. Real recipient data is held in server-side `ADMIN_EMAIL`.
