@@ -4,6 +4,7 @@ import ForceGraph3D from "react-force-graph-3d";
 import SpriteText from "three-spritetext";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import IncidentMap from "./IncidentMap";
 import { COLORS } from "./colors";
 
 export type GNode = { id: string; label: string; name: string; tier?: number; severity?: string; vulnerable?: boolean; direct?: boolean; mc?: number; title?: string; x?: number; y?: number; z?: number };
@@ -101,6 +102,7 @@ const GraphView = forwardRef<GraphHandle, { data: { nodes: GNode[]; links: GLink
           onNodeClick={(n: any) => { onNode?.(n); camTo(n, 110); }}
           enableNodeDrag={false}
         />
+        {hl.mode === "incident" && <IncidentMap nodes={data.nodes} links={data.links} hl={hl} onNode={onNode} />}
       </div>
     );
   }

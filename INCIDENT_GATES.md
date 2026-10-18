@@ -10,6 +10,6 @@ OWNS: src scripts .github .env.example README.md INCIDENT_GATES.md
 - [x] I3: Production build and type/lint checks pass.
   CHECK: npm run verify:build
   EXPECT: BUILD_VERIFIED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=2e99e7ae391e1abf8bfc0f359557a386064ef7f2ce89762d60476a214ac91a9d; exit=0; EXPECT=matched; output-sha256=5d71a27fca589a76b1936c635f8ae9fae939aa899dbaf9253fdc0060971d7d6c; output-bytes=1982; shell=/bin/sh; cwd=/Users/gadgetplug/Documents/vibecoding/blast-radius; path=c8b5927152e5/30 entries
-- [ ] I4: Live deployment and monitoring verified; protected admin onboarding and provider setup requirements documented. Provider acceptance tested with mocked responses; real delivery only if credentials and recipient are supplied.
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=2e99e7ae391e1abf8bfc0f359557a386064ef7f2ce89762d60476a214ac91a9d; exit=0; EXPECT=matched; output-sha256=97c906790188bf11262413048b52ab3b3346f863cc25db22cc2be4bf3752d4b5; output-bytes=1982; shell=/bin/sh; cwd=/Users/gadgetplug/Documents/vibecoding/blast-radius; path=c8b5927152e5/30 entries
+- [x] I4: Live deployment and monitoring verified; protected admin onboarding and provider setup requirements documented. Provider acceptance tested with mocked responses; real delivery only if credentials and recipient are supplied.
+  EVIDENCE: Vercel production Ready; live smoke passed (5 exposed, 11 claims, 8/10 maintainer reach); live impact 20 nodes/21 edges. GitHub monitor run 39136023735 passed and public last-scan status updated. Production owner key unlocks setup; email/provider absent and test-send disabled. Layered overview browser verified locally; final release verified after push.

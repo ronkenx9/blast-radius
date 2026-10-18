@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd());
+// Never allow a test to send mail using real local provider credentials.
+delete process.env.RESEND_API_KEY; delete process.env.ALERT_FROM;
 async function main() {
  const {impact}=await import('../src/lib/impact');
  const {q,getDb,connOptions}=await import('../src/lib/db');
@@ -29,6 +31,7 @@ async function main() {
  delete process.env.RESEND_API_KEY;delete process.env.ALERT_FROM;
  process.env.ADMIN_TOKEN='a'.repeat(32);
  const request=(body:any)=>new Request('http://local',{method:'POST',headers:{authorization:'Bearer '+process.env.ADMIN_TOKEN},body:JSON.stringify(body)});
+ const originalSettings=await q<any>("MATCH (s:AlertSettings {id:'admin'}) RETURN s.email AS email,s.enabled AS enabled");
  assert.equal((await admin.POST(request({email:'bad',enabled:true}))).status,400);
  assert.equal((await admin.POST(request({email:'admin@example.com',enabled:false}))).status,200);
  const fixture='TEST-MONITOR-FIXTURE';
@@ -47,7 +50,8 @@ async function main() {
    globalThis.fetch=realFetch;
    await q('MATCH (a:Alert {advisory:$id}) DELETE a',{id:fixture},false);
    await q('MATCH (a:Advisory {id:$id}) DETACH DELETE a',{id:fixture},false);
-   await q("MATCH (s:AlertSettings {id:'admin'}) DELETE s",{},false);
+   if(originalSettings[0]) await q("MATCH (s:AlertSettings {id:'admin'}) SET s.email=$email,s.enabled=$enabled RETURN s.id",originalSettings[0],false);
+   else await q("MATCH (s:AlertSettings {id:'admin'}) DELETE s",{},false);
  }
 
  const graph=await (await import('../src/app/api/graph/route')).GET();const gd=await graph.json();assert.ok(!gd.nodes.some((n:any)=>['Alert','AlertSettings','Monitor'].includes(n.label)));

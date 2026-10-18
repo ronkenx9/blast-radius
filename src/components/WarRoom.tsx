@@ -403,7 +403,7 @@ export default function WarRoom() {
       )}</AnimatePresence>
 
       {/* legend */}
-      <div className="pointer-events-none absolute bottom-[70px] left-[372px] z-10 flex flex-wrap max-w-[calc(100%-830px)] gap-x-3 gap-y-1 font-mono text-[10px] text-muted">
+      <div className={clsx(mapMode && "hidden", "pointer-events-none absolute bottom-[70px] left-[372px] z-10 flex flex-wrap max-w-[calc(100%-830px)] gap-x-3 gap-y-1 font-mono text-[10px] text-muted")}>
         {["Service", "Team", "Person", "Version", "Maintainer", "Advisory", "Incident", "Decision"].map((l) => (
           <span key={l} className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full" style={{ background: COLORS[l] }} />{l}</span>
         ))}
